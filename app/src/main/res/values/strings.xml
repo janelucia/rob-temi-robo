@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">RoboGuide</string>
+    <string name="app_name" translatable="false">RoboGuide</string>
+
+    <string name="btnSpeak" translatable="false">Hello World</string>
 </resources>
