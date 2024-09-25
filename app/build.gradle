@@ -10,6 +10,7 @@ android {
     defaultConfig {
         applicationId "de.fhkiel.temi.robogguide"
         minSdk 30
+        //noinspection OldTargetApi
         targetSdk 34
         //noinspection OldTargetApi
         versionCode 2
