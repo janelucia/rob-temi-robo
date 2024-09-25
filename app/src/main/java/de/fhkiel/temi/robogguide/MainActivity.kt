@@ -14,6 +14,10 @@ class MainActivity : AppCompatActivity(), OnRobotReadyListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // use database
+        // TODO
+
+        //let robot speak on button click
         findViewById<Button>(R.id.btnSpeak).setOnClickListener {
             speak("Hello World!")
         }
@@ -30,14 +34,14 @@ class MainActivity : AppCompatActivity(), OnRobotReadyListener {
     }
 
     override fun onRobotReady(isReady: Boolean) {
-        if (isReady){
-            mRobot = Robot.getInstance()
+        mRobot = if (isReady){
+            Robot.getInstance()
         } else {
-            mRobot = null
+            null
         }
     }
 
-    fun speak(text: String){
+    private fun speak(text: String){
         mRobot?.let { robot ->
             val ttsRequest: TtsRequest = TtsRequest.create(speech = text, isShowOnConversationLayer = true)
             robot.speak(ttsRequest)
