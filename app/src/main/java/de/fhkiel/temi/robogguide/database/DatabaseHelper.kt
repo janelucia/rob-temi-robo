@@ -10,7 +10,7 @@ import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 
-class DynamicDatabaseReader(context: Context, databaseName: String) : SQLiteOpenHelper(context, databaseName, null, 1) {
+class DatabaseHelper(context: Context, databaseName: String) : SQLiteOpenHelper(context, databaseName, null, 1) {
 
     private val appContext = context
 
