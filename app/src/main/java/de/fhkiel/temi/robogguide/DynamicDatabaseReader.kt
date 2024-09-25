@@ -5,7 +5,7 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import org.json.JSONObject
 
-class DynamicDatabaseHelper(context: Context, databaseName: String) : SQLiteOpenHelper(context, databaseName, null, 1) {
+class DynamicDatabaseReader(context: Context, databaseName: String) : SQLiteOpenHelper(context, databaseName, null, 1) {
 
     override fun onCreate(db: SQLiteDatabase) {
         // Example to create a table
