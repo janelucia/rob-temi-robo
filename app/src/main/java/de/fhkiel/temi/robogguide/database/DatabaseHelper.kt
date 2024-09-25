@@ -3,31 +3,29 @@ package de.fhkiel.temi.robogguide.database
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import android.util.Log
 import org.json.JSONObject
+import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 
-class DatabaseHelper(context: Context, databaseName: String) : SQLiteOpenHelper(context, databaseName, null, 1) {
+class DynamicDatabaseReader(context: Context, private val databaseName: String) : SQLiteOpenHelper(context, databaseName, null, 1) {
 
-    private val appContext = context
+    private val databasePath = File(context.getDatabasePath(databaseName).path).absolutePath
+    private val databaseFullPath = "$databasePath$databaseName"
+    private var database: SQLiteDatabase? = null
+    private val appContext: Context = context
 
     override fun onCreate(db: SQLiteDatabase) {}
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {}
 
-    private fun getFullDatabasePath(): String {
-        return "${appContext.packageName}/database/$databaseName"
-    }
-
-
-    // Method to copy the database from assets to internal storage
+    // Method to copy the database from assets to internal storage (always overwrites existing database)
     @Throws(IOException::class)
     private fun copyDatabase() {
         val inputStream: InputStream = appContext.assets.open(databaseName)
-        val outFileName = getFullDatabasePath()
+        val outFileName = databaseFullPath
         val outputStream: OutputStream = FileOutputStream(outFileName)
 
         val buffer = ByteArray(1024)
@@ -41,67 +39,89 @@ class DatabaseHelper(context: Context, databaseName: String) : SQLiteOpenHelper(
         inputStream.close()
     }
 
-    // Method to check if the database already exists in internal storage
-    private fun checkDatabase(): Boolean {
-        var checkDB: SQLiteDatabase? = null
-        try {
-            checkDB = SQLiteDatabase.openDatabase(getFullDatabasePath(), null, SQLiteDatabase.OPEN_READONLY)
-        } catch (e: Exception) {
-            // Database does not exist yet
-            Log.e(appContext.packageName, "Database $databaseName not found!")
-        }
-
-        checkDB?.close()
-        return checkDB != null
-    }
-
-    // Method to initialize the database
+    // Method to initialize the database (always copies and overwrites any existing database)
     @Throws(IOException::class)
     fun initializeDatabase() {
-        if (!checkDatabase()) {
-            this.readableDatabase // Creates an empty database in the default system path
-            copyDatabase() // Copies the database from assets
-        }
+        this.readableDatabase // Create an empty database in the default system path
+        copyDatabase() // Overwrite the existing database with the one from assets
+        openDatabase() // Open the copied database
     }
 
-    // Method to retrieve the table structure dynamically
-    private fun getTableStructure(tableName: String): List<String> {
+    // Method to open the copied database and store its reference
+    private fun openDatabase() {
+        database = SQLiteDatabase.openDatabase(databaseFullPath, null, SQLiteDatabase.OPEN_READWRITE)
+    }
+
+    // Method to close the opened database
+    fun closeDatabase() {
+        database?.close()
+    }
+
+    // Method to retrieve the table structure dynamically, including the primary key
+    private fun getTableStructure(tableName: String): Pair<List<String>, String?> {
         val columns = mutableListOf<String>()
-        val db = this.readableDatabase
-        val cursor = db.rawQuery("PRAGMA table_info($tableName)", null)
+        var primaryKey: String? = null
 
-        if (cursor.moveToFirst()) {
-            do {
-                // Retrieve the column name from the result
-                val columnName = cursor.getString(cursor.getColumnIndexOrThrow("name"))
-                columns.add(columnName)
-            } while (cursor.moveToNext())
+        database?.let { db ->
+            val cursor = db.rawQuery("PRAGMA table_info(`$tableName`)", null)
+
+            if (cursor.moveToFirst()) {
+                do {
+                    // Retrieve the column name from the result
+                    val columnName = cursor.getString(cursor.getColumnIndexOrThrow("name"))
+                    columns.add(columnName)
+
+                    // Check if this column is the primary key
+                    val isPrimaryKey = cursor.getInt(cursor.getColumnIndexOrThrow("pk")) == 1
+                    if (isPrimaryKey) {
+                        primaryKey = columnName
+                    }
+                } while (cursor.moveToNext())
+            }
+            cursor.close()
         }
-        cursor.close()
-        return columns
+
+        return Pair(columns, primaryKey)
     }
 
-    // Method to read data dynamically and convert it into JSON
+    // Method to read data dynamically and convert it into a JSON Map using the primary key as the key
     @Suppress("unused")
-    fun getTableDataAsJson(tableName: String): MutableList<JSONObject> {
-        val db = this.readableDatabase
-        val columns = getTableStructure(tableName)
+    fun getTableDataAsJson(tableName: String): Map<String, JSONObject> {
+        val (columns, primaryKey) = getTableStructure(tableName)
 
-        val cursor = db.rawQuery("SELECT * FROM $tableName", null)
-        val jsonArray = mutableListOf<JSONObject>()
-
-        if (cursor.moveToFirst()) {
-            do {
-                val jsonObject = JSONObject()
-                for (column in columns) {
-                    val value = cursor.getString(cursor.getColumnIndexOrThrow(column))
-                    jsonObject.put(column, value)
-                }
-                jsonArray.add(jsonObject)
-            } while (cursor.moveToNext())
+        if (primaryKey == null) {
+            throw IllegalArgumentException("Table $tableName has no primary key.")
         }
-        cursor.close()
 
-        return jsonArray
+        val jsonMap = mutableMapOf<String, JSONObject>()
+
+        database?.let { db ->
+            val cursor = db.rawQuery("SELECT * FROM `$tableName`", null)
+
+            if (cursor.moveToFirst()) {
+                do {
+                    val jsonObject = JSONObject()
+                    var primaryKeyValue: String? = null
+
+                    for (column in columns) {
+                        val value = cursor.getString(cursor.getColumnIndexOrThrow(column))
+                        jsonObject.put(column, value)
+
+                        // Check if this column is the primary key and save its value
+                        if (column == primaryKey) {
+                            primaryKeyValue = value
+                        }
+                    }
+
+                    // Ensure the primary key value is not null before adding to the map
+                    primaryKeyValue?.let {
+                        jsonMap[it] = jsonObject
+                    }
+                } while (cursor.moveToNext())
+            }
+            cursor.close()
+        }
+
+        return jsonMap
     }
 }
