@@ -1,4 +1,4 @@
-package de.fhkiel.temi.robogguide
+package de.fhkiel.temi.robogguide.database
 
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
