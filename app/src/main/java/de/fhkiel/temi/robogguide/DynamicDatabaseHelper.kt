@@ -3,7 +3,6 @@ package de.fhkiel.temi.robogguide
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import com.google.gson.Gson
 import org.json.JSONObject
 
 class DynamicDatabaseHelper(context: Context, databaseName: String) : SQLiteOpenHelper(context, databaseName, null, 1) {
@@ -34,7 +33,7 @@ class DynamicDatabaseHelper(context: Context, databaseName: String) : SQLiteOpen
 
     // Method to read data dynamically and convert it into JSON
     @Suppress("unused")
-    fun getTableDataAsJson(tableName: String): String {
+    fun getTableDataAsJson(tableName: String): MutableList<JSONObject> {
         val db = this.readableDatabase
         val columns = getTableStructure(tableName)
 
@@ -53,8 +52,6 @@ class DynamicDatabaseHelper(context: Context, databaseName: String) : SQLiteOpen
         }
         cursor.close()
 
-        // Convert the list of JSON objects into a JSON string
-        val gson = Gson()
-        return gson.toJson(jsonArray)
+        return jsonArray
     }
 }
