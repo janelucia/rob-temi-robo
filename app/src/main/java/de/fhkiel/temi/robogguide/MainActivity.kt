@@ -1,5 +1,7 @@
 package de.fhkiel.temi.robogguide
 
+import android.content.pm.ActivityInfo
+import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -72,10 +74,14 @@ class MainActivity : AppCompatActivity(), OnRobotReadyListener {
     }
 
     override fun onRobotReady(isReady: Boolean) {
-        mRobot = if (isReady){
-            Robot.getInstance()
-        } else {
-            null
+        if (isReady){
+            mRobot = Robot.getInstance()
+            mRobot?.hideTopBar()        // hide top action bar
+
+            // hide pull-down bar
+            val activityInfo: ActivityInfo = packageManager.getActivityInfo(componentName, PackageManager.GET_META_DATA)
+            Robot.getInstance().onStart(activityInfo)
+
         }
     }
 

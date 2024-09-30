@@ -35,6 +35,11 @@
             android:name="@string/metadata_permissions"
             android:value="com.robotemi.permission.settings" />
 
+        <!-- TEMI SET UI MODE TO DISABLE PULL-DOWN BAR -->
+        <meta-data
+            android:name="com.robotemi.sdk.metadata.UI_MODE"
+            android:value="4" />
+
     </application>
 
 </manifest>
