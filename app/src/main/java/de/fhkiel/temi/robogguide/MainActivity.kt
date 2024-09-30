@@ -12,7 +12,7 @@ import java.io.IOException
 
 class MainActivity : AppCompatActivity(), OnRobotReadyListener {
     private var mRobot: Robot? = null
-    lateinit var databse: DynamicDatabaseReader
+    lateinit var database: DynamicDatabaseReader
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,13 +20,13 @@ class MainActivity : AppCompatActivity(), OnRobotReadyListener {
 
         // use database
         val databaseName = "roboguide.db"
-        databse = DynamicDatabaseReader(this, databaseName)
+        database = DynamicDatabaseReader(this, databaseName)
 
         try {
-            databse.initializeDatabase() // Initialize the database and copy it from assets
+            database.initializeDatabase() // Initialize the database and copy it from assets
 
-            val places = databse.getTableDataAsJson("places") // Fetch data as JSON
-            val locations = databse.getTableDataAsJson("locations") // Fetch data as JSON
+            val places = database.getTableDataAsJson("places") // Fetch data as JSON
+            val locations = database.getTableDataAsJson("locations") // Fetch data as JSON
             Log.i("MainActivity", "Places: $places")
             Log.i("MainActivity", "Locations: $locations")
 
@@ -35,8 +35,24 @@ class MainActivity : AppCompatActivity(), OnRobotReadyListener {
         }
 
         // let robot speak on button click
-        findViewById<Button>(R.id.btnSpeak).setOnClickListener {
-            speak("Hello World!")
+        findViewById<Button>(R.id.btnSpeakHelloWorld).setOnClickListener {
+            speakHelloWorld("Hello World!")
+        }
+
+        findViewById<Button>(R.id.btnSpeakLocations).setOnClickListener {
+            speakLocations()
+        }
+
+        findViewById<Button>(R.id.btnCancelSpeak).setOnClickListener {
+            mRobot?.cancelAllTtsRequests()
+        }
+
+        findViewById<Button>(R.id.btnGotoHomeBase).setOnClickListener {
+            gotoHomeBase()
+        }
+
+        findViewById<Button>(R.id.btnExitApp).setOnClickListener {
+            finishAffinity()
         }
     }
 
@@ -52,7 +68,7 @@ class MainActivity : AppCompatActivity(), OnRobotReadyListener {
 
     override fun onDestroy() {
         super.onDestroy()
-        databse.closeDatabase()
+        database.closeDatabase()
     }
 
     override fun onRobotReady(isReady: Boolean) {
@@ -63,11 +79,25 @@ class MainActivity : AppCompatActivity(), OnRobotReadyListener {
         }
     }
 
-    private fun speak(text: String){
+    private fun speakHelloWorld(text: String, isShowOnConversationLayer: Boolean = true){
         mRobot?.let { robot ->
-            val ttsRequest: TtsRequest = TtsRequest.create(speech = text, isShowOnConversationLayer = true)
+            val ttsRequest: TtsRequest = TtsRequest.create(speech = text, isShowOnConversationLayer = isShowOnConversationLayer)
             robot.speak(ttsRequest)
         }
+    }
+
+    private fun speakLocations(){
+        mRobot?.let { robot ->
+            var text = "Das sind alle Orte an die ich gehen kann:"
+            robot.locations.forEach {
+                text += " $it,"
+            }
+            speakHelloWorld(text, isShowOnConversationLayer = false)
+        }
+    }
+
+    private fun gotoHomeBase(){
+        mRobot?.goTo(location = "home base")
     }
 
 }

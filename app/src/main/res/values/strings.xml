@@ -1,5 +1,9 @@
 <resources>
     <string name="app_name" translatable="false">RoboGuide</string>
 
-    <string name="btnSpeak" translatable="false">Hello World</string>
+    <string name="btnSpeakHelloWorld" translatable="false">Hello World</string>
+    <string name="btnSpeakLocations" translatable="false">Read locations</string>
+    <string name="btnCancelSpeak" translatable="false">Cancel Speak</string>
+    <string name="btnGotoHomeBase" translatable="false">Goto Home Base</string>
+    <string name="btnExit" translatable="false">Exit App</string>
 </resources>
