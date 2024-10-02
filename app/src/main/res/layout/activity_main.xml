@@ -66,15 +66,4 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/btnDownloadDatabase"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/btnHeight"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="92dp"
-        android:drawableStart="@drawable/baseline_cloud_download_24"
-        android:drawablePadding="@dimen/btnIconPadding"
-        android:text="@string/btnDownloadDatabase"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

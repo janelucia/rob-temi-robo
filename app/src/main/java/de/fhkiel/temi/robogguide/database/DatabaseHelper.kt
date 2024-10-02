@@ -57,14 +57,6 @@ class DynamicDatabaseReader(context: Context, private val databaseName: String) 
         database?.close()
     }
 
-    suspend fun getDatabaseUpdate(): DownloadTask {
-        val downloader = FileDownloader()
-        val downloadDirectory = File(appContext.filesDir, "downloads")
-        downloadDirectory.mkdirs()
-
-        return downloader.downloadLatestDatabaseFile(url = "https://roboguide.wissjahr.uber.space/releases", downloadDirectory = downloadDirectory)
-    }
-
     // Method to retrieve the table structure dynamically, including the primary key
     private fun getTableStructure(tableName: String): Pair<List<String>, String?> {
         val columns = mutableListOf<String>()

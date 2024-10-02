@@ -59,14 +59,6 @@ class MainActivity : AppCompatActivity(), OnRobotReadyListener {
             gotoHomeBase()
         }
 
-        findViewById<Button>(R.id.btnDownloadDatabase).setOnClickListener {
-            if (this::database.isInitialized){
-                activityScope.launch {
-                    database.getDatabaseUpdate()
-                }
-            }
-        }
-
         findViewById<Button>(R.id.btnExitApp).setOnClickListener {
             finishAffinity()
         }

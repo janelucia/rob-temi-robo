@@ -5,6 +5,5 @@
     <string name="btnSpeakLocations" translatable="false">Read locations</string>
     <string name="btnCancelSpeak" translatable="false">Cancel Speak</string>
     <string name="btnGotoHomeBase" translatable="false">Goto Home Base</string>
-    <string name="btnDownloadDatabase" translatable="false">Download Database</string>
     <string name="btnExit" translatable="false">Exit App</string>
 </resources>
