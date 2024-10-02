@@ -22,10 +22,12 @@ class DatabaseHelper(context: Context, private val databaseName: String) : SQLit
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {}
 
+    @Suppress("unused")
     fun getDatabase(): SQLiteDatabase?{
         return database
     }
 
+    @Suppress("unused")
     fun getDBFile(): File?{
         return dbFile
     }
@@ -69,7 +71,7 @@ class DatabaseHelper(context: Context, private val databaseName: String) : SQLit
     }
 
     // Method to open the copied database and store its reference
-    fun openDatabase(): SQLiteDatabase? {
+    private fun openDatabase(): SQLiteDatabase? {
         database = SQLiteDatabase.openDatabase(databaseFullPath, null, SQLiteDatabase.OPEN_READWRITE)
         return database
     }
