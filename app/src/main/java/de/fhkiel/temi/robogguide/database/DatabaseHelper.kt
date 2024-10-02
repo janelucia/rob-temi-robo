@@ -10,23 +10,36 @@ import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 
-class DynamicDatabaseReader(context: Context, private val databaseName: String) : SQLiteOpenHelper(context, databaseName, null, 1) {
+class DatabaseHelper(context: Context, private val databaseName: String) : SQLiteOpenHelper(context, databaseName, null, 1) {
 
     private val databasePath = File(context.getDatabasePath(databaseName).path).absolutePath
     private val databaseFullPath = "$databasePath$databaseName"
     private var database: SQLiteDatabase? = null
     private val appContext: Context = context
+    private var dbFile: File? = null
 
     override fun onCreate(db: SQLiteDatabase) {}
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {}
 
-    // Method to copy the database from assets to internal storage (always overwrites existing database)
+    fun getDatabase(): SQLiteDatabase?{
+        return database
+    }
+
+    fun getDBFile(): File?{
+        return dbFile
+    }
+
+    /**
+     * Method to copy the database from assets to internal storage (always overwrites existing database)
+     * @return  output File or null
+     */
     @Throws(IOException::class)
-    private fun copyDatabase() {
+    private fun copyDatabase(): File {
         val inputStream: InputStream = appContext.assets.open(databaseName)
         val outFileName = databaseFullPath
-        val outputStream: OutputStream = FileOutputStream(outFileName)
+        val outFile = File(outFileName)
+        val outputStream: OutputStream = FileOutputStream(outFile)
 
         val buffer = ByteArray(1024)
         var length: Int
@@ -37,19 +50,28 @@ class DynamicDatabaseReader(context: Context, private val databaseName: String) 
         outputStream.flush()
         outputStream.close()
         inputStream.close()
+
+        return outFile
     }
 
-    // Method to initialize the database (always copies and overwrites any existing database)
+    /**
+     * Method to initialize the database (always copies and overwrites any existing database)
+     * @param withOpen  Set to false, to only copy the database, otherwise it is also opened (default)
+     */
     @Throws(IOException::class)
-    fun initializeDatabase() {
+    fun initializeDatabase(withOpen: Boolean = true){
         this.readableDatabase // Create an empty database in the default system path
-        copyDatabase() // Overwrite the existing database with the one from assets
-        openDatabase() // Open the copied database
+        dbFile = copyDatabase() // Overwrite the existing database with the one from assets
+
+        if (withOpen) {
+            openDatabase() // Open the copied database
+        }
     }
 
     // Method to open the copied database and store its reference
-    private fun openDatabase() {
+    fun openDatabase(): SQLiteDatabase? {
         database = SQLiteDatabase.openDatabase(databaseFullPath, null, SQLiteDatabase.OPEN_READWRITE)
+        return database
     }
 
     // Method to close the opened database
