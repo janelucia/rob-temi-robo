@@ -9,16 +9,15 @@ import android.widget.Button
 import com.robotemi.sdk.Robot
 import com.robotemi.sdk.TtsRequest
 import com.robotemi.sdk.listeners.OnRobotReadyListener
-import de.fhkiel.temi.robogguide.database.DynamicDatabaseReader
+import de.fhkiel.temi.robogguide.database.DatabaseHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
 import java.io.IOException
 
 class MainActivity : AppCompatActivity(), OnRobotReadyListener {
     private var mRobot: Robot? = null
-    lateinit var database: DynamicDatabaseReader
+    lateinit var database: DatabaseHelper
 
     private val activityScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
 
@@ -28,10 +27,17 @@ class MainActivity : AppCompatActivity(), OnRobotReadyListener {
 
         // use database
         val databaseName = "roboguide.db"
-        database = DynamicDatabaseReader(this, databaseName)
+        database = DatabaseHelper(this, databaseName)
 
         try {
             database.initializeDatabase() // Initialize the database and copy it from assets
+
+            /*
+            // EXAMPLE CODE TO ONLY COPY DATABASE TO DIRECTLY USE THE DATABASE FILE
+            database.initializeDatabase(withOpen = false)
+            val dbFile = database.getDBFile()
+            val sqLiteDatabase = database.getDatabase()
+            */
 
             val places = database.getTableDataAsJson("places") // Fetch data as JSON
             val locations = database.getTableDataAsJson("locations") // Fetch data as JSON
