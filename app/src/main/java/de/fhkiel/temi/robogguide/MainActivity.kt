@@ -10,11 +10,17 @@ import com.robotemi.sdk.Robot
 import com.robotemi.sdk.TtsRequest
 import com.robotemi.sdk.listeners.OnRobotReadyListener
 import de.fhkiel.temi.robogguide.database.DynamicDatabaseReader
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import java.io.IOException
 
 class MainActivity : AppCompatActivity(), OnRobotReadyListener {
     private var mRobot: Robot? = null
     lateinit var database: DynamicDatabaseReader
+
+    private val activityScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,6 +57,14 @@ class MainActivity : AppCompatActivity(), OnRobotReadyListener {
 
         findViewById<Button>(R.id.btnGotoHomeBase).setOnClickListener {
             gotoHomeBase()
+        }
+
+        findViewById<Button>(R.id.btnDownloadDatabase).setOnClickListener {
+            if (this::database.isInitialized){
+                activityScope.launch {
+                    database.getDatabaseUpdate()
+                }
+            }
         }
 
         findViewById<Button>(R.id.btnExitApp).setOnClickListener {
