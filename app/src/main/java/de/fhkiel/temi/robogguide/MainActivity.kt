@@ -11,10 +11,14 @@ import com.robotemi.sdk.TtsRequest
 import com.robotemi.sdk.listeners.OnRobotReadyListener
 import de.fhkiel.temi.robogguide.database.DatabaseHelper
 import java.io.IOException
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 class MainActivity : AppCompatActivity(), OnRobotReadyListener {
     private var mRobot: Robot? = null
     private lateinit var database: DatabaseHelper
+
+    private val singleThreadExecutor: ExecutorService = Executors.newSingleThreadExecutor()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,6 +88,21 @@ class MainActivity : AppCompatActivity(), OnRobotReadyListener {
         if (isReady){
             mRobot = Robot.getInstance()
             mRobot?.hideTopBar()        // hide top action bar
+
+            singleThreadExecutor.execute {
+                val mapDataModel = Robot.getInstance().getMapData() ?: return@execute
+                val mapImage = mapDataModel!!.mapImage
+                Log.i("Map-mapImage", mapDataModel!!.mapImage.typeId)
+
+                runOnUiThread {
+                    Log.i("Map-mapId", mapDataModel!!.mapId)
+                    Log.i("Map-mapInfo", mapDataModel!!.mapInfo.toString())
+                    Log.i("Map-greenPaths", mapDataModel!!.greenPaths.toString())
+                    Log.i("Map-virtualWalls", mapDataModel!!.virtualWalls.toString())
+                    Log.i("Map-locations", mapDataModel!!.locations.toString())
+                }
+            }
+            Log.i( "TAG", "${mRobot?.getMapList()}")
 
             // hide pull-down bar
             val activityInfo: ActivityInfo = packageManager.getActivityInfo(componentName, PackageManager.GET_META_DATA)
