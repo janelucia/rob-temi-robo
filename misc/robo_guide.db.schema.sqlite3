@@ -1,0 +1,49 @@
+CREATE TABLE `places` (
+  `id` INTEGER PRIMARY KEY,
+  `name` TEXT NOT NULL);
+CREATE TABLE `locations` (
+  `id` INTEGER PRIMARY KEY,
+  `name` TEXT NOT NULL,
+  `important` TINYINT NOT NULL DEFAULT 0,
+  `places_id` INTEGER NOT NULL,
+
+    FOREIGN KEY (`places_id`)
+    REFERENCES `places` (`id`)
+
+    );
+CREATE TABLE `items` (
+  `id` INTEGER PRIMARY KEY,
+  `name` TEXT NOT NULL,
+  `locations_id` INTEGER NOT NULL,
+
+    FOREIGN KEY (`locations_id`)
+    REFERENCES `locations` (`id`)
+
+    );
+CREATE TABLE `media`( `id` INTEGER PRIMARY KEY,
+ `url` TEXT,
+ `texts_id` INTEGER NOT NULL,
+  FOREIGN KEY (`texts_id`)
+  REFERENCES `texts` (`id`)
+);
+CREATE TABLE IF NOT EXISTS "texts" (
+        "id"    INTEGER,
+        "title" TEXT NOT NULL,
+        "text"  TEXT NOT NULL,
+        "detailed"      TINYINT NOT NULL DEFAULT 0,
+        "locations_id"  INTEGER,
+        "items_id"      INTEGER,
+        "transfers_id"  INTEGER,
+        PRIMARY KEY("id"),
+        FOREIGN KEY("locations_id") REFERENCES "locations"("id"),
+        FOREIGN KEY("items_id") REFERENCES "items"("id"),
+        FOREIGN KEY("transfers_id") REFERENCES "transfers"("id")
+);
+CREATE TABLE IF NOT EXISTS "transfers" (
+        "title" TEXT NOT NULL,
+        "location_from" INTEGER NOT NULL,
+        "location_to"   INTEGER NOT NULL,
+        FOREIGN KEY("location_to") REFERENCES "locations"("id"),
+        PRIMARY KEY("id"),
+        FOREIGN KEY("location_from") REFERENCES "locations"("id")
+);
