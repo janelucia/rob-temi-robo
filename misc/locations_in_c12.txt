@@ -23,4 +23,4 @@ kaffeeautomat
 snackautomat
 fb maschinenwesen 2
 lastenfahrstuhl
-?? treppenhaus informatik ??
+treppenhaus informatik
