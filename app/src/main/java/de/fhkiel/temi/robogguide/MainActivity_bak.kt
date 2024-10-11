@@ -12,7 +12,7 @@ import com.robotemi.sdk.listeners.OnRobotReadyListener
 import de.fhkiel.temi.robogguide.database.DynamicDatabaseReader
 import java.io.IOException
 
-class MainActivity : AppCompatActivity(), OnRobotReadyListener {
+class MainActivity_bak : AppCompatActivity(), OnRobotReadyListener {
     private var mRobot: Robot? = null
     lateinit var database: DynamicDatabaseReader
 
