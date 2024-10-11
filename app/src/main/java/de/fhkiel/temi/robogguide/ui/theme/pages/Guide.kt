@@ -1,4 +1,4 @@
-package com.example.rob_temi_robo_ui.ui.theme.pages
+package de.fhkiel.temi.robogguide.ui.theme.pages
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
@@ -11,8 +11,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.rob_temi_robo_ui.R
-import com.example.rob_temi_robo_ui.ui.theme.components.Header
+import de.fhkiel.temi.robogguide.R
+import de.fhkiel.temi.robogguide.ui.theme.components.Header
 
 @Composable
 fun Guide(innerPadding: PaddingValues, navHostController: NavHostController) {

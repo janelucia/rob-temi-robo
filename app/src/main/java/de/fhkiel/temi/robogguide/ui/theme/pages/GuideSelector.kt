@@ -1,4 +1,4 @@
-package com.example.rob_temi_robo_ui.ui.theme.pages
+package de.fhkiel.temi.robogguide.ui.theme.pages
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
@@ -13,8 +13,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.rob_temi_robo_ui.ui.theme.components.CustomButton
-import com.example.rob_temi_robo_ui.ui.theme.components.Header
+import de.fhkiel.temi.robogguide.ui.theme.components.CustomButton
+import de.fhkiel.temi.robogguide.ui.theme.components.Header
 
 @Composable
 fun GuideSelector(innerPadding: PaddingValues, navHostController: NavHostController){

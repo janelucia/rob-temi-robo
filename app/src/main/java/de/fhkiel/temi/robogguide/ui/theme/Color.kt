@@ -1,4 +1,4 @@
-package com.example.rob_temi_robo_ui.ui.theme
+package de.fhkiel.temi.robogguide.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

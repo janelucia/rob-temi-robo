@@ -1,4 +1,4 @@
-package com.example.rob_temi_robo_ui.ui.theme.components
+package de.fhkiel.temi.robogguide.ui.theme.components
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.height

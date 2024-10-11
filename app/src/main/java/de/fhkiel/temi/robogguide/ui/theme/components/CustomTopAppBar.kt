@@ -1,4 +1,4 @@
-package com.example.rob_temi_robo_ui.ui.theme.components
+package de.fhkiel.temi.robogguide.ui.theme.components
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Row
@@ -21,7 +21,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.vectorResource
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.example.rob_temi_robo_ui.R
+import de.fhkiel.temi.robogguide.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
