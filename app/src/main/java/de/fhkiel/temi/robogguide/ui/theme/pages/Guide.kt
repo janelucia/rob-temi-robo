@@ -11,11 +11,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.robotemi.sdk.Robot
 import de.fhkiel.temi.robogguide.R
 import de.fhkiel.temi.robogguide.ui.theme.components.Header
 
 @Composable
-fun Guide(innerPadding: PaddingValues, navHostController: NavHostController) {
+fun Guide(innerPadding: PaddingValues, navHostController: NavHostController, mRobot: Robot?) {
     Column(
         modifier = Modifier
             .fillMaxSize()

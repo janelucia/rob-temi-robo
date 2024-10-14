@@ -81,9 +81,9 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener {
                     topBar = { CustomTopAppBar(navController) }
                 ) { innerPadding ->
                     NavHost(navController, startDestination = "homePage") {
-                        composable("homePage") { Home(innerPadding, navController) }
-                        composable("guideSelector") { GuideSelector(innerPadding, navController) }
-                        composable("guide") { Guide(innerPadding, navController) }
+                        composable("homePage") { Home(innerPadding, navController, mRobot) }
+                        composable("guideSelector") { GuideSelector(innerPadding, navController, mRobot) }
+                        composable("guide") { Guide(innerPadding, navController, mRobot) }
                     }
                 }
             }

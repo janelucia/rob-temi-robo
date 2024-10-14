@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.foundation.Image
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import de.fhkiel.temi.robogguide.R
@@ -58,6 +59,7 @@ fun CustomTopAppBar(navController: NavController) {
                 onClick = {},
                 width = 100.dp,
                 height = 50.dp,
+                fontSize = 32.sp,
                 backgroundColor = Color.White,
                 contentColor = Color.Black,
                 borderColor = Color.Black,
@@ -69,6 +71,7 @@ fun CustomTopAppBar(navController: NavController) {
                 onClick = {},
                 width = 60.dp,
                 height = 55.dp,
+                fontSize = 32.sp,
                 backgroundColor = Color.Black,
                 contentColor = Color.White,
                 borderColor = Color.Black,
