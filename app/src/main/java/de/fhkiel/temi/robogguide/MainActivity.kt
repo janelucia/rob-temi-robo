@@ -9,12 +9,15 @@ import androidx.appcompat.app.AppCompatActivity
 import com.robotemi.sdk.Robot
 import com.robotemi.sdk.TtsRequest
 import com.robotemi.sdk.listeners.OnRobotReadyListener
+import com.robotemi.sdk.map.MapDataModel
+import com.robotemi.sdk.permission.OnRequestPermissionResultListener
+import com.robotemi.sdk.permission.Permission
 import de.fhkiel.temi.robogguide.database.DatabaseHelper
 import java.io.IOException
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-class MainActivity : AppCompatActivity(), OnRobotReadyListener {
+class MainActivity : AppCompatActivity(), OnRobotReadyListener, OnRequestPermissionResultListener {
     private var mRobot: Robot? = null
     private lateinit var database: DatabaseHelper
 
@@ -87,29 +90,16 @@ class MainActivity : AppCompatActivity(), OnRobotReadyListener {
     override fun onRobotReady(isReady: Boolean) {
         if (isReady){
             mRobot = Robot.getInstance()
-            mRobot?.hideTopBar()        // hide top action bar
-
-            singleThreadExecutor.execute {
-                val mapDataModel = Robot.getInstance().getMapData() ?: return@execute
-                val mapImage = mapDataModel!!.mapImage
-                Log.i("Map-mapImage", mapDataModel!!.mapImage.typeId)
-
-                runOnUiThread {
-                    Log.i("Map-mapId", mapDataModel!!.mapId)
-                    Log.i("Map-mapInfo", mapDataModel!!.mapInfo.toString())
-                    Log.i("Map-greenPaths", mapDataModel!!.greenPaths.toString())
-                    Log.i("Map-virtualWalls", mapDataModel!!.virtualWalls.toString())
-                    Log.i("Map-locations", mapDataModel!!.locations.toString())
-                }
-            }
-            Log.i( "TAG", "${mRobot?.getMapList()}")
+            // mRobot?.hideTopBar()        // hide top action bar
 
             // hide pull-down bar
-            val activityInfo: ActivityInfo = packageManager.getActivityInfo(componentName, PackageManager.GET_META_DATA)
-            Robot.getInstance().onStart(activityInfo)
+            // val activityInfo: ActivityInfo = packageManager.getActivityInfo(componentName, PackageManager.GET_META_DATA)
+            // Robot.getInstance().onStart(activityInfo)
 
+            showMapData()
         }
     }
+
 
     private fun speakHelloWorld(text: String, isShowOnConversationLayer: Boolean = true){
         mRobot?.let { robot ->
@@ -130,6 +120,76 @@ class MainActivity : AppCompatActivity(), OnRobotReadyListener {
 
     private fun gotoHomeBase(){
         mRobot?.goTo(location = "home base")
+    }
+
+
+    private fun showMapData(){
+        singleThreadExecutor.execute {
+            getMap()?.let { mapDataModel ->
+                Log.i("Map-mapImage", mapDataModel.mapImage.typeId)
+                Log.i("Map-mapId", mapDataModel.mapId)
+                Log.i("Map-mapInfo", mapDataModel.mapInfo.toString())
+                Log.i("Map-greenPaths", mapDataModel.greenPaths.toString())
+                Log.i("Map-virtualWalls", mapDataModel.virtualWalls.toString())
+                Log.i("Map-locations", mapDataModel.locations.toString())
+            }
+            return@execute
+        }
+
+        Log.i( "Map-List", "${mRobot?.getMapList()}")
+    }
+
+    private fun getMap(): MapDataModel? {
+        // check if permission is missing
+        if (requestPermissionsIfNeeded(Permission.MAP, REQUEST_CODE_MAP) == true){
+            return null
+        }
+
+        return mRobot?.let { robot ->
+            return robot.getMapData()
+        }
+    }
+
+
+    @Suppress("SameParameterValue")
+    private fun requestPermissionsIfNeeded(permission: Permission, requestCode: Int): Boolean? {
+        return mRobot?.let { robot ->
+            if (robot.checkSelfPermission(permission) == Permission.GRANTED) {
+                return@let false
+            }
+
+            robot.requestPermissions(listOf(permission), requestCode)
+
+            return true
+        }
+    }
+
+    override fun onRequestPermissionResult(
+        permission: Permission,
+        grantResult: Int,
+        requestCode: Int,
+    ) {
+        Log.d("PERMISSION RESULT", "permission $permission with request code $requestCode with result = $grantResult")
+
+        when (permission){
+            Permission.MAP -> when (requestCode){
+                REQUEST_CODE_MAP -> {
+                    showMapData()
+                }
+            }
+
+            // Permission.FACE_RECOGNITION -> TODO
+            // Permission.SETTINGS -> TODO
+            // Permission.UNKNOWN -> TODO
+
+            else -> {
+                // do nothing
+            }
+        }
+    }
+
+    companion object{
+        const val REQUEST_CODE_MAP = 10
     }
 
 }

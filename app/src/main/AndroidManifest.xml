@@ -34,7 +34,8 @@
         <meta-data
             android:name="@string/metadata_permissions"
             android:value="com.robotemi.permission.settings,
-                com.robotemi.permission.map
+                com.robotemi.permission.map,
+                com.robotemi.permission.face_recognition
             " />
 
         <!-- TEMI SET UI MODE TO DISABLE PULL-DOWN BAR -->
