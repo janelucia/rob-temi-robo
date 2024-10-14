@@ -41,13 +41,6 @@ fun GuideSelector(innerPadding: PaddingValues, navHostController: NavHostControl
         )
         Spacer(modifier = Modifier.height(32.dp))
             if (isGuideSelected) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
                     if (selectedLength.isNotEmpty()) {
                         Text(
                             text = buildAnnotatedString {
@@ -103,20 +96,20 @@ fun GuideSelector(innerPadding: PaddingValues, navHostController: NavHostControl
                             )
                         }
                     }
-                }
-
             } else if (isExhibitSelected) {
-                CustomButton(
-                    title = "Exponat 1",
-                    onClick = { /* Handle exhibit 1 selection */ }
-                )
-                Spacer(modifier = Modifier.width(16.dp))
-                CustomButton(
-                    title = "Exponat 2",
-                    backgroundColor = Color.White,
-                    contentColor = Color.Black,
-                    onClick = { /* Handle exhibit 2 selection */ }
-                )
+                Row(modifier = Modifier.align(Alignment.CenterHorizontally).padding(top = 32.dp)) {
+                    CustomButton(
+                        title = "Exponat 1",
+                        onClick = { /* Handle exhibit 1 selection */ }
+                    )
+                    Spacer(modifier = Modifier.width(16.dp))
+                    CustomButton(
+                        title = "Exponat 2",
+                        backgroundColor = Color.White,
+                        contentColor = Color.Black,
+                        onClick = { /* Handle exhibit 2 selection */ }
+                    )
+                }
                 /* this needs to be a for loop where all exhibits are displayed*/
             } else {
                 Row(modifier = Modifier.align(Alignment.CenterHorizontally).padding(top = 32.dp)) {
