@@ -16,7 +16,6 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.size
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.vectorResource
 import androidx.navigation.NavController
@@ -40,15 +39,6 @@ fun CustomTopAppBar(navController: NavController) {
             Spacer(modifier = Modifier.width(8.dp))
             Text("Location")
         }},
-        navigationIcon = {
-            if (currentDestination != "homePage") {
-                IconButton(onClick = { navController.popBackStack() }) {
-                    Icon(
-                        imageVector = ImageVector.vectorResource(id = R.drawable.arrow_back),
-                        contentDescription = "Back")
-                }
-            }
-        },
         actions = {
             if (currentDestination != "homePage") {
                 IconButton(
