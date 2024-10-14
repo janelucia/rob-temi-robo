@@ -36,8 +36,6 @@ fun CustomTopAppBar(navController: NavController) {
                 modifier = Modifier.size(200.dp),
                 contentScale = ContentScale.Fit
             )
-            Spacer(modifier = Modifier.width(8.dp))
-            Text("Location")
         }},
         actions = {
             if (currentDestination != "homePage") {
