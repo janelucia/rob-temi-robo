@@ -4,8 +4,6 @@ import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
-import android.widget.Button
-import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -109,13 +107,11 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
             mRobot = Robot.getInstance()
 
             // ---- DISABLE TEMI UI ELEMENTS ---
-            // mRobot.hideTopBar()        // hide top action bar
+            mRobot.hideTopBar()        // hide top action bar
 
             // hide pull-down bar
             val activityInfo: ActivityInfo = packageManager.getActivityInfo(componentName, PackageManager.GET_META_DATA)
             Robot.getInstance().onStart(activityInfo)
-            // val activityInfo: ActivityInfo = packageManager.getActivityInfo(componentName, PackageManager.GET_META_DATA)
-            // Robot.getInstance().onStart(activityInfo)
 
             showMapData()
         }
