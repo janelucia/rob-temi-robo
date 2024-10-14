@@ -61,7 +61,9 @@
         android:layout_marginTop="92dp"
         android:layout_marginEnd="16dp"
         android:drawableEnd="@drawable/baseline_exit_to_app_24"
+        android:drawablePadding="@dimen/btnIconPadding"
         android:text="@string/btnExit"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
