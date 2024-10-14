@@ -11,33 +11,19 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/SkillTheme"
+        android:theme="@style/Theme.Rob_Temi_Robo_UI"
         tools:targetApi="31">
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.RoboGuide">
+            android:label="@string/app_name"
+            android:theme="@style/Theme.Rob_Temi_Robo_UI">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <!-- INCLUDE TEMI SDK -->
-        <meta-data
-            android:name="com.robotemi.sdk.metadata.SKILL"
-            android:value="@string/app_name" />
-
-        <!-- TEMI PERMISSIONS -->
-        <meta-data
-            android:name="@string/metadata_permissions"
-            android:value="com.robotemi.permission.settings" />
-
-        <!-- TEMI SET UI MODE TO DISABLE PULL-DOWN BAR -->
-        <meta-data
-            android:name="com.robotemi.sdk.metadata.UI_MODE"
-            android:value="4" />
-
     </application>
 
 </manifest>
