@@ -6,9 +6,12 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -21,17 +24,20 @@ import com.robotemi.sdk.permission.OnRequestPermissionResultListener
 import com.robotemi.sdk.permission.Permission
 import de.fhkiel.temi.robogguide.database.DatabaseHelper
 import de.fhkiel.temi.robogguide.logic.TourManager
+import de.fhkiel.temi.robogguide.ui.logic.SetupViewModel
 import de.fhkiel.temi.robogguide.ui.theme.Rob_Temi_Robo_UITheme
 import de.fhkiel.temi.robogguide.ui.theme.components.CustomTopAppBar
 import de.fhkiel.temi.robogguide.ui.theme.pages.Guide
 import de.fhkiel.temi.robogguide.ui.theme.pages.GuideSelector
 import de.fhkiel.temi.robogguide.ui.theme.pages.Home
+import de.fhkiel.temi.robogguide.ui.theme.pages.Setup
 import java.io.IOException
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 @OptIn(ExperimentalMaterial3Api::class)
 class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermissionResultListener {
+    private val setupViewModel: SetupViewModel by viewModels()
     private var mRobot: Robot? = null
     private lateinit var database: DatabaseHelper
     private lateinit var tourManager: TourManager
@@ -68,25 +74,32 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
         }
 
         setContent {
-            Rob_Temi_Robo_UITheme {
-                val navController = rememberNavController()
-                Scaffold(
-                    modifier = Modifier.fillMaxSize(),
-                    topBar = { CustomTopAppBar(navController) }
-                ) { innerPadding ->
-                    NavHost(navController, startDestination = "homePage") {
-                        composable("homePage") { Home(innerPadding, navController, mRobot) }
-                        composable("guideSelector") {
-                            GuideSelector(
-                                innerPadding,
-                                navController,
-                                mRobot
-                            )
+            val isSetupComplete by setupViewModel.isSetupComplete.observeAsState(false)
+
+            if (isSetupComplete) {
+                Rob_Temi_Robo_UITheme {
+                    val navController = rememberNavController()
+                    Scaffold(
+                        modifier = Modifier.fillMaxSize(),
+                        topBar = { CustomTopAppBar(navController) }
+                    ) { innerPadding ->
+                        NavHost(navController, startDestination = "homePage") {
+                            composable("homePage") { Home(innerPadding, navController, mRobot) }
+                            composable("guideSelector") {
+                                GuideSelector(
+                                    innerPadding,
+                                    navController,
+                                    mRobot
+                                )
+                            }
+                            composable("guide") { Guide(innerPadding, navController, mRobot) }
                         }
-                        composable("guide") { Guide(innerPadding, navController, mRobot) }
                     }
                 }
+            } else {
+                Setup(setupViewModel, tourManager)
             }
+
         }
 
     }
