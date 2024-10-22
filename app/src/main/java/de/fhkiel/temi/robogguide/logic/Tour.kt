@@ -1,4 +1,4 @@
-package de.fhkiel.temi.robogguide.logic;
+package de.fhkiel.temi.robogguide.logic
 
-public class Tour {
+class Tour {
 }
