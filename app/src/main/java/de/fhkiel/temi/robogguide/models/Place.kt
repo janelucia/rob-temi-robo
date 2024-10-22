@@ -1,9 +1,9 @@
 package de.fhkiel.temi.robogguide.models
 
 class Place(
-    private val name: String,
-    private val unimportantLocations: List<Location>,
-    private val importantLocations: List<Location>
+    val name: String,
 ) {
+    private val _unimportantLocations: MutableList<Location> = mutableListOf()
+    private val _importantLocations: MutableList<Location> = mutableListOf()
 
 }

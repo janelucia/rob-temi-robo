@@ -3,6 +3,7 @@ package de.fhkiel.temi.robogguide.logic
 import android.database.sqlite.SQLiteDatabase
 import android.util.Log
 import de.fhkiel.temi.robogguide.models.LevelOfDetail
+import de.fhkiel.temi.robogguide.models.Place
 import de.fhkiel.temi.robogguide.models.Tour
 
 /**
@@ -14,7 +15,9 @@ import de.fhkiel.temi.robogguide.models.Tour
  */
 class TourManager(private val db: SQLiteDatabase?) {
 
-    private val tours: MutableList<Tour> = mutableListOf()
+    private val _tours: MutableList<Tour> = mutableListOf()
+    private var _currentPlace: Place? = null
+    val allPlaces: MutableList<Place> = mutableListOf()
 
     init {
         checkDatabase()
@@ -41,6 +44,18 @@ class TourManager(private val db: SQLiteDatabase?) {
 
         Log.i("TourManager", LevelOfDetail.EVERYTHING_DETAILED.getNrOfExhibits().toString())
 
+        db.rawQuery("SELECT * FROM places", null).use {
+            if (it.count == 0) {
+                Log.e("TourManager", "Database is empty")
+            }
+            if (it.moveToFirst()) {
+                do {
+                    val name = it.getString(it.getColumnIndexOrThrow("name"))
+                    Log.i("TourManager", "Place: $name")
+                    allPlaces.add(Place(name))
+                } while (it.moveToNext())
+            }
+        }
 
 
         Log.i("TourManager", "Database is valid")
