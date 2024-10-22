@@ -5,35 +5,35 @@ package de.fhkiel.temi.robogguide.models
  * The parameters need to be filled at a later point, when the db is analyzed.
  * These Level of Details need to be set for each new Place.
  *
- * @param lengthInMinutes the length of the tour in minutes
- * @param nrOfExhibits the number of exhibits in the tour
+ * @param _lengthInMinutes the length of the tour in minutes
+ * @param _nrOfExhibits the number of exhibits in the tour
  */
-enum class LevelOfDetail(private var lengthInMinutes: Int?, private var nrOfExhibits: Int?) {
+enum class LevelOfDetail(private var _lengthInMinutes: Int?, private var _nrOfExhibits: Int?) {
     EVERYTHING_DETAILED(null, null),
     EVERYTHING_CONCISE(null, null),
     ONLY_IMPORTANT_DETAILED(null, null),
     ONLY_IMPORTANT_CONCISE(null, null);
 
     fun setLengthInMinutes(lengthInMinutes: Int) {
-        this.lengthInMinutes = lengthInMinutes
+        this._lengthInMinutes = lengthInMinutes
     }
 
     fun setNrOfExhibits(nrOfExhibits: Int) {
-        this.nrOfExhibits = nrOfExhibits
+        this._nrOfExhibits = nrOfExhibits
     }
 
 
     fun getLengthInMinutes(): Int {
-        if (lengthInMinutes == null) {
+        if (_lengthInMinutes == null) {
             throw IllegalStateException("Length in minutes is not set for ${this.name}!")
         }
-        return lengthInMinutes!!
+        return _lengthInMinutes!!
     }
 
     fun getNrOfExhibits(): Int {
-        if (nrOfExhibits == null) {
+        if (_nrOfExhibits == null) {
             throw IllegalStateException("Nr of Exhibits is not set for ${this.name}!")
         }
-        return nrOfExhibits!!
+        return _nrOfExhibits!!
     }
 }
