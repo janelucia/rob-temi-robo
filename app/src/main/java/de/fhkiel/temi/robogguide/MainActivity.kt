@@ -58,10 +58,10 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
             */
 
             // use json code to get database objects
-            val places = database.getTableDataAsJson("places") // Fetch data as JSON
-            val locations = database.getTableDataAsJson("locations") // Fetch data as JSON
-            Log.i("MainActivity", "Places: $places")
-            Log.i("MainActivity", "Locations: $locations")
+//            val places = database.getTableDataAsJson("places") // Fetch data as JSON
+//            val locations = database.getTableDataAsJson("locations") // Fetch data as JSON
+//            Log.i("MainActivity", "Places: $places")
+//            Log.i("MainActivity", "Locations: $locations")
 
         } catch (e: IOException) {
             e.printStackTrace()
@@ -76,7 +76,13 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
                 ) { innerPadding ->
                     NavHost(navController, startDestination = "homePage") {
                         composable("homePage") { Home(innerPadding, navController, mRobot) }
-                        composable("guideSelector") { GuideSelector(innerPadding, navController, mRobot) }
+                        composable("guideSelector") {
+                            GuideSelector(
+                                innerPadding,
+                                navController,
+                                mRobot
+                            )
+                        }
                         composable("guide") { Guide(innerPadding, navController, mRobot) }
                     }
                 }
@@ -103,14 +109,15 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
     }
 
     override fun onRobotReady(isReady: Boolean) {
-        if (isReady){
+        if (isReady) {
             mRobot = Robot.getInstance()
 
             // ---- DISABLE TEMI UI ELEMENTS ---
             mRobot?.hideTopBar()        // hide top action bar
 
             // hide pull-down bar
-            val activityInfo: ActivityInfo = packageManager.getActivityInfo(componentName, PackageManager.GET_META_DATA)
+            val activityInfo: ActivityInfo =
+                packageManager.getActivityInfo(componentName, PackageManager.GET_META_DATA)
             Robot.getInstance().onStart(activityInfo)
 
             showMapData()
@@ -122,9 +129,12 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
      * @param text                          [String] text to speak
      * @param isShowOnConversationLayer     [Boolean] true (default) to show conversation layer while speaking, false to hide it.
      */
-    private fun speakText(text: String, isShowOnConversationLayer: Boolean = true){
+    private fun speakText(text: String, isShowOnConversationLayer: Boolean = true) {
         mRobot.let { robot ->
-            val ttsRequest: TtsRequest = TtsRequest.create(speech = text, isShowOnConversationLayer = isShowOnConversationLayer)
+            val ttsRequest: TtsRequest = TtsRequest.create(
+                speech = text,
+                isShowOnConversationLayer = isShowOnConversationLayer
+            )
             robot?.speak(ttsRequest)
         }
     }
@@ -132,7 +142,7 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
     /**
      * Uses temi tts to speak every listed location on the active map
      */
-    private fun speakLocations(){
+    private fun speakLocations() {
         mRobot.let { robot ->
             var text = "Das sind alle Orte an die ich gehen kann:"
             robot?.locations?.forEach {
@@ -145,7 +155,7 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
     /**
      * Uses temi sdk function to go to home base
      */
-    private fun gotoHomeBase(){
+    private fun gotoHomeBase() {
         mRobot?.goTo(location = "home base")
     }
 
@@ -153,7 +163,7 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
     /**
      * Gets the [MapDataModel] of the robot and shows its data in Logcat
      */
-    private fun showMapData(){
+    private fun showMapData() {
         singleThreadExecutor.execute {
             getMap()?.let { mapDataModel ->
                 Log.i("Map-mapImage", mapDataModel.mapImage.typeId)
@@ -166,7 +176,7 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
             return@execute
         }
 
-        Log.i( "Map-List", "${mRobot?.getMapList()}")
+        Log.i("Map-List", "${mRobot?.getMapList()}")
     }
 
     /**
@@ -208,10 +218,13 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
         grantResult: Int,
         requestCode: Int,
     ) {
-        Log.d("PERMISSION RESULT", "permission $permission with request code $requestCode with result = $grantResult")
+        Log.d(
+            "PERMISSION RESULT",
+            "permission $permission with request code $requestCode with result = $grantResult"
+        )
 
-        when (permission){
-            Permission.MAP -> when (requestCode){
+        when (permission) {
+            Permission.MAP -> when (requestCode) {
                 REQUEST_CODE_MAP -> {
                     showMapData()
                 }
@@ -227,7 +240,7 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
         }
     }
 
-    companion object{
+    companion object {
         const val REQUEST_CODE_MAP = 10
     }
 
