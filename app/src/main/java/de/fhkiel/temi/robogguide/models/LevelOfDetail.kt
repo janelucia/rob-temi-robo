@@ -8,11 +8,20 @@ package de.fhkiel.temi.robogguide.models
  * @param lengthInMinutes the length of the tour in minutes
  * @param nrOfExhibits the number of exhibits in the tour
  */
-enum class LevelOfDetail(var lengthInMinutes: Int?, var nrOfExhibits: Int?) {
-    EVERYTHING_DETAILED(null,null),
+enum class LevelOfDetail(private var lengthInMinutes: Int?, private var nrOfExhibits: Int?) {
+    EVERYTHING_DETAILED(null, null),
     EVERYTHING_CONCISE(null, null),
     ONLY_IMPORTANT_DETAILED(null, null),
     ONLY_IMPORTANT_CONCISE(null, null);
+
+    fun setLengthInMinutes(lengthInMinutes: Int) {
+        this.lengthInMinutes = lengthInMinutes
+    }
+
+    fun setNrOfExhibits(nrOfExhibits: Int) {
+        this.nrOfExhibits = nrOfExhibits
+    }
+
 
     fun getLengthInMinutes(): Int {
         if (lengthInMinutes == null) {
@@ -21,7 +30,7 @@ enum class LevelOfDetail(var lengthInMinutes: Int?, var nrOfExhibits: Int?) {
         return lengthInMinutes!!
     }
 
-    fun nrOfExhibits(): Int {
+    fun getNrOfExhibits(): Int {
         if (nrOfExhibits == null) {
             throw IllegalStateException("Nr of Exhibits is not set for ${this.name}!")
         }
