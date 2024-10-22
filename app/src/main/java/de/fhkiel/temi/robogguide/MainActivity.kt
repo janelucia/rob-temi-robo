@@ -48,7 +48,7 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
 
         try {
             database.initializeDatabase() // Initialize the database and copy it from assets
-            tourManager = TourManager(database)
+            tourManager = TourManager(database.getDatabase())
 
             /*
             // EXAMPLE CODE TO ONLY COPY DATABASE TO DIRECTLY USE THE DATABASE FILE FOR ORM
