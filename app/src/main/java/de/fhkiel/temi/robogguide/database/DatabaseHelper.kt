@@ -10,7 +10,8 @@ import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 
-class DatabaseHelper(context: Context, private val databaseName: String) : SQLiteOpenHelper(context, databaseName, null, 1) {
+class DatabaseHelper(context: Context, private val databaseName: String) :
+    SQLiteOpenHelper(context, databaseName, null, 1) {
 
     private val databasePath = File(context.getDatabasePath(databaseName).path).absolutePath
     private val databaseFullPath = "$databasePath$databaseName"
@@ -23,12 +24,12 @@ class DatabaseHelper(context: Context, private val databaseName: String) : SQLit
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {}
 
     @Suppress("unused")
-    fun getDatabase(): SQLiteDatabase?{
+    fun getDatabase(): SQLiteDatabase? {
         return database
     }
 
     @Suppress("unused")
-    fun getDBFile(): File?{
+    fun getDBFile(): File? {
         return dbFile
     }
 
@@ -61,7 +62,7 @@ class DatabaseHelper(context: Context, private val databaseName: String) : SQLit
      * @param withOpen  Set to false, to only copy the database, otherwise it is also opened (default)
      */
     @Throws(IOException::class)
-    fun initializeDatabase(withOpen: Boolean = true){
+    fun initializeDatabase(withOpen: Boolean = true) {
         this.readableDatabase // Create an empty database in the default system path
         dbFile = copyDatabase() // Overwrite the existing database with the one from assets
 
@@ -72,7 +73,8 @@ class DatabaseHelper(context: Context, private val databaseName: String) : SQLit
 
     // Method to open the copied database and store its reference
     private fun openDatabase(): SQLiteDatabase? {
-        database = SQLiteDatabase.openDatabase(databaseFullPath, null, SQLiteDatabase.OPEN_READWRITE)
+        database =
+            SQLiteDatabase.openDatabase(databaseFullPath, null, SQLiteDatabase.OPEN_READWRITE)
         return database
     }
 
