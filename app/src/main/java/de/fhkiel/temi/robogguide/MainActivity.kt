@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.rob_temi_robo_ui.ui.theme.pages.Guide
 import com.robotemi.sdk.Robot
 import com.robotemi.sdk.TtsRequest
 import com.robotemi.sdk.listeners.OnRobotReadyListener
@@ -23,7 +24,7 @@ import de.fhkiel.temi.robogguide.database.DatabaseHelper
 import de.fhkiel.temi.robogguide.logic.TourManager
 import de.fhkiel.temi.robogguide.ui.theme.Rob_Temi_Robo_UITheme
 import de.fhkiel.temi.robogguide.ui.theme.components.CustomTopAppBar
-import de.fhkiel.temi.robogguide.ui.theme.pages.Guide
+import de.fhkiel.temi.robogguide.ui.theme.components.GuideNavigationButton
 import de.fhkiel.temi.robogguide.ui.theme.pages.GuideSelector
 import de.fhkiel.temi.robogguide.ui.theme.pages.Home
 import java.io.IOException
@@ -72,7 +73,8 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
                 val navController = rememberNavController()
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
-                    topBar = { CustomTopAppBar(navController) }
+                    topBar = { CustomTopAppBar(navController) },
+                    bottomBar = { GuideNavigationButton(navController) }
                 ) { innerPadding ->
                     NavHost(navController, startDestination = "homePage") {
                         composable("homePage") { Home(innerPadding, navController, mRobot) }

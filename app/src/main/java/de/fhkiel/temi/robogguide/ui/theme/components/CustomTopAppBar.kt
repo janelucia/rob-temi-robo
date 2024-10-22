@@ -39,6 +39,11 @@ fun CustomTopAppBar(navController: NavController) {
             )
         }},
         actions = {
+
+            if (currentDestination == "guide") {
+                GuideProgressBar()
+            }
+
             if (currentDestination != "homePage") {
                 IconButton(
                     onClick = { navController.navigate("homePage") },
