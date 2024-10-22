@@ -32,7 +32,7 @@ import java.util.concurrent.Executors
 
 @OptIn(ExperimentalMaterial3Api::class)
 class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermissionResultListener {
-    private lateinit var mRobot: Robot
+    private var mRobot: Robot? = null
     private lateinit var database: DatabaseHelper
     private lateinit var tourManager: TourManager
 
@@ -107,7 +107,7 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
             mRobot = Robot.getInstance()
 
             // ---- DISABLE TEMI UI ELEMENTS ---
-            mRobot.hideTopBar()        // hide top action bar
+            mRobot?.hideTopBar()        // hide top action bar
 
             // hide pull-down bar
             val activityInfo: ActivityInfo = packageManager.getActivityInfo(componentName, PackageManager.GET_META_DATA)
@@ -125,7 +125,7 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
     private fun speakText(text: String, isShowOnConversationLayer: Boolean = true){
         mRobot.let { robot ->
             val ttsRequest: TtsRequest = TtsRequest.create(speech = text, isShowOnConversationLayer = isShowOnConversationLayer)
-            robot.speak(ttsRequest)
+            robot?.speak(ttsRequest)
         }
     }
 
@@ -135,7 +135,7 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
     private fun speakLocations(){
         mRobot.let { robot ->
             var text = "Das sind alle Orte an die ich gehen kann:"
-            robot.locations.forEach {
+            robot?.locations?.forEach {
                 text += " $it,"
             }
             speakText(text, isShowOnConversationLayer = false)
@@ -146,7 +146,7 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
      * Uses temi sdk function to go to home base
      */
     private fun gotoHomeBase(){
-        mRobot.goTo(location = "home base")
+        mRobot?.goTo(location = "home base")
     }
 
 
@@ -166,7 +166,7 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
             return@execute
         }
 
-        Log.i( "Map-List", "${mRobot.getMapList()}")
+        Log.i( "Map-List", "${mRobot?.getMapList()}")
     }
 
     /**
@@ -177,7 +177,7 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
     private fun getMap(): MapDataModel? {
         // check if permission is missing
         requestPermissionsIfNeeded(Permission.MAP, REQUEST_CODE_MAP)
-        return mRobot.getMapData()
+        return mRobot?.getMapData()
     }
 
 
@@ -189,10 +189,10 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
      */
     @Suppress("SameParameterValue")
     private fun requestPermissionsIfNeeded(permission: Permission, requestCode: Int): Boolean {
-        if (mRobot.checkSelfPermission(permission) == Permission.GRANTED) {
+        if (mRobot?.checkSelfPermission(permission) == Permission.GRANTED) {
             return false;
         } else {
-            mRobot.requestPermissions(listOf(permission), requestCode)
+            mRobot?.requestPermissions(listOf(permission), requestCode)
             return true
         }
     }
