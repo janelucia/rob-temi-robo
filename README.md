@@ -32,39 +32,38 @@ Funktionen
 
 ## Anforderungen
 
-1. Benutzeroberfläche (UI):
-   • Erstellen Sie einen Startbildschirm mit Auswahlmöglichkeiten für die Art der Führung:
-   ◦ Kurz (kurze Erklärungen) oder Lang (ausführliche Erklärungen).
-   ◦ Einfach (nur wichtige Bereiche) oder Ausführlich (alle Bereiche).
-   ◦ Individuelle Führung
-   • Implementieren Sie eine Fortschrittsleiste oder eine Übersicht der Bereiche während der
-   Führung.
-2. Interaktive Elemente:
-   • Ermöglichen Sie den Besucher*innen, die Art der Führung auszuwählen.
-   • Implementieren Sie Feedback-Möglichkeiten für die Besucher*innen, um die Qualität der
-   Führung zu bewerten. Die Bewertung sollte in Form einer Simley-Bewertung (gut / neutral /
-   schlecht) erfolgen.
-3. Navigation:
-   • Integrieren Sie die Funktion zur Steuerung des Roboters zu den jeweiligen Exponaten.
-   ◦ Schaffen Sie die Möglichkeit, die Führung zu pausieren oder zu beenden.
-4. Erklärungen und Medienwiedergabe:
-   • Rufen Sie kurze und lange Erklärungstexte zu den Themenbereichen und Exponaten ab und
-   lassen Sie den Roboter diese sprechen.
-   ◦ Implementieren Sie die Wiedergabe von Fotos und Videos zu den Exponaten.
-   ◦ Stellen Sie sicher, dass die Medieninhalte zusammen mit der Sprache wiedergegeben
-   werden.
-5. Datenverwaltung:
-   • Nutzen Sie für die Datenverwaltung die Funktionen im Beispielprojekt.
-6. Fehlerbehandlung:
-   • Entwickeln Sie eine Anzeige von Fehlermeldungen bei Navigationsfehlern oder anderen
-   Problemen.
-   • Schaffen Sie die Möglichkeit zur Wiederholung oder zum Überspringen eines Exponats bei
-   Navigationsfehlern.
+1. **Benutzeroberfläche (UI)**:
+   - Erstellen Sie einen Startbildschirm mit Auswahlmöglichkeiten für die Art der Führung:
+     - Kurz (kurze Erklärungen) oder Lang (ausführliche Erklärungen).
+     - Einfach (nur wichtige Bereiche) oder Ausführlich (alle Bereiche).
+     - Individuelle Führung.
+   - Implementieren Sie eine Fortschrittsleiste oder eine Übersicht der Bereiche während der Führung.
+
+2. **Interaktive Elemente**:
+   - Ermöglichen Sie den Besucher*innen, die Art der Führung auszuwählen.
+   - Implementieren Sie Feedback-Möglichkeiten für die Besucher*innen, um die Qualität der Führung zu bewerten. Die Bewertung sollte in Form einer Smiley-Bewertung (gut / neutral / schlecht) erfolgen.
+
+3. **Navigation**:
+   - Integrieren Sie die Funktion zur Steuerung des Roboters zu den jeweiligen Exponaten.
+     - Schaffen Sie die Möglichkeit, die Führung zu pausieren oder zu beenden.
+
+4. **Erklärungen und Medienwiedergabe**:
+   - Rufen Sie kurze und lange Erklärungstexte zu den Themenbereichen und Exponaten ab und lassen Sie den Roboter diese sprechen.
+     - Implementieren Sie die Wiedergabe von Fotos und Videos zu den Exponaten.
+     - Stellen Sie sicher, dass die Medieninhalte zusammen mit der Sprache wiedergegeben werden.
+
+5. **Datenverwaltung**:
+   - Nutzen Sie für die Datenverwaltung die Funktionen im Beispielprojekt.
+
+6. **Fehlerbehandlung**:
+   - Entwickeln Sie eine Anzeige von Fehlermeldungen bei Navigationsfehlern oder anderen Problemen.
+   - Schaffen Sie die Möglichkeit zur Wiederholung oder zum Überspringen eines Exponats bei Navigationsfehlern.
+
 
 ## Technologische Anforderungen
 
 Technische Anforderungen
-• Programmiersprache: Kotlin
-• Entwicklungsumgebung: Android Studio
-• Zugriff auf temi Roboter: Nutzen Sie die bereitgestellten Funktionen zur Navigation und
+- Programmiersprache: Kotlin
+- Entwicklungsumgebung: Android Studio
+- Zugriff auf temi Roboter: Nutzen Sie die bereitgestellten Funktionen zur Navigation und
 Statusüberprüfung.
