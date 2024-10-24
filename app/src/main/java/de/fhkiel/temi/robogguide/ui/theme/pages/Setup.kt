@@ -15,12 +15,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -39,112 +41,171 @@ import de.fhkiel.temi.robogguide.logic.TourManager
 import de.fhkiel.temi.robogguide.ui.logic.SetupViewModel
 import de.fhkiel.temi.robogguide.ui.theme.components.CustomButton
 import de.fhkiel.temi.robogguide.ui.theme.components.Header
+import kotlinx.coroutines.delay
 
 @Composable
 fun Setup(setupViewModel: SetupViewModel, tourManager: TourManager) {
     var expanded by remember { mutableStateOf(false) }
     var selectedIndex by remember { mutableIntStateOf(0) }
-Scaffold (
-    topBar = {
-        Text(
-            "Gruppe Pentagram - Temi Setup",
-            fontSize = 32.sp,
-            fontWeight = FontWeight.Bold,
-        )
+    var loading by remember { mutableStateOf(true) }
+    var isDatabaseValid by remember { mutableStateOf(false) }
+    var currentMessageIndex by remember { mutableStateOf(0) }
+
+    val messages = listOf(
+        "Checking database...",
+        "Loading data...",
+        "Setting up the map...",
+        "Almost there...",
+        "Cleaning up...",
+        "Ready!"
+    )
+
+    LaunchedEffect(Unit) {
+        isDatabaseValid = tourManager.allPlaces.isNotEmpty()
+        loading = true
     }
-) { innerPadding ->
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(innerPadding),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceEvenly
-    ) {
-        Header(
-            title = "Hallo Mensch!",
-            modifier = Modifier.padding(16.dp),
-            fontSize = 64.sp,
-        )
-        Header(
-            title = "Bitte wähle aus der Liste von Orten, wo ich eingesetzt werden soll.",
-            fontSize = 42.sp,
-            fontWeight = FontWeight.Normal
-        )
-        Spacer(modifier = Modifier.height(32.dp))
+
+    LaunchedEffect(Unit) {
+        for (i in messages.indices) {
+            delay(4000)
+            currentMessageIndex = i
+        }
+    }
+
+    if (loading) {
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-                .clickable(onClick = { expanded = true })
-                .border(
-                    width = 2.dp,
-                    color = Color.Black,
-                    shape = RoundedCornerShape(8.dp)
-                )
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
         ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Column {
-                        Text(
-                            text = "Ort:",
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(start = 16.dp, top = 16.dp)
-                        )
-                        Text(
-                            text = tourManager.allPlaces[selectedIndex].name,
-                            fontSize = 64.sp,
-                        )
-                    }
-                    Icon(
-                        painter = painterResource(
-                            id = R.drawable.arrow_drop_down
-                        ),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .graphicsLayer(
-                                rotationZ = if (expanded) 180f else 0f
-                            )
-                            .size(64.dp)
-                    )
-                }
-            DropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false },
-                scrollState = rememberScrollState(),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
             ) {
-                Log.d("Setup", "All places: ${tourManager.allPlaces}")
-                    tourManager.allPlaces.forEachIndexed { index, place ->
-                        DropdownMenuItem(
-                            onClick = {
-                                selectedIndex = index
-                                expanded = false
-                            },
-                            text = {
-                                Text(
-                                    text = place.name,
-                                    fontSize = 64.sp,
-                                    modifier = Modifier.padding(8.dp)
-                                )
-                            }
-                        )
-                    }
+                CircularProgressIndicator()
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = messages[currentMessageIndex],
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold
+                )
             }
         }
+    } else {
+        if (isDatabaseValid) {
+            Scaffold(
+                topBar = {
+                    Text(
+                        "Gruppe Pentagram - Temi Setup",
+                        fontSize = 32.sp,
+                        fontWeight = FontWeight.Bold,
+                    )
+                }
+            ) { innerPadding ->
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    Header(
+                        title = "Hallo Mensch!",
+                        modifier = Modifier.padding(16.dp),
+                        fontSize = 64.sp,
+                    )
+                    Header(
+                        title = "Bitte wähle aus der Liste von Orten, wo ich eingesetzt werden soll.",
+                        fontSize = 42.sp,
+                        fontWeight = FontWeight.Normal
+                    )
+                    Spacer(modifier = Modifier.height(32.dp))
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp)
+                            .clickable(onClick = { expanded = true })
+                            .border(
+                                width = 2.dp,
+                                color = Color.Black,
+                                shape = RoundedCornerShape(8.dp)
+                            )
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Column {
+                                Text(
+                                    text = "Ort:",
+                                    fontSize = 24.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    modifier = Modifier.padding(start = 16.dp, top = 16.dp)
+                                )
+                                Text(
+                                    text = tourManager.allPlaces[selectedIndex].name,
+                                    fontSize = 64.sp,
+                                )
+                            }
+                            Icon(
+                                painter = painterResource(
+                                    id = R.drawable.arrow_drop_down
+                                ),
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .graphicsLayer(
+                                        rotationZ = if (expanded) 180f else 0f
+                                    )
+                                    .size(64.dp)
+                            )
+                        }
+                        DropdownMenu(
+                            expanded = expanded,
+                            onDismissRequest = { expanded = false },
+                            scrollState = rememberScrollState(),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp)
+                        ) {
+                            Log.d("Setup", "All places: ${tourManager.allPlaces}")
+                            tourManager.allPlaces.forEachIndexed { index, place ->
+                                DropdownMenuItem(
+                                    onClick = {
+                                        selectedIndex = index
+                                        expanded = false
+                                    },
+                                    text = {
+                                        Text(
+                                            text = place.name,
+                                            fontSize = 64.sp,
+                                            modifier = Modifier.padding(8.dp)
+                                        )
+                                    }
+                                )
+                            }
+                        }
+                    }
 
-        CustomButton(
-            onClick = { setupViewModel.completeSetup() },
-            title = "Setup beenden",
-            modifier = Modifier.padding(16.dp)
-        )
+                    CustomButton(
+                        onClick = { setupViewModel.completeSetup() },
+                        title = "Setup beenden",
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
+            }
+        } else {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "Datenbank ist fehlerhaft!",
+                    fontSize = 32.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        }
     }
-}
 }
