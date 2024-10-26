@@ -20,7 +20,7 @@ import de.fhkiel.temi.robogguide.ui.theme.components.SetupUi
 import kotlinx.coroutines.delay
 
 @Composable
-fun Setup(setupViewModel: SetupViewModel, tourManager: TourManager) {
+fun Setup(setupViewModel: SetupViewModel, tourManager: TourManager, hasError: Boolean) {
 
     var loading by remember { mutableStateOf(true) }
     var isDatabaseValid by remember { mutableStateOf(false) }
@@ -50,7 +50,18 @@ fun Setup(setupViewModel: SetupViewModel, tourManager: TourManager) {
     if (loading) {
         LoadingSpinner(messages = messages, currentMessageIndex = currentMessageIndex)
     } else {
-        if (isDatabaseValid) {
+        if (hasError) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "Error: ${tourManager.error?.message}",
+                    fontSize = 32.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        } else if (isDatabaseValid) {
             SetupUi(tourManager = tourManager, setupViewModel = setupViewModel)
         } else {
             Box(

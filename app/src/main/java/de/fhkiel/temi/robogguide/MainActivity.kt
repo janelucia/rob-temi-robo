@@ -71,10 +71,13 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
 
         } catch (e: IOException) {
             e.printStackTrace()
+            tourManager = TourManager(null) // Initialize with null to simulate error
+            tourManager.error = e
         }
 
         setContent {
             val isSetupComplete by setupViewModel.isSetupComplete.observeAsState(false)
+            val hasError = tourManager.error != null
 
             if (isSetupComplete) {
                 Rob_Temi_Robo_UITheme {
@@ -97,7 +100,7 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
                     }
                 }
             } else {
-                Setup(setupViewModel, tourManager)
+                Setup(setupViewModel, tourManager, hasError)
             }
 
         }

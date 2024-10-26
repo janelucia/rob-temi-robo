@@ -18,10 +18,17 @@ class TourManager(private val db: SQLiteDatabase?) {
     private val _tours: MutableList<Tour> = mutableListOf()
     private var _currentPlace: Place? = null
     val allPlaces: MutableList<Place> = mutableListOf()
+    var error: Exception? = null
 
     init {
-        checkDatabase()
-        parseTours()
+        // try catch to handle an error like a wrongly named database
+        try {
+            checkDatabase()
+            parseTours()
+        } catch (e: Exception) {
+            error = e
+            Log.e("TourManager", "Error initializing TourManager: ${e.message}")
+        }
     }
 
     /**
@@ -47,6 +54,7 @@ class TourManager(private val db: SQLiteDatabase?) {
         db.rawQuery("SELECT * FROM places", null).use {
             if (it.count == 0) {
                 Log.e("TourManager", "Database is empty")
+                throw IllegalStateException("Database is empty")
             }
             if (it.moveToFirst()) {
                 do {
@@ -56,7 +64,6 @@ class TourManager(private val db: SQLiteDatabase?) {
                 } while (it.moveToNext())
             }
         }
-
 
         Log.i("TourManager", "Database is valid")
     }
