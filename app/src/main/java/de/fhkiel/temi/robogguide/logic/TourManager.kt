@@ -18,6 +18,9 @@ class TourManager(private val db: SQLiteDatabase?) {
     private var _currentPlace: Place? = null
     val allPlaces: MutableList<Place> = mutableListOf()
     var error: Exception? = null
+    val fromCount = mutableMapOf<String, Int>()
+    val toCount = mutableMapOf<String, Int>()
+    val errorMessage : String = "Die Datenbank scheint nicht korrekt befüllt zu sein.\nFolgender Fehler ist aufgetreten:\n"
 
     init {
         // try catch to handle an error like a wrongly named database
@@ -46,7 +49,7 @@ class TourManager(private val db: SQLiteDatabase?) {
 
         if (db == null) {
             Log.e("TourManager", "Database is not initialized")
-            throw IllegalStateException("Database is not initialized")
+            throw IllegalStateException(errorMessage + "Datenbank ist nicht initialisiert.")
         }
 
         val places = db.rawQuery("SELECT * FROM places", null)
@@ -56,7 +59,7 @@ class TourManager(private val db: SQLiteDatabase?) {
         places.use {
             if (it.count == 0) {
                 Log.e("TourManager", "Places is empty")
-                throw IllegalStateException("Places is empty")
+                throw IllegalStateException(errorMessage + "Es sind keine Karten (Places) vorhanden.")
             }
             if (it.moveToFirst()) {
                 do {
@@ -74,7 +77,7 @@ class TourManager(private val db: SQLiteDatabase?) {
         locations.use {
             if (it.count == 0) {
                 Log.e("TourManager", "Locations is empty")
-                throw IllegalStateException("Locations is empty")
+                throw IllegalStateException(errorMessage + "Es sind keine Orte (Locations) vorhanden.")
             }
             if (it.moveToFirst()) {
                 do {
@@ -85,13 +88,10 @@ class TourManager(private val db: SQLiteDatabase?) {
             }
         }
 
-        val fromCount = mutableMapOf<String, Int>()
-        val toCount = mutableMapOf<String, Int>()
-
         transfers.use {
             if (it.count == 0) {
                 Log.e("TourManager", "Transfers is empty")
-                throw IllegalStateException("Transfers is empty")
+                throw IllegalStateException(errorMessage + "Es sind keine Verbindungen (Transfers) zwischen den Orten vorhanden.")
             }
             if (it.moveToFirst()) {
                 do {
@@ -100,7 +100,7 @@ class TourManager(private val db: SQLiteDatabase?) {
 
                     if (!locationIds.contains(from) || !locationIds.contains(to)) {
                         Log.e("TourManager", "Invalid transfer: $from -> $to")
-                        throw IllegalStateException("Invalid transfer: $from -> $to")
+                        throw IllegalStateException(errorMessage + "Ungültige Verbindung (Transfer) zwischen den Orten: $from -> $to")
                     }
 
                     fromCount[from] = fromCount.getOrDefault(from, 0) + 1
@@ -116,14 +116,14 @@ class TourManager(private val db: SQLiteDatabase?) {
         fromCount.forEach { (id, count) ->
             if (count > 1) {
                 Log.e("TourManager", "ID $id appears more than once in the 'from' column")
-                throw IllegalStateException("ID $id appears more than once in the 'from' column")
+                throw IllegalStateException(errorMessage + "ID $id erscheint mehr als einmal in der 'from' Spalte von der Verbindungstabelle (transfers).")
             }
         }
 
         toCount.forEach { (id, count) ->
             if (count > 1) {
                 Log.e("TourManager", "ID $id appears more than once in the 'to' column")
-                throw IllegalStateException("ID $id appears more than once in the 'to' column")
+                throw IllegalStateException(errorMessage + "ID $id erscheint mehr als einmal in der 'to' Spalte von der Verbindungstabelle (transfers).")
             }
         }
 
@@ -132,7 +132,7 @@ class TourManager(private val db: SQLiteDatabase?) {
 
         if (startLocation.size != 1 || endLocation.size != 1) {
             Log.e("TourManager", "Invalid number of start or end locations")
-            throw IllegalStateException("Invalid number of start or end locations")
+            throw IllegalStateException(errorMessage + "Ungültige Anzahl von Start- oder Endorten.")
         }
 
         Log.i("TourManager", "Start location: ${startLocation.first()}")
