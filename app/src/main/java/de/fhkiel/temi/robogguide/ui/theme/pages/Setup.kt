@@ -1,7 +1,11 @@
 package de.fhkiel.temi.robogguide.ui.theme.pages
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -11,8 +15,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.dp
 import de.fhkiel.temi.robogguide.logic.TourManager
 import de.fhkiel.temi.robogguide.ui.logic.SetupViewModel
 import de.fhkiel.temi.robogguide.ui.theme.components.LoadingSpinner
@@ -52,14 +59,25 @@ fun Setup(setupViewModel: SetupViewModel, tourManager: TourManager, hasError: Bo
     } else {
         if (hasError) {
             Box(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxSize().padding(16.dp),
                 contentAlignment = Alignment.Center
             ) {
-                Text(
-                    text = "Error: ${tourManager.error?.message}",
-                    fontSize = 32.sp,
-                    fontWeight = FontWeight.Bold
-                )
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                ) {
+                    Text(
+                        text = "Error: ",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 64.sp,
+                        style = TextStyle(color = Color.Red)
+                    )
+                    Spacer(modifier = Modifier.padding(16.dp))
+                    Text(
+                        text = tourManager.error?.message ?: "unbekannter Fehler",
+                        fontSize = 32.sp,
+                    )
+                }
             }
         } else if (isDatabaseValid) {
             SetupUi(tourManager = tourManager, setupViewModel = setupViewModel)
