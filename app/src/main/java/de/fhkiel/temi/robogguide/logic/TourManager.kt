@@ -18,9 +18,6 @@ class TourManager(private val db: SQLiteDatabase?) {
     private var _currentPlace: Place? = null
     val allPlaces: MutableList<Place> = mutableListOf()
     var error: Exception? = null
-    private val fromCount = mutableMapOf<String, Int>()
-    private val toCount = mutableMapOf<String, Int>()
-    private val errorMessage : String = "Die Datenbank scheint nicht korrekt befüllt zu sein.\nFolgender Fehler ist aufgetreten:\n"
 
     init {
         // try catch to handle an error like a wrongly named database
@@ -45,6 +42,14 @@ class TourManager(private val db: SQLiteDatabase?) {
      * Method to check the database for validity.
      */
     private fun checkDatabase() {
+
+        val locationIds = mutableSetOf<String>()
+        val startLocations = mutableSetOf<String>()
+        val endLocations = mutableSetOf<String>()
+        val fromCount = mutableMapOf<String, Int>()
+        val toCount = mutableMapOf<String, Int>()
+        val errorMessage = "Die Datenbank scheint nicht korrekt befüllt zu sein.\nFolgender Fehler ist aufgetreten:\n"
+
         Log.i("TourManager", "Checking database for validity")
 
         if (db == null) {
@@ -55,6 +60,7 @@ class TourManager(private val db: SQLiteDatabase?) {
         val places = db.rawQuery("SELECT * FROM places", null)
         val locations = db.rawQuery("SELECT * FROM locations", null)
         val transfers = db.rawQuery("SELECT * FROM transfers", null)
+        val items = db.rawQuery("SELECT * FROM items", null)
 
         places.use {
             if (it.count == 0) {
@@ -70,10 +76,6 @@ class TourManager(private val db: SQLiteDatabase?) {
             }
         }
 
-        val locationIds = mutableSetOf<String>()
-        val startLocations = mutableSetOf<String>()
-        val endLocations = mutableSetOf<String>()
-
         locations.use {
             if (it.count == 0) {
                 Log.e("TourManager", "Locations is empty")
@@ -84,6 +86,23 @@ class TourManager(private val db: SQLiteDatabase?) {
                     val locationId = it.getString(it.getColumnIndexOrThrow("id"))
                     locationIds.add(locationId)
                     Log.i("TourManager", "Location ID: $locationId")
+                } while (it.moveToNext())
+            }
+        }
+
+        items.use {
+            if (it.count == 0) {
+                Log.e("TourManager", "Items is empty")
+                throw IllegalStateException(errorMessage + "Es sind keine Ausstellungsstücke vorhanden.")
+            }
+            if (it.moveToFirst()) {
+                do {
+                    val locationId = it.getString(it.getColumnIndexOrThrow("location_id"))
+                    if (!locationIds.contains(locationId)) {
+                        Log.e("TourManager", "Invalid location ID in items")
+                        throw IllegalStateException(errorMessage + "Ungültige Orts-ID in der Items-Tabelle.")
+                    }
+                    Log.i("TourManager", "Item at location ID: $locationId")
                 } while (it.moveToNext())
             }
         }
