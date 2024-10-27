@@ -18,9 +18,9 @@ class TourManager(private val db: SQLiteDatabase?) {
     private var _currentPlace: Place? = null
     val allPlaces: MutableList<Place> = mutableListOf()
     var error: Exception? = null
-    val fromCount = mutableMapOf<String, Int>()
-    val toCount = mutableMapOf<String, Int>()
-    val errorMessage : String = "Die Datenbank scheint nicht korrekt befüllt zu sein.\nFolgender Fehler ist aufgetreten:\n"
+    private val fromCount = mutableMapOf<String, Int>()
+    private val toCount = mutableMapOf<String, Int>()
+    private val errorMessage : String = "Die Datenbank scheint nicht korrekt befüllt zu sein.\nFolgender Fehler ist aufgetreten:\n"
 
     init {
         // try catch to handle an error like a wrongly named database
