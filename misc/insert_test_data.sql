@@ -116,3 +116,46 @@ INSERT or ignore INTO `transfers` (id, title, location_from, location_to) VALUES
 (22, 'long_tour_station_22', 22, 23),
 (23, 'long_tour_station_23', 23, 24);
 
+-- Schritt 5: Einfügen der `items`
+-- Einfügen der Items
+INSERT or ignore INTO `items` (id, name, locations_id) VALUES
+(1, 'item_01_00', 1),
+(2, 'item_01_01', 1),
+(3, 'item_01_02', 1),
+
+(4, 'item_02_00', 2),
+(5, 'item_02_01', 2),
+(6, 'item_02_02', 2),
+
+(7, 'item_03_00', 3),
+(8, 'item_03_01', 3),
+(9, 'item_03_02', 3),
+
+(10, 'item_04_00', 4),
+(11, 'item_04_01', 4),
+(12, 'item_04_02', 4),
+
+(13, 'item_05_00', 5),
+(14, 'item_05_01', 5),
+(15, 'item_05_02', 5),
+
+(6, 'item_06', 6),
+(7, 'item_07', 7),
+(8, 'item_08', 8),
+(9, 'item_09', 9),
+(10, 'item_10', 10),
+(11, 'item_11', 11),
+(12, 'item_12', 12),
+(13, 'item_13', 13),
+(14, 'item_14', 14),
+(15, 'item_15', 15),
+(16, 'item_16', 16),
+(17, 'item_17', 17),
+(18, 'item_18', 18),
+(19, 'item_19', 19),
+(20, 'item_20', 20),
+(21, 'item_21', 21),
+(22, 'item_22', 22),
+(23, 'item_23', 23),
+(24, 'item_24', 24);
+

@@ -97,7 +97,7 @@ class TourManager(private val db: SQLiteDatabase?) {
             }
             if (it.moveToFirst()) {
                 do {
-                    val locationId = it.getString(it.getColumnIndexOrThrow("location_id"))
+                    val locationId = it.getString(it.getColumnIndexOrThrow("locations_id"))
                     if (!locationIds.contains(locationId)) {
                         Log.e("TourManager", "Invalid location ID in items")
                         throw IllegalStateException(errorMessage + "Ungültige Orts-ID in der Items-Tabelle.")
@@ -158,7 +158,7 @@ class TourManager(private val db: SQLiteDatabase?) {
         Log.i("TourManager", "End location: ${endLocation.first()}")
 
         // Check for the start location again to stop as it indicates another tour
-        db.rawQuery("SELECT * FROM transfers", null).use { newTransfers ->
+        db.rawQuery("SELECT * from transfers", null).use { newTransfers ->
             if (newTransfers.moveToFirst()) {
                 do {
                     val from = newTransfers.getString(newTransfers.getColumnIndexOrThrow("location_from"))
