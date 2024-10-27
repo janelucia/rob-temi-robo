@@ -116,17 +116,3 @@ INSERT or ignore INTO `transfers` (id, title, location_from, location_to) VALUES
 (22, 'long_tour_station_22', 22, 23),
 (23, 'long_tour_station_23', 23, 24);
 
--- Einfügen der kurzen Tour
-INSERT or ignore INTO `transfers` (id, title, location_from, location_to) VALUES
-(24, 'short_tour_station_01', 1, 3),
-(25, 'short_tour_station_02', 3, 5),
-(26, 'short_tour_station_03', 5, 7),
-(27, 'short_tour_station_04', 7, 9),
-(28, 'short_tour_station_05', 9, 11),
-(29, 'short_tour_station_06', 11, 13),
-(30, 'short_tour_station_07', 13, 15),
-(31, 'short_tour_station_08', 15, 17),
-(32, 'short_tour_station_09', 17, 19),
-(33, 'short_tour_station_10', 19, 21),
-(34, 'short_tour_station_11', 21, 23);
-
