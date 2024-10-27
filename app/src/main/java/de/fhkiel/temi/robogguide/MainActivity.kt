@@ -75,6 +75,7 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
             tourManager.error = e
         }
 
+        // TODO: Close Icon for top bar on setup and hidden on normal
         setContent {
             val isSetupComplete by setupViewModel.isSetupComplete.observeAsState(false)
             val hasError = tourManager.error != null
