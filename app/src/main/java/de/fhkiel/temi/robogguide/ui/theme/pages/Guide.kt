@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -27,7 +28,9 @@ import de.fhkiel.temi.robogguide.ui.theme.components.GuideProgressBar
 fun Guide(innerPadding: PaddingValues, navHostController: NavHostController, mRobot: Robot?) {
 
     var guideState by remember { mutableStateOf(GuideState.Transition) }
-    var showMenu by remember { mutableStateOf(false) }
+
+    //todo muss variable sein, die von mehreren Orten referenzierbar ist
+    var currentExhibit by remember { mutableIntStateOf(4) }
 
 
     Column(
@@ -103,28 +106,14 @@ fun Guide(innerPadding: PaddingValues, navHostController: NavHostController, mRo
                     //TODO aktuell noch Button oder Mechanismus, um zur nächsten Übergangssequenz zu wechseln
                     CustomButton(
                         title = "Zum nächsten Exponat",
-                        onClick = { guideState = GuideState.Transition }
+                        onClick = { guideState = GuideState.Transition
+                        currentExhibit++}
                     )
                     Spacer(modifier = Modifier.height(16.dp))
-                    CustomButton(
-                        title = "Menü",
-                        onClick = { showMenu = true }
-                    )
                 }
 
             }
         }
-    }
-    if (showMenu) {
-        Dialog(
-            onDismissRequest = { showMenu = false },
-            properties = DialogProperties(
-                usePlatformDefaultWidth = false
-            )
-        ) {
-            GuideProgressBar()
-        }
-
     }
 
 }
