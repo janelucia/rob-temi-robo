@@ -17,25 +17,22 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import androidx.compose.foundation.Canvas
+
 
 @Composable
-fun GuideProgressBar() {
+fun GuideProgressBar(numberOfExhibits: Int, currentExhibit: Int) {
 
-
-    // Titel des Menüs, bspw. aktuelles Exponat
-    Header(
-        title = "AKTUELLES EXPONAT",
-        fontWeight = FontWeight.Bold,
-        fontSize = 24.sp
-    )
 
     // Fortschrittsanzeige
     Spacer(modifier = Modifier.height(8.dp))
@@ -53,18 +50,28 @@ fun GuideProgressBar() {
                 .clickable { /*Dinge*/ }
         ) {
             //Fortschrittselemente, eines hervorgehoben (=das aktuelle)
-            repeat(5) {
+            repeat(numberOfExhibits) {
                 Box(
                     modifier = Modifier
                         .size(24.dp)
                         .border(2.dp, Color.Black, shape = ButtonDefaults.outlinedShape)
                         .background(
-                            if (it == 2) Color.Black else Color.White,
+                            if (it == currentExhibit) Color.Black else Color.White,
                             CircleShape
                         )
                         .padding(4.dp)
                 )
-                Spacer(modifier = Modifier.width(4.dp))
+                if (it < numberOfExhibits - 1) {
+                    // add a small line between each 'bead'
+                    Box(
+                        modifier = Modifier
+                            .width(12.dp)
+                            .height(2.dp)
+                            .background(Color.Gray)
+                            .align(Alignment.CenterVertically)
+                    )
+
+                }
             }
         }
     }
