@@ -70,7 +70,9 @@ fun GuideSelector(innerPadding: PaddingValues, navHostController: NavHostControl
                                 backgroundColor = Color.White,
                                 contentColor = Color.Black,
                                 width = 800.dp,
-                                onClick = { selectedInfoLoad = "Highlights" }
+                                onClick = { selectedInfoLoad = "Highlights"
+                                    //TODO navigation zur Entwicklung eingebaut
+                                navHostController.navigate("guide")}
                             )
                         }
                     } else {
