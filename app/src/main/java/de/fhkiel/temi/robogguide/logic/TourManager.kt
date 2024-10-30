@@ -2,6 +2,7 @@ package de.fhkiel.temi.robogguide.logic
 
 import android.database.sqlite.SQLiteDatabase
 import android.util.Log
+import de.fhkiel.temi.robogguide.models.Location
 import de.fhkiel.temi.robogguide.models.Place
 import de.fhkiel.temi.robogguide.models.Tour
 
@@ -16,8 +17,9 @@ class TourManager(private val db: SQLiteDatabase?) {
 
     private val _tours: MutableList<Tour> = mutableListOf()
     private var _currentPlace: Place? = null
-    val allPlaces: MutableList<Place> = mutableListOf()
+    val allPlaces: MutableMap<Int, Place> = mutableMapOf()
     var error: Exception? = null
+
 
     init {
         // try catch to handle an error like a wrongly named database
@@ -48,7 +50,8 @@ class TourManager(private val db: SQLiteDatabase?) {
         val endLocations = mutableSetOf<String>()
         val fromCount = mutableMapOf<String, Int>()
         val toCount = mutableMapOf<String, Int>()
-        val errorMessage = "Die Datenbank scheint nicht korrekt befüllt zu sein.\nFolgender Fehler ist aufgetreten:\n"
+        val errorMessage =
+            "Die Datenbank scheint nicht korrekt befüllt zu sein.\nFolgender Fehler ist aufgetreten:\n"
 
         Log.i("TourManager", "Checking database for validity")
 
@@ -69,9 +72,10 @@ class TourManager(private val db: SQLiteDatabase?) {
             }
             if (it.moveToFirst()) {
                 do {
+                    val id = it.getInt(it.getColumnIndexOrThrow("id"))
                     val name = it.getString(it.getColumnIndexOrThrow("name"))
                     Log.i("TourManager", "Place: $name")
-                    allPlaces.add(Place(name))
+                    allPlaces[id] = Place(name)
                 } while (it.moveToNext())
             }
         }
@@ -83,9 +87,21 @@ class TourManager(private val db: SQLiteDatabase?) {
             }
             if (it.moveToFirst()) {
                 do {
-                    val locationId = it.getString(it.getColumnIndexOrThrow("id"))
-                    locationIds.add(locationId)
-                    Log.i("TourManager", "Location ID: $locationId")
+                    val id = it.getString(it.getColumnIndexOrThrow("id"))
+                    val placesId = it.getInt(it.getColumnIndexOrThrow("places_id"))
+                    val name = it.getString(it.getColumnIndexOrThrow("name"))
+                    val important = it.getInt(it.getColumnIndexOrThrow("important"))
+                    val isImportant = (important == 1)
+
+                    locationIds.add(id)
+                    Log.i("TourManager", "Location ID: $id")
+
+                    if (!allPlaces.keys.contains(placesId)) {
+                        Log.e("TourManager", "Location with unknown Place found")
+                        throw IllegalStateException(errorMessage + "Die Location mit der ID: $id wurde einem Ort mit der \"places_id\": $placesId zugeordnet. Dieser Ort konnte nicht in der Datenbank gefunden werden!")
+                    }
+                    allPlaces[placesId]!!.addLocation(Location(name), isImportant)
+
                 } while (it.moveToNext())
             }
         }
@@ -161,7 +177,8 @@ class TourManager(private val db: SQLiteDatabase?) {
         db.rawQuery("SELECT * from transfers", null).use { newTransfers ->
             if (newTransfers.moveToFirst()) {
                 do {
-                    val from = newTransfers.getString(newTransfers.getColumnIndexOrThrow("location_from"))
+                    val from =
+                        newTransfers.getString(newTransfers.getColumnIndexOrThrow("location_from"))
                     if (from == startLocation.first()) {
                         Log.i("TourManager", "Encountered start location again, stopping check")
                         break
