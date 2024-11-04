@@ -190,4 +190,9 @@ class TourManager(private val db: SQLiteDatabase?) {
         Log.i("TourManager", "Database is valid")
     }
 
+
+    fun setPlace(place: Place) {
+        Log.i("TourManager", "Set current place to ${place.name}")
+        _currentPlace = place
+    }
 }
