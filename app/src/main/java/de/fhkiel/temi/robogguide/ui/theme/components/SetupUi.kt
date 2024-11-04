@@ -41,7 +41,7 @@ import de.fhkiel.temi.robogguide.ui.logic.SetupViewModel
 @Composable
 fun SetupUi(tourManager: TourManager, setupViewModel: SetupViewModel) {
     var expanded by remember { mutableStateOf(false) }
-    var selectedIndex by remember { mutableIntStateOf(0) }
+    var selectedIndex by remember { mutableIntStateOf(1) } // needs to be one
     Scaffold(
         topBar = {
             Text(
@@ -95,7 +95,7 @@ fun SetupUi(tourManager: TourManager, setupViewModel: SetupViewModel) {
                             modifier = Modifier.padding(start = 16.dp, top = 16.dp)
                         )
                         Text(
-                            text = tourManager.allPlaces[selectedIndex].name,
+                            text = tourManager.allPlaces[selectedIndex]!!.name,
                             fontSize = 64.sp,
                         )
                     }
@@ -120,7 +120,7 @@ fun SetupUi(tourManager: TourManager, setupViewModel: SetupViewModel) {
                         .padding(horizontal = 16.dp)
                 ) {
                     Log.d("Setup", "All places: ${tourManager.allPlaces}")
-                    tourManager.allPlaces.forEachIndexed { index, place ->
+                    tourManager.allPlaces.forEach { (index, place) ->
                         DropdownMenuItem(
                             onClick = {
                                 selectedIndex = index
