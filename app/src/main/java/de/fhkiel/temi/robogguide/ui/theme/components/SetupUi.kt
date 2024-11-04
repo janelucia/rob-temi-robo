@@ -139,7 +139,11 @@ fun SetupUi(tourManager: TourManager, setupViewModel: SetupViewModel) {
             }
 
             CustomButton(
-                onClick = { setupViewModel.completeSetup() },
+                onClick = {
+                    setupViewModel.completeSetup()
+                    // Set the selected place inside the tour manager
+                    tourManager.setPlace(tourManager.allPlaces[selectedIndex]!!)
+                },
                 title = "Setup beenden",
                 modifier = Modifier.padding(16.dp)
             )
