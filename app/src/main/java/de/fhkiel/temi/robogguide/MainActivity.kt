@@ -32,6 +32,7 @@ import de.fhkiel.temi.robogguide.ui.theme.components.GuideNavigationButton
 import de.fhkiel.temi.robogguide.ui.theme.pages.GuideSelector
 import de.fhkiel.temi.robogguide.ui.theme.pages.Home
 import de.fhkiel.temi.robogguide.ui.theme.pages.Setup
+import de.fhkiel.temi.robogguide.ui.theme.pages.Test
 import java.io.IOException
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -72,10 +73,14 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
 
         } catch (e: IOException) {
             e.printStackTrace()
+            tourManager = TourManager(null) // Initialize with null to simulate error
+            tourManager.error = e
         }
 
+        // TODO: Close Icon for top bar on setup and hidden on normal
         setContent {
             val isSetupComplete by setupViewModel.isSetupComplete.observeAsState(false)
+            val hasError = tourManager.error != null
 
             if (isSetupComplete) {
                 Rob_Temi_Robo_UITheme {
@@ -85,7 +90,7 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
                         topBar = { CustomTopAppBar(navController) },
                         bottomBar = { GuideNavigationButton(navController) }
                     ) { innerPadding ->
-                        NavHost(navController, startDestination = "homePage") {
+                        NavHost(navController, startDestination = "test") {
                             composable("homePage") { Home(innerPadding, navController, mRobot) }
                             composable("guideSelector") {
                                 GuideSelector(
@@ -95,11 +100,12 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
                                 )
                             }
                             composable("guide") { Guide(innerPadding, navController, mRobot) }
+                            composable("test") { Test(mRobot, tourManager) }
                         }
                     }
                 }
             } else {
-                Setup(setupViewModel, tourManager)
+                Setup(setupViewModel, tourManager, hasError)
             }
 
         }

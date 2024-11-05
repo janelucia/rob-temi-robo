@@ -1,21 +1,14 @@
 package de.fhkiel.temi.robogguide.ui.theme.pages
 
-import android.util.Log
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -24,76 +17,82 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.dp
 import de.fhkiel.temi.robogguide.logic.TourManager
 import de.fhkiel.temi.robogguide.ui.logic.SetupViewModel
-import de.fhkiel.temi.robogguide.ui.theme.components.Header
+import de.fhkiel.temi.robogguide.ui.theme.components.LoadingSpinner
+import de.fhkiel.temi.robogguide.ui.theme.components.SetupUi
+import kotlinx.coroutines.delay
 
 @Composable
-fun Setup(setupViewModel: SetupViewModel, tourManager: TourManager) {
+fun Setup(setupViewModel: SetupViewModel, tourManager: TourManager, hasError: Boolean) {
 
+    var loading by remember { mutableStateOf(true) }
+    var isDatabaseValid by remember { mutableStateOf(false) }
+    var currentMessageIndex by remember { mutableIntStateOf(0) }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Header(
-            title = "Gruppe Pentagram -\nSetup Seite",
-            modifier = Modifier.padding(16.dp),
-        )
-        Header(
-            title = "Bitte wähle aus der Liste von Orten, wo ich eingesetzt werden soll.",
-            fontSize = 42.sp,
-            fontWeight = FontWeight.Normal
-        )
-        Spacer(modifier = Modifier.height(32.dp))
-        Box(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            var expanded by remember { mutableStateOf(false) }
-            var selectedIndex by remember { mutableIntStateOf(0) }
-            Text(
-                tourManager.allPlaces[selectedIndex].name,
-                fontSize = 64.sp,
-                modifier = Modifier.clickable(onClick = { expanded = true })
-            )
-            DropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color.Red)
+    val messages = listOf(
+        "Checking database...",
+        "Loading data...",
+        "Setting up the map...",
+        "Almost there...",
+        "Cleaning up...",
+        "Ready!"
+    )
+
+    LaunchedEffect(Unit) {
+        isDatabaseValid = tourManager.allPlacesMap.isNotEmpty()
+        loading = false
+    }
+
+    LaunchedEffect(Unit) {
+        for (i in messages.indices) {
+            delay(4000)
+            currentMessageIndex = i
+        }
+    }
+
+    if (loading) {
+        LoadingSpinner(messages = messages, currentMessageIndex = currentMessageIndex)
+    } else {
+        if (hasError) {
+            Box(
+                modifier = Modifier.fillMaxSize().padding(16.dp),
+                contentAlignment = Alignment.Center
             ) {
-                Log.d("Setup", "All places: ${tourManager.allPlaces}")
-                tourManager.allPlaces.forEachIndexed { index, place ->
-                    DropdownMenuItem(
-                        onClick = {
-                            selectedIndex = index
-                            expanded = false
-                        },
-                        text = {
-                            Text(
-                                text = place.name,
-                                fontSize = 64.sp
-                            )
-                        }
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                ) {
+                    Text(
+                        text = "Error: ",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 64.sp,
+                        style = TextStyle(color = Color.Red)
+                    )
+                    Spacer(modifier = Modifier.padding(16.dp))
+                    Text(
+                        text = tourManager.error?.message ?: "unbekannter Fehler",
+                        fontSize = 32.sp,
                     )
                 }
             }
-        }
-
-        Button(
-            onClick = { setupViewModel.completeSetup() }
-        ) {
-            Text(
-                text = "Complete Setup",
-                fontSize = 64.sp,
-            )
+        } else if (isDatabaseValid) {
+            SetupUi(tourManager = tourManager, setupViewModel = setupViewModel)
+        } else {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "Datenbank ist fehlerhaft!",
+                    fontSize = 32.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
         }
     }
 }
