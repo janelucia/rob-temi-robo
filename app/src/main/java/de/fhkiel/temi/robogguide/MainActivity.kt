@@ -31,6 +31,7 @@ import de.fhkiel.temi.robogguide.ui.theme.pages.Guide
 import de.fhkiel.temi.robogguide.ui.theme.pages.GuideSelector
 import de.fhkiel.temi.robogguide.ui.theme.pages.Home
 import de.fhkiel.temi.robogguide.ui.theme.pages.Setup
+import de.fhkiel.temi.robogguide.ui.theme.pages.Test
 import java.io.IOException
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -87,7 +88,7 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
                         modifier = Modifier.fillMaxSize(),
                         topBar = { CustomTopAppBar(navController) }
                     ) { innerPadding ->
-                        NavHost(navController, startDestination = "homePage") {
+                        NavHost(navController, startDestination = "test") {
                             composable("homePage") { Home(innerPadding, navController, mRobot) }
                             composable("guideSelector") {
                                 GuideSelector(
@@ -97,6 +98,7 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
                                 )
                             }
                             composable("guide") { Guide(innerPadding, navController, mRobot) }
+                            composable("test") { Test(mRobot, tourManager) }
                         }
                     }
                 }

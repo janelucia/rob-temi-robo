@@ -13,6 +13,8 @@ class Place(
      */
     private val _importantLocations: MutableList<Location> = mutableListOf()
 
+    private val _allLocations: MutableList<Location> = mutableListOf()
+
     /**
      * Add a location either in the important or unimportant list.
      */
@@ -22,7 +24,19 @@ class Place(
         } else {
             _unimportantLocations.add(location)
         }
+        _allLocations.add(location)
     }
 
+    fun getImportantLocations(): List<Location> {
+        return _importantLocations
+    }
+
+    fun getUnimportantLocations(): List<Location> {
+        return _unimportantLocations
+    }
+
+    fun getAllLocations(): List<Location> {
+        return _allLocations
+    }
 
 }
