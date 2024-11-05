@@ -16,7 +16,7 @@ import de.fhkiel.temi.robogguide.models.Tour
 class TourManager(private val db: SQLiteDatabase?) {
 
     private val _tours: MutableList<Tour> = mutableListOf()
-    private var _currentPlace: Place? = null
+    var currentPlace: Place? = null
     val allPlaces: MutableMap<Int, Place> = mutableMapOf()
     var error: Exception? = null
 
@@ -64,6 +64,7 @@ class TourManager(private val db: SQLiteDatabase?) {
         val locations = db.rawQuery("SELECT * FROM locations", null)
         val transfers = db.rawQuery("SELECT * FROM transfers", null)
         val items = db.rawQuery("SELECT * FROM items", null)
+        val texts = db.rawQuery("SELECT * FROM texts", null)
 
         places.use {
             if (it.count == 0) {
@@ -148,6 +149,31 @@ class TourManager(private val db: SQLiteDatabase?) {
             }
         }
 
+        texts.use {
+            if (it.count == 0) {
+                Log.e("TourManager", "Texts is empty")
+                throw IllegalStateException(errorMessage + "Es sind keine Texte vorhanden.")
+            }
+            if (it.moveToFirst()) {
+                do {
+                    // check that at least one id is set: locations_id, items_id, transfers_id
+                    val id = it.getInt(it.getColumnIndexOrThrow("id"))
+                    val locationId = it.getInt(it.getColumnIndexOrThrow("locations_id"))
+                    val itemId: Int = it.getInt(it.getColumnIndexOrThrow("items_id"))
+                    val transferId = it.getInt(it.getColumnIndexOrThrow("transfers_id"))
+
+                    if (locationId == 0 && itemId == 0 && transferId == 0) {
+                        Log.e("TourManager", "No ID set in text entry $id")
+                        throw IllegalStateException(errorMessage + "Der Text mit der ID $id hat keine gültige ID Zuweisung.")
+                    }
+
+                    //TODO fill texts into Location/Item/Transfer
+
+                    Log.i("TourManager", "Text")
+                } while (it.moveToNext())
+            }
+        }
+
         fromCount.forEach { (id, count) ->
             if (count > 1) {
                 Log.e("TourManager", "ID $id appears more than once in the 'from' column")
@@ -193,6 +219,6 @@ class TourManager(private val db: SQLiteDatabase?) {
 
     fun setPlace(place: Place) {
         Log.i("TourManager", "Set current place to ${place.name}")
-        _currentPlace = place
+        currentPlace = place
     }
 }
