@@ -10,13 +10,6 @@ import de.fhkiel.temi.robogguide.models.Place
 import de.fhkiel.temi.robogguide.models.Text
 import java.net.URL
 
-/**
- * Class to manage tours.
- * Parses the database and provides methods to further choose a specific [Tour].
- * The specific [Tour] instance can be used to guide the robot.
- * @param db SQLiteDatabase instance
- *
- */
 class TourManager(private val db: SQLiteDatabase?) {
 
     private var currentPlaceId: Int? = null
