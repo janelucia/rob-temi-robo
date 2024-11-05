@@ -95,7 +95,7 @@ fun SetupUi(tourManager: TourManager, setupViewModel: SetupViewModel) {
                             modifier = Modifier.padding(start = 16.dp, top = 16.dp)
                         )
                         Text(
-                            text = tourManager.allPlaces[selectedIndex]!!.name,
+                            text = tourManager.allPlacesMap[selectedIndex]!!,
                             fontSize = 64.sp,
                         )
                     }
@@ -119,8 +119,7 @@ fun SetupUi(tourManager: TourManager, setupViewModel: SetupViewModel) {
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp)
                 ) {
-                    Log.d("Setup", "All places: ${tourManager.allPlaces}")
-                    tourManager.allPlaces.forEach { (index, place) ->
+                    tourManager.allPlacesMap.forEach { (index, placeName) ->
                         DropdownMenuItem(
                             onClick = {
                                 selectedIndex = index
@@ -128,7 +127,7 @@ fun SetupUi(tourManager: TourManager, setupViewModel: SetupViewModel) {
                             },
                             text = {
                                 Text(
-                                    text = place.name,
+                                    text = placeName,
                                     fontSize = 64.sp,
                                     modifier = Modifier.padding(8.dp)
                                 )
@@ -142,7 +141,7 @@ fun SetupUi(tourManager: TourManager, setupViewModel: SetupViewModel) {
                 onClick = {
                     setupViewModel.completeSetup()
                     // Set the selected place inside the tour manager
-                    tourManager.setPlace(tourManager.allPlaces[selectedIndex]!!)
+                    tourManager.setPlace(selectedIndex, tourManager.allPlacesMap[selectedIndex]!!)
                 },
                 title = "Setup beenden",
                 modifier = Modifier.padding(16.dp)

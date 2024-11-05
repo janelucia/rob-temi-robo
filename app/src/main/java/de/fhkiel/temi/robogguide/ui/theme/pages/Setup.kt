@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -31,7 +32,7 @@ fun Setup(setupViewModel: SetupViewModel, tourManager: TourManager, hasError: Bo
 
     var loading by remember { mutableStateOf(true) }
     var isDatabaseValid by remember { mutableStateOf(false) }
-    var currentMessageIndex by remember { mutableStateOf(0) }
+    var currentMessageIndex by remember { mutableIntStateOf(0) }
 
     val messages = listOf(
         "Checking database...",
@@ -43,7 +44,7 @@ fun Setup(setupViewModel: SetupViewModel, tourManager: TourManager, hasError: Bo
     )
 
     LaunchedEffect(Unit) {
-        isDatabaseValid = tourManager.allPlaces.isNotEmpty()
+        isDatabaseValid = tourManager.allPlacesMap.isNotEmpty()
         loading = false
     }
 
