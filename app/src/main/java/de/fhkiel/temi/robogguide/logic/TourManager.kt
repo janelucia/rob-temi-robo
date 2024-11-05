@@ -17,26 +17,23 @@ class TourManager(private val db: SQLiteDatabase?) {
     val allPlacesMap: MutableMap<Int, String> = mutableMapOf()
     var error: Exception? = null
 
+    private val tourStartLocation = mutableMapOf<Int, Int>()
+    private val tourEndLocation = mutableMapOf<Int, Int>()
+
     var selectedPlace: Place? = null
     var selectedLevelOfDetail: LevelOfDetail? = null
+
+
+
 
     init {
         // try catch to handle an error like a wrongly named database
         try {
             checkDatabase()
-            parseTours()
         } catch (e: Exception) {
             error = e
             Log.e("TourManager", "Error initializing TourManager: ${e.message}")
         }
-    }
-
-    /**
-     * Method to parse the database and create [Tour] instances.
-     */
-    private fun parseTours() {
-        Log.i("TourManager", "Parsing tours")
-
     }
 
     /**
@@ -47,10 +44,8 @@ class TourManager(private val db: SQLiteDatabase?) {
         val locationIds = mutableSetOf<Int>()
         val startLocations = mutableSetOf<Int>()
         val endLocations = mutableSetOf<Int>()
-        val fromCount = mutableMapOf<Int, Int>()
-        val toCount = mutableMapOf<Int, Int>()
-        val tourStartLocation = mutableSetOf<Int>()
-        val tourEndLocation = mutableSetOf<Int>()
+        val fromCount = mutableMapOf<Int, MutableMap<Int,Int>>()
+        val toCount = mutableMapOf<Int, MutableMap<Int,Int>>()
         val errorMessage =
             "Die Datenbank scheint nicht korrekt befüllt zu sein.\nFolgender Fehler ist aufgetreten:\n"
 
@@ -144,32 +139,29 @@ class TourManager(private val db: SQLiteDatabase?) {
                     val p1 = it.getInt(it.getColumnIndexOrThrow("P1_ID"))
                     val p2 = it.getInt(it.getColumnIndexOrThrow("P2_ID"))
 
-                    if (p1 != p2 && p1 != 0 && p2 != 0) {
+                    if (p1 != p2) {
                         Log.e("TourManager", "Error in Transfer: $from -> $to")
                         throw IllegalStateException(errorMessage + "Die Transfers scheinen zwischen mehreren Places zu laufen. $from -> $to")
                     }
 
-                    if ((!locationIds.contains(from) || !locationIds.contains(to)) && to != -1 && from != -1) {
+                    if (!locationIds.contains(from) || !locationIds.contains(to)) {
                         Log.e("TourManager", "Invalid transfer: $from -> $to")
                         throw IllegalStateException(errorMessage + "Ungültige Verbindung (Transfer) zwischen den Orten: $from -> $to")
                     }
 
-                    if (to != -1) {
-                        fromCount[from] = fromCount.getOrDefault(from, 0) + 1
-                    } else {
-                        if (!tourStartLocation.add(p1)) {
-                            Log.e("TourManager", "Mutliple Tour Start Locations detected")
-                            throw IllegalStateException(errorMessage + "Mehrere Startorte für eine Tour gefunden.")
-                        }
+                    if (fromCount[p1].isNullOrEmpty()) {
+                        fromCount[p1] = mutableMapOf()
                     }
-                    if (from != -1) {
-                        toCount[to] = toCount.getOrDefault(to, 0) + 1
-                    } else {
-                        if (!tourEndLocation.add(p2)) {
-                            Log.e("TourManager", "Mutliple Tour End Locations detected")
-                            throw IllegalStateException(errorMessage + "Mehrere Zielorte für eine Tour gefunden.")
-                        }
+                    if (toCount[p2].isNullOrEmpty()) {
+                        toCount[p2] = mutableMapOf()
                     }
+
+                    val fromMap = fromCount[p1]!!
+                    val toMap = toCount[p2]!!
+
+                    fromMap[from] = fromMap.getOrDefault(from, 0) + 1
+                    toMap[to] = toMap.getOrDefault(to, 0) + 1
+
                     startLocations.add(from)
                     endLocations.add(to)
                     Log.i("TourManager", "Transfer: $from -> $to")
@@ -200,18 +192,49 @@ class TourManager(private val db: SQLiteDatabase?) {
             }
         }
 
-        fromCount.forEach { (id, count) ->
-            if (count > 1) {
-                Log.e("TourManager", "ID $id appears more than once in the 'from' column")
-                throw IllegalStateException(errorMessage + "ID $id erscheint mehr als einmal in der 'from' Spalte von der Verbindungstabelle (transfers).")
+        fromCount.forEach { (placeId, map) ->
+
+            val toMapKeys = toCount[placeId]!!.keys
+
+            // compare which key is not in the other map
+            val startLocationsDiff = map.keys.subtract(toMapKeys)
+
+            if (startLocationsDiff.size > 1 || startLocationsDiff.isEmpty()) {
+                Log.e("TourManager", "Invalid number of start locations")
+                throw IllegalStateException(errorMessage + "Ungültige Anzahl von Startorten in place $placeId.")
+            } else {
+                tourStartLocation[placeId] = startLocationsDiff.first()
+            }
+
+            map.forEach { (id, count) ->
+                if (count > 1) {
+                    Log.e("TourManager", "ID $id appears more than once in the 'from' column")
+                    throw IllegalStateException(errorMessage + "ID $id erscheint mehr als einmal in der 'from' Spalte von der Verbindungstabelle (transfers).")
+                }
             }
         }
 
-        toCount.forEach { (id, count) ->
-            if (count > 1) {
-                Log.e("TourManager", "ID $id appears more than once in the 'to' column")
-                throw IllegalStateException(errorMessage + "ID $id erscheint mehr als einmal in der 'to' Spalte von der Verbindungstabelle (transfers).")
+        toCount.forEach { (placeId, map) ->
+
+            val fromMapKeys = fromCount[placeId]!!.keys
+
+            // compare which key is not in the other map
+            val endLocationsDiff = map.keys.subtract(fromMapKeys)
+
+            if (endLocationsDiff.size > 1 || endLocationsDiff.isEmpty()) {
+                Log.e("TourManager", "Invalid number of start locations")
+                throw IllegalStateException(errorMessage + "Ungültige Anzahl von Startorten in place $placeId.")
+            } else {
+                tourEndLocation[placeId] = endLocationsDiff.first()
             }
+
+            map.forEach { (id, count) ->
+                if (count > 1) {
+                    Log.e("TourManager", "ID $id appears more than once in the 'to' column")
+                    throw IllegalStateException(errorMessage + "ID $id erscheint mehr als einmal in der 'to' Spalte von der Verbindungstabelle (transfers).")
+                }
+            }
+
         }
 
         val startLocation = startLocations.subtract(endLocations)
@@ -263,8 +286,8 @@ class TourManager(private val db: SQLiteDatabase?) {
     private fun getLocations(): Pair<List<Location>, List<Location>> {
 
         val transfersForLocation: MutableMap<Int, Int> = mutableMapOf()
-        var startPoint = 0
-        var endPoint = 0
+        val startPoint = tourStartLocation[currentPlaceId]!!
+        val endPoint = tourEndLocation[currentPlaceId]!!
         val sortedAllLocations: MutableList<Location> = mutableListOf()
         val sortedImportantLocations: MutableList<Location> = mutableListOf()
         val allLocations: MutableMap<Int, Location> = mutableMapOf()
@@ -284,28 +307,6 @@ class TourManager(private val db: SQLiteDatabase?) {
             WHERE p1.id = $currentPlaceId
             AND p2.id = $currentPlaceId
         """
-
-        val queryStartPoint = """
-            SELECT t.*, p1.id as P1_ID 
-            FROM transfers AS t
-            LEFT JOIN locations AS l1 
-            ON t.location_from = l1.id 
-            LEFT JOIN places AS p1
-            ON l1.places_id = p1.id
-            WHERE p1.id = $currentPlaceId
-            AND t.location_to = -1
-            """
-
-        val queryEndPoint = """
-            SELECT t.*, p2.id as P2_ID 
-            FROM transfers AS t
-            LEFT JOIN locations AS l2 
-            ON t.location_to = l2.id 
-            LEFT JOIN places AS p2
-            ON l2.places_id = p2.id
-            WHERE p2.id = $currentPlaceId
-            AND t.location_from = -1
-            """
 
         db?.rawQuery(queryGetAllTransfersForLocation, null)?.use { cursor ->
             if (cursor.moveToFirst()) {
@@ -332,18 +333,7 @@ class TourManager(private val db: SQLiteDatabase?) {
                 } while (cursor.moveToNext())
             }
         }
-        db?.rawQuery(queryStartPoint, null)?.use { cursor ->
-            if (cursor.moveToFirst()) {
-                startPoint = cursor.getInt(cursor.getColumnIndexOrThrow("location_from"))
-                Log.i("TourManager", "Start Point: $startPoint")
-            }
-        }
-        db?.rawQuery(queryEndPoint, null)?.use { cursor ->
-            if (cursor.moveToFirst()) {
-                endPoint = cursor.getInt(cursor.getColumnIndexOrThrow("location_to"))
-                Log.i("TourManager", "Start Point: $endPoint")
-            }
-        }
+
 
         var currentStartpoint = startPoint
         do {
