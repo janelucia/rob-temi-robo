@@ -11,7 +11,7 @@ import de.fhkiel.temi.robogguide.ui.theme.components.TextDisplay
 @Composable
 fun Test(mRobot: Robot?, tourManager: TourManager) {
     Column {
-        tourManager.selectedPlace?.allLocations?.forEach { location: Location ->
+        tourManager.selectedPlace?.importantLocations?.forEach { location: Location ->
             Log.d("Test", "Location: ${location.name}")
             location.conciseText?.let {
                 TextDisplay(text = it)

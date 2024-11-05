@@ -3,11 +3,11 @@ package de.fhkiel.temi.robogguide.logic
 import android.database.sqlite.SQLiteDatabase
 import android.util.Log
 import de.fhkiel.temi.robogguide.models.Item
+import de.fhkiel.temi.robogguide.models.LevelOfDetail
 import de.fhkiel.temi.robogguide.models.Location
 import de.fhkiel.temi.robogguide.models.Media
 import de.fhkiel.temi.robogguide.models.Place
 import de.fhkiel.temi.robogguide.models.Text
-import de.fhkiel.temi.robogguide.models.Tour
 import java.net.URL
 
 /**
@@ -19,13 +19,13 @@ import java.net.URL
  */
 class TourManager(private val db: SQLiteDatabase?) {
 
-    private val _tours: MutableList<Tour> = mutableListOf()
     private var currentPlaceId: Int? = null
     private var currentPlaceName: String? = null
     val allPlacesMap: MutableMap<Int, String> = mutableMapOf()
     var error: Exception? = null
 
     var selectedPlace: Place? = null
+    var selectedLevelOfDetail: LevelOfDetail? = null
 
     init {
         // try catch to handle an error like a wrongly named database
@@ -70,7 +70,8 @@ class TourManager(private val db: SQLiteDatabase?) {
 
         val places = db.rawQuery("SELECT * FROM places", null)
         val locations = db.rawQuery("SELECT * FROM locations", null)
-        val transfers = db.rawQuery("""
+        val transfers = db.rawQuery(
+            """
             SELECT t.*, p1.id as P1_ID, p2.id as P2_ID FROM transfers AS t
             LEFT JOIN locations AS l1 
             ON t.location_from = l1.id 
@@ -79,7 +80,8 @@ class TourManager(private val db: SQLiteDatabase?) {
             LEFT JOIN places AS p1
             ON l1.places_id = p1.id 
             LEFT JOIN places as p2
-            ON l2.places_id = p2.id""", null)
+            ON l2.places_id = p2.id""", null
+        )
         val items = db.rawQuery("SELECT * FROM items", null)
         val texts = db.rawQuery("SELECT * FROM texts", null)
 
@@ -107,9 +109,6 @@ class TourManager(private val db: SQLiteDatabase?) {
                 do {
                     val id = it.getInt(it.getColumnIndexOrThrow("id"))
                     val placesId = it.getInt(it.getColumnIndexOrThrow("places_id"))
-                    val name = it.getString(it.getColumnIndexOrThrow("name"))
-                    val important = it.getInt(it.getColumnIndexOrThrow("important"))
-                    val isImportant = (important == 1)
 
                     locationIds.add(id)
                     Log.i("TourManager", "Location ID: $id")
@@ -268,15 +267,59 @@ class TourManager(private val db: SQLiteDatabase?) {
     /**
      * Method to get all locations for the current place.
      */
-    private fun getLocations(): Pair<List<Location>,List<Location>> {
-        val allLocations = mutableListOf<Location>()
-        val importantLocations = mutableListOf<Location>()
-        val unimportantLocations = mutableListOf<Location>()
-        val query = "SELECT * FROM locations WHERE places_id = $currentPlaceId"
+    private fun getLocations(): Pair<List<Location>, List<Location>> {
 
-        db?.rawQuery(query, null)?.use { cursor ->
+        val transfersForLocation: MutableMap<Int, Int> = mutableMapOf()
+        var startPoint = 0
+        var endPoint = 0
+        val sortedAllLocations: MutableList<Location> = mutableListOf()
+        val sortedImportantLocations: MutableList<Location> = mutableListOf()
+        val allLocations: MutableMap<Int, Location> = mutableMapOf()
+        val importantLocations: MutableMap<Int, Location> = mutableMapOf()
+
+        val queryGetAllTransfersForLocation = """
+            SELECT t.location_from, t.location_to, l1.id, l1.name, l1.important
+            FROM transfers AS t
+            LEFT JOIN locations AS l1 
+            ON t.location_from = l1.id 
+            LEFT JOIN locations AS l2
+            ON t.location_to = l2.id 
+            LEFT JOIN places AS p1
+            ON l1.places_id = p1.id 
+            LEFT JOIN places as p2
+            ON l2.places_id = p2.id
+            WHERE p1.id = $currentPlaceId
+            AND p2.id = $currentPlaceId
+        """
+
+        val queryStartPoint = """
+            SELECT t.*, p1.id as P1_ID 
+            FROM transfers AS t
+            LEFT JOIN locations AS l1 
+            ON t.location_from = l1.id 
+            LEFT JOIN places AS p1
+            ON l1.places_id = p1.id
+            WHERE p1.id = $currentPlaceId
+            AND t.location_to = -1
+            """
+
+        val queryEndPoint = """
+            SELECT t.*, p2.id as P2_ID 
+            FROM transfers AS t
+            LEFT JOIN locations AS l2 
+            ON t.location_to = l2.id 
+            LEFT JOIN places AS p2
+            ON l2.places_id = p2.id
+            WHERE p2.id = $currentPlaceId
+            AND t.location_from = -1
+            """
+
+        db?.rawQuery(queryGetAllTransfersForLocation, null)?.use { cursor ->
             if (cursor.moveToFirst()) {
                 do {
+                    val from = cursor.getInt(cursor.getColumnIndexOrThrow("location_from"))
+                    val to = cursor.getInt(cursor.getColumnIndexOrThrow("location_to"))
+
                     val id = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
                     val name = cursor.getString(cursor.getColumnIndexOrThrow("name"))
                     val important = cursor.getInt(cursor.getColumnIndexOrThrow("important"))
@@ -284,30 +327,50 @@ class TourManager(private val db: SQLiteDatabase?) {
                     val texts = getTexts("locations_id", id)
                     val detailedText = texts?.get(true)
                     val conciseText = texts?.get(false)
-                    allLocations.add(Location(name, getItems(id), detailedText, conciseText))
-                    if (isImportant) {
-                        importantLocations.add(Location(name, getItems(id), detailedText, conciseText))
-                    } else {
-                        unimportantLocations.add(Location(name, getItems(id), detailedText, conciseText))
-                    }
 
+
+                    Log.i("TourManager", "Transfer: $from -> $to")
+                    transfersForLocation[from] = to
+                    allLocations[from] = Location(name, getItems(id), detailedText, conciseText)
+                    if (isImportant) {
+                        importantLocations[from] =
+                            Location(name, getItems(id), detailedText, conciseText)
+                    }
                 } while (cursor.moveToNext())
             }
         }
-        return Pair(allLocations, importantLocations)
-    }
+        db?.rawQuery(queryStartPoint, null)?.use { cursor ->
+            if (cursor.moveToFirst()) {
+                startPoint = cursor.getInt(cursor.getColumnIndexOrThrow("location_from"))
+                Log.i("TourManager", "Start Point: $startPoint")
+            }
+        }
+        db?.rawQuery(queryEndPoint, null)?.use { cursor ->
+            if (cursor.moveToFirst()) {
+                endPoint = cursor.getInt(cursor.getColumnIndexOrThrow("location_to"))
+                Log.i("TourManager", "Start Point: $endPoint")
+            }
+        }
+
+        var currentStartpoint = startPoint
+        do {
+
+            val currentEndpoint = transfersForLocation[currentStartpoint]!!
+
+            sortedAllLocations.add(allLocations[currentStartpoint]!!)
+
+            if (importantLocations.containsKey(currentStartpoint)) {
+                sortedImportantLocations.add(importantLocations[currentStartpoint]!!)
+            }
+
+            currentStartpoint = currentEndpoint
+        } while (currentEndpoint != endPoint)
 
 
-    private fun getTransfers() {
-        // get for the current place the one route
-        val queryStartPoint = """
-            SELECT * FROM transfers AS t 
-            JOIN locations as l
-            ON t.location_from = l.id
-            JOIN places as p
-            ON l.places_id = p.id
-            WHERE p.id = $currentPlaceId AND t.location_to IS NULL
-            """
+        Log.i("TourManager", "Transfers for location: $transfersForLocation")
+
+        return Pair(sortedAllLocations, sortedImportantLocations)
+
     }
 
     /**
