@@ -21,15 +21,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import de.fhkiel.temi.robogguide.logic.TourManager
+import de.fhkiel.temi.robogguide.ui.logic.TourViewModel
 
 @Composable
-fun GuideNavigationButton(navController: NavController) {
+fun GuideNavigationButton(
+    navController: NavController,
+    tourManager: TourManager,
+    tourViewModel: TourViewModel
+) {
     val navBackStackEntry = navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry.value?.destination?.route
 
-    //todo ändern zu Zugriff auf DB/vorgeladene Strukturen
-    var numberOfExhibits = 10
-    var currentExhibit = 3
+    var numberOfLocations = tourViewModel.getNumberOfExhibits()
+    var currentExhibit = tourViewModel.getCurrentExhibit()
 
     if (currentDestination == "guide") {
         Row(horizontalArrangement = Arrangement.SpaceAround, modifier = Modifier.fillMaxWidth()) {
@@ -39,7 +44,7 @@ fun GuideNavigationButton(navController: NavController) {
                     .align(Alignment.CenterVertically),
                 contentAlignment = Alignment.Center
             ) {
-                GuideProgressBar(numberOfExhibits, currentExhibit)
+                GuideProgressBar(numberOfLocations, currentExhibit)
             }
 
 
@@ -52,7 +57,10 @@ fun GuideNavigationButton(navController: NavController) {
                     Header(title = "⏮",
                         fontSize = 64.sp,
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.clickable { /* zurück zum vorherigen exponat gehen */ }
+                        modifier = Modifier.clickable {
+                            tourViewModel.setCurrentExhibit(currentExhibit - 1)
+                            //TODO robo und ui stuff
+                        }
                     )
                     Header(title = "⟲",
                         fontSize = 64.sp,
@@ -62,7 +70,10 @@ fun GuideNavigationButton(navController: NavController) {
                     Header(title = "⏭",
                         fontSize = 64.sp,
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.clickable { /* direkt zum nächsten exponat gehen */ }
+                        modifier = Modifier.clickable {
+                            tourViewModel.setCurrentExhibit(currentExhibit + 1)
+                            //TODO robo und ui stuff
+                        }
                     )
                     /*Icon(imageVector = Icons.Filled.Refresh,
                         contentDescription = "Play text again",

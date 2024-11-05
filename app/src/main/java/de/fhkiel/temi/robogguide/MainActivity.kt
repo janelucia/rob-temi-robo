@@ -26,6 +26,7 @@ import com.robotemi.sdk.permission.Permission
 import de.fhkiel.temi.robogguide.database.DatabaseHelper
 import de.fhkiel.temi.robogguide.logic.TourManager
 import de.fhkiel.temi.robogguide.ui.logic.SetupViewModel
+import de.fhkiel.temi.robogguide.ui.logic.TourViewModel
 import de.fhkiel.temi.robogguide.ui.theme.Rob_Temi_Robo_UITheme
 import de.fhkiel.temi.robogguide.ui.theme.components.CustomTopAppBar
 import de.fhkiel.temi.robogguide.ui.theme.components.GuideNavigationButton
@@ -40,6 +41,7 @@ import java.util.concurrent.Executors
 @OptIn(ExperimentalMaterial3Api::class)
 class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermissionResultListener {
     private val setupViewModel: SetupViewModel by viewModels()
+    private val tourViewModel: TourViewModel by viewModels()
     private var mRobot: Robot? = null
     private lateinit var database: DatabaseHelper
     private lateinit var tourManager: TourManager
@@ -88,9 +90,9 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
                     Scaffold(
                         modifier = Modifier.fillMaxSize(),
                         topBar = { CustomTopAppBar(navController) },
-                        bottomBar = { GuideNavigationButton(navController) }
+                        bottomBar = { GuideNavigationButton(navController, tourManager, tourViewModel) }
                     ) { innerPadding ->
-                        NavHost(navController, startDestination = "test") {
+                        NavHost(navController, startDestination = "homePage") {
                             composable("homePage") { Home(innerPadding, navController, mRobot) }
                             composable("guideSelector") {
                                 GuideSelector(
@@ -99,7 +101,9 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
                                     mRobot
                                 )
                             }
-                            composable("guide") { Guide(innerPadding, navController, mRobot) }
+                            composable("guide") {
+                                Guide(innerPadding, navController, mRobot, tourManager, tourViewModel)
+                            }
                             composable("test") { Test(mRobot, tourManager) }
                         }
                     }

@@ -5,7 +5,6 @@ import androidx.navigation.NavHostController
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -16,21 +15,28 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import com.robotemi.sdk.Robot
 import de.fhkiel.temi.robogguide.ui.theme.components.CustomButton
 import de.fhkiel.temi.robogguide.ui.theme.components.Header
 import de.fhkiel.temi.robogguide.R
-import de.fhkiel.temi.robogguide.ui.theme.components.GuideProgressBar
+import de.fhkiel.temi.robogguide.logic.TourManager
+import de.fhkiel.temi.robogguide.models.Location
+import de.fhkiel.temi.robogguide.ui.logic.TourViewModel
 
 @Composable
-fun Guide(innerPadding: PaddingValues, navHostController: NavHostController, mRobot: Robot?) {
+fun Guide(
+    innerPadding: PaddingValues,
+    navHostController: NavHostController,
+    mRobot: Robot?,
+    tourManager: TourManager,
+    tourViewModel: TourViewModel
+) {
 
-    var guideState by remember { mutableStateOf(GuideState.Transition) }
+    var guideState by remember { mutableStateOf(GuideState.Transfer) }
 
-    //todo muss variable sein, die von mehreren Orten referenzierbar ist
-    var currentExhibit by remember { mutableIntStateOf(4) }
+    val tourLocations: List<Location> = tourViewModel.getTourLocations()
+    var numberOfLocations = tourViewModel.getNumberOfExhibits()
+    var currentExhibit = tourViewModel.getCurrentExhibit()
 
 
     Column(
@@ -41,7 +47,7 @@ fun Guide(innerPadding: PaddingValues, navHostController: NavHostController, mRo
         verticalArrangement = Arrangement.Center
     ) {
         when (guideState) {
-            GuideState.Transition -> {
+            GuideState.Transfer -> {
                 Header(
                     title = "Kurze Führung (30 Minuten)",
                     fontSize = 32.sp,
@@ -106,8 +112,10 @@ fun Guide(innerPadding: PaddingValues, navHostController: NavHostController, mRo
                     //TODO aktuell noch Button oder Mechanismus, um zur nächsten Übergangssequenz zu wechseln
                     CustomButton(
                         title = "Zum nächsten Exponat",
-                        onClick = { guideState = GuideState.Transition
-                        currentExhibit++}
+                        onClick = {
+                            guideState = GuideState.Transfer
+                            tourViewModel.setCurrentExhibit(currentExhibit + 1)
+                        }
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                 }
@@ -120,7 +128,7 @@ fun Guide(innerPadding: PaddingValues, navHostController: NavHostController, mRo
 
 
 enum class GuideState {
-    Transition, // robot leads guest to next exhibit
+    Transfer, // robot leads guest to next exhibit
     Exhibit     // robot is at exhibit
     //TODO vielleicht weitere states hinzufügen wie exhibit introduction, exhibit idle, exhibit end (...)
 }

@@ -9,11 +9,15 @@ import de.fhkiel.temi.robogguide.models.Location
 class TourViewModel : ViewModel() {
     private var currentExhibit by mutableIntStateOf(0)
     private var tourLocations: List<Location> = emptyList()
-
-    val numberOfExhibits: Int = tourLocations.size
+    private var numberOfExhibits: Int = tourLocations.size
 
     fun setTourLocations(locations: List<Location>) {
         tourLocations = locations
+        numberOfExhibits = tourLocations.size
+    }
+
+    fun getNumberOfExhibits(): Int {
+        return numberOfExhibits
     }
 
     fun getTourLocations(): List<Location> {
