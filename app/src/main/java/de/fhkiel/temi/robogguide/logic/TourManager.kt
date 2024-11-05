@@ -51,11 +51,13 @@ class TourManager(private val db: SQLiteDatabase?) {
      */
     private fun checkDatabase() {
 
-        val locationIds = mutableSetOf<String>()
-        val startLocations = mutableSetOf<String>()
-        val endLocations = mutableSetOf<String>()
-        val fromCount = mutableMapOf<String, Int>()
-        val toCount = mutableMapOf<String, Int>()
+        val locationIds = mutableSetOf<Int>()
+        val startLocations = mutableSetOf<Int>()
+        val endLocations = mutableSetOf<Int>()
+        val fromCount = mutableMapOf<Int, Int>()
+        val toCount = mutableMapOf<Int, Int>()
+        val tourStartLocation = mutableSetOf<Int>()
+        val tourEndLocation = mutableSetOf<Int>()
         val errorMessage =
             "Die Datenbank scheint nicht korrekt befüllt zu sein.\nFolgender Fehler ist aufgetreten:\n"
 
@@ -68,7 +70,16 @@ class TourManager(private val db: SQLiteDatabase?) {
 
         val places = db.rawQuery("SELECT * FROM places", null)
         val locations = db.rawQuery("SELECT * FROM locations", null)
-        val transfers = db.rawQuery("SELECT * FROM transfers", null)
+        val transfers = db.rawQuery("""
+            SELECT t.*, p1.id as P1_ID, p2.id as P2_ID FROM transfers AS t
+            LEFT JOIN locations AS l1 
+            ON t.location_from = l1.id 
+            LEFT JOIN locations AS l2
+            ON t.location_to = l2.id 
+            LEFT JOIN places AS p1
+            ON l1.places_id = p1.id 
+            LEFT JOIN places as p2
+            ON l2.places_id = p2.id""", null)
         val items = db.rawQuery("SELECT * FROM items", null)
         val texts = db.rawQuery("SELECT * FROM texts", null)
 
@@ -94,7 +105,7 @@ class TourManager(private val db: SQLiteDatabase?) {
             }
             if (it.moveToFirst()) {
                 do {
-                    val id = it.getString(it.getColumnIndexOrThrow("id"))
+                    val id = it.getInt(it.getColumnIndexOrThrow("id"))
                     val placesId = it.getInt(it.getColumnIndexOrThrow("places_id"))
                     val name = it.getString(it.getColumnIndexOrThrow("name"))
                     val important = it.getInt(it.getColumnIndexOrThrow("important"))
@@ -119,7 +130,7 @@ class TourManager(private val db: SQLiteDatabase?) {
             }
             if (it.moveToFirst()) {
                 do {
-                    val locationId = it.getString(it.getColumnIndexOrThrow("locations_id"))
+                    val locationId = it.getInt(it.getColumnIndexOrThrow("locations_id"))
                     if (!locationIds.contains(locationId)) {
                         Log.e("TourManager", "Invalid location ID in items")
                         throw IllegalStateException(errorMessage + "Ungültige Orts-ID in der Items-Tabelle.")
@@ -136,17 +147,37 @@ class TourManager(private val db: SQLiteDatabase?) {
             }
             if (it.moveToFirst()) {
                 do {
-                    val from = it.getString(it.getColumnIndexOrThrow("location_from"))
-                    val to = it.getString(it.getColumnIndexOrThrow("location_to"))
+                    val from = it.getInt(it.getColumnIndexOrThrow("location_from"))
+                    val to = it.getInt(it.getColumnIndexOrThrow("location_to"))
+                    val p1 = it.getInt(it.getColumnIndexOrThrow("P1_ID"))
+                    val p2 = it.getInt(it.getColumnIndexOrThrow("P2_ID"))
 
-                    if (!locationIds.contains(from) || !locationIds.contains(to)) {
+                    if (p1 != p2 && p1 != 0 && p2 != 0) {
+                        Log.e("TourManager", "Error in Transfer: $from -> $to")
+                        throw IllegalStateException(errorMessage + "Die Transfers scheinen zwischen mehreren Places zu laufen. $from -> $to")
+                    }
+
+                    if ((!locationIds.contains(from) || !locationIds.contains(to)) && to != -1 && from != -1) {
                         Log.e("TourManager", "Invalid transfer: $from -> $to")
                         throw IllegalStateException(errorMessage + "Ungültige Verbindung (Transfer) zwischen den Orten: $from -> $to")
                     }
 
-                    fromCount[from] = fromCount.getOrDefault(from, 0) + 1
-                    toCount[to] = toCount.getOrDefault(to, 0) + 1
-
+                    if (to != -1) {
+                        fromCount[from] = fromCount.getOrDefault(from, 0) + 1
+                    } else {
+                        if (!tourStartLocation.add(p1)) {
+                            Log.e("TourManager", "Mutliple Tour Start Locations detected")
+                            throw IllegalStateException(errorMessage + "Mehrere Startorte für eine Tour gefunden.")
+                        }
+                    }
+                    if (from != -1) {
+                        toCount[to] = toCount.getOrDefault(to, 0) + 1
+                    } else {
+                        if (!tourEndLocation.add(p2)) {
+                            Log.e("TourManager", "Mutliple Tour End Locations detected")
+                            throw IllegalStateException(errorMessage + "Mehrere Zielorte für eine Tour gefunden.")
+                        }
+                    }
                     startLocations.add(from)
                     endLocations.add(to)
                     Log.i("TourManager", "Transfer: $from -> $to")
@@ -207,7 +238,7 @@ class TourManager(private val db: SQLiteDatabase?) {
             if (newTransfers.moveToFirst()) {
                 do {
                     val from =
-                        newTransfers.getString(newTransfers.getColumnIndexOrThrow("location_from"))
+                        newTransfers.getInt(newTransfers.getColumnIndexOrThrow("location_from"))
                     if (from == startLocation.first()) {
                         Log.i("TourManager", "Encountered start location again, stopping check")
                         break
