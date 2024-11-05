@@ -2,9 +2,13 @@ package de.fhkiel.temi.robogguide.logic
 
 import android.database.sqlite.SQLiteDatabase
 import android.util.Log
+import de.fhkiel.temi.robogguide.models.Item
 import de.fhkiel.temi.robogguide.models.Location
+import de.fhkiel.temi.robogguide.models.Media
 import de.fhkiel.temi.robogguide.models.Place
+import de.fhkiel.temi.robogguide.models.Text
 import de.fhkiel.temi.robogguide.models.Tour
+import java.net.URL
 
 /**
  * Class to manage tours.
@@ -16,10 +20,12 @@ import de.fhkiel.temi.robogguide.models.Tour
 class TourManager(private val db: SQLiteDatabase?) {
 
     private val _tours: MutableList<Tour> = mutableListOf()
-    var currentPlace: Place? = null
-    val allPlaces: MutableMap<Int, Place> = mutableMapOf()
+    private var currentPlaceId: Int? = null
+    private var currentPlaceName: String? = null
+    val allPlacesMap: MutableMap<Int, String> = mutableMapOf()
     var error: Exception? = null
 
+    var selectedPlace: Place? = null
 
     init {
         // try catch to handle an error like a wrongly named database
@@ -76,7 +82,7 @@ class TourManager(private val db: SQLiteDatabase?) {
                     val id = it.getInt(it.getColumnIndexOrThrow("id"))
                     val name = it.getString(it.getColumnIndexOrThrow("name"))
                     Log.i("TourManager", "Place: $name")
-                    allPlaces[id] = Place(name)
+                    allPlacesMap[id] = name
                 } while (it.moveToNext())
             }
         }
@@ -97,11 +103,10 @@ class TourManager(private val db: SQLiteDatabase?) {
                     locationIds.add(id)
                     Log.i("TourManager", "Location ID: $id")
 
-                    if (!allPlaces.keys.contains(placesId)) {
+                    if (!allPlacesMap.keys.contains(placesId)) {
                         Log.e("TourManager", "Location with unknown Place found")
                         throw IllegalStateException(errorMessage + "Die Location mit der ID: $id wurde einem Ort mit der \"places_id\": $placesId zugeordnet. Dieser Ort konnte nicht in der Datenbank gefunden werden!")
                     }
-                    allPlaces[placesId]!!.addLocation(Location(name), isImportant)
 
                 } while (it.moveToNext())
             }
@@ -167,8 +172,6 @@ class TourManager(private val db: SQLiteDatabase?) {
                         throw IllegalStateException(errorMessage + "Der Text mit der ID $id hat keine gültige ID Zuweisung.")
                     }
 
-                    //TODO fill texts into Location/Item/Transfer
-
                     Log.i("TourManager", "Text")
                 } while (it.moveToNext())
             }
@@ -217,8 +220,101 @@ class TourManager(private val db: SQLiteDatabase?) {
     }
 
 
-    fun setPlace(place: Place) {
-        Log.i("TourManager", "Set current place to ${place.name}")
-        currentPlace = place
+    fun setPlace(placeId: Int, placeName: String) {
+        Log.i("TourManager", "Set current place to $placeName")
+        currentPlaceId = placeId
+        currentPlaceName = placeName
+        fillThePlaceWithData()
+    }
+
+    private fun fillThePlaceWithData() {
+        Log.i("TourManager", "Filling the selected place with data")
+
+        val (allLocations, importantLocations, unimportantLocations) = getLocations()
+        selectedPlace = Place(currentPlaceName!!, unimportantLocations, importantLocations, allLocations)
+    }
+
+    /**
+     * Method to get all locations for the current place.
+     */
+    private fun getLocations(): Triple<List<Location>,List<Location>,List<Location>> {
+        val allLocations = mutableListOf<Location>()
+        val importantLocations = mutableListOf<Location>()
+        val unimportantLocations = mutableListOf<Location>()
+        val query = "SELECT * FROM locations WHERE places_id = $currentPlaceId"
+        db?.rawQuery(query, null)?.use { cursor ->
+            if (cursor.moveToFirst()) {
+                do {
+                    val id = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
+                    val name = cursor.getString(cursor.getColumnIndexOrThrow("name"))
+                    val important = cursor.getInt(cursor.getColumnIndexOrThrow("important"))
+                    val isImportant = (important == 1)
+                    val texts = getTexts("locations_id", id)
+                    val detailedText = texts?.get(true)
+                    val conciseText = texts?.get(false)
+                    allLocations.add(Location(name, getItems(id), detailedText, conciseText))
+                    if (isImportant) {
+                        importantLocations.add(Location(name, getItems(id), detailedText, conciseText))
+                    } else {
+                        unimportantLocations.add(Location(name, getItems(id), detailedText, conciseText))
+                    }
+                } while (cursor.moveToNext())
+            }
+        }
+        return Triple(allLocations, importantLocations, unimportantLocations)
+    }
+
+    /**
+     * Method to get all items for a location.
+     */
+    private fun getItems(locationId: Int): List<Item> {
+        val items = mutableListOf<Item>()
+        val query = "SELECT * FROM items WHERE locations_id = $locationId"
+        db?.rawQuery(query, null)?.use { cursor ->
+            if (cursor.moveToFirst()) {
+                do {
+                    val id = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
+                    val name = cursor.getString(cursor.getColumnIndexOrThrow("name"))
+                    val texts = getTexts("items_id", id)
+                    val detailedText = texts?.get(true)
+                    val conciseText = texts?.get(false)
+                    items.add(Item(name, detailedText, conciseText))
+                } while (cursor.moveToNext())
+            }
+        }
+        return items
+    }
+
+    /**
+     * Method to get texts for a specific item.
+     * @param field The field to search for
+     * @param itemId The item id to search for
+     */
+    private fun getTexts(field: String, itemId: Int): Map<Boolean, Text>? {
+        val query = "SELECT * FROM texts WHERE $field = $itemId"
+        val texts = mutableMapOf<Boolean, Text>()
+        db?.rawQuery(query, null)?.use { cursor ->
+            if (cursor.moveToFirst()) {
+                do {
+                    val text = cursor.getString(cursor.getColumnIndexOrThrow("text"))
+                    val media = getMedia(cursor.getInt(cursor.getColumnIndexOrThrow("id")))
+                    val isDetailed = cursor.getInt(cursor.getColumnIndexOrThrow("detailed")) == 1
+                    texts[isDetailed] = Text(text, media)
+                } while (cursor.moveToNext())
+            }
+            return texts
+        }
+        return null
+    }
+
+    private fun getMedia(textId: Int): Media? {
+        val query = "SELECT * FROM media WHERE texts_id = $textId"
+        db?.rawQuery(query, null)?.use { cursor ->
+            if (cursor.moveToFirst()) {
+                val url = cursor.getString(cursor.getColumnIndexOrThrow("url"))
+                return Media(URL(url))
+            }
+        }
+        return null
     }
 }
