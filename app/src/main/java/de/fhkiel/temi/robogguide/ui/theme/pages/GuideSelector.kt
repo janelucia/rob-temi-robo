@@ -27,6 +27,7 @@ fun GuideSelector(innerPadding: PaddingValues, navHostController: NavHostControl
     var isExhibitSelected by remember { mutableStateOf(false) }
     var selectedLength by remember { mutableStateOf("") }
     var selectedInfoLoad by remember { mutableStateOf("") }
+    //TODO make use of Tour object ???
 
     Column(
         modifier = Modifier
