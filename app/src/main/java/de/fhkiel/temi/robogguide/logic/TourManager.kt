@@ -230,18 +230,19 @@ class TourManager(private val db: SQLiteDatabase?) {
     private fun fillThePlaceWithData() {
         Log.i("TourManager", "Filling the selected place with data")
 
-        val (allLocations, importantLocations, unimportantLocations) = getLocations()
-        selectedPlace = Place(currentPlaceName!!, unimportantLocations, importantLocations, allLocations)
+        val (allLocations, importantLocations) = getLocations()
+        selectedPlace = Place(currentPlaceName!!, importantLocations, allLocations)
     }
 
     /**
      * Method to get all locations for the current place.
      */
-    private fun getLocations(): Triple<List<Location>,List<Location>,List<Location>> {
+    private fun getLocations(): Pair<List<Location>,List<Location>> {
         val allLocations = mutableListOf<Location>()
         val importantLocations = mutableListOf<Location>()
         val unimportantLocations = mutableListOf<Location>()
         val query = "SELECT * FROM locations WHERE places_id = $currentPlaceId"
+
         db?.rawQuery(query, null)?.use { cursor ->
             if (cursor.moveToFirst()) {
                 do {
@@ -258,10 +259,24 @@ class TourManager(private val db: SQLiteDatabase?) {
                     } else {
                         unimportantLocations.add(Location(name, getItems(id), detailedText, conciseText))
                     }
+
                 } while (cursor.moveToNext())
             }
         }
-        return Triple(allLocations, importantLocations, unimportantLocations)
+        return Pair(allLocations, importantLocations)
+    }
+
+
+    private fun getTransfers() {
+        // get for the current place the one route
+        val queryStartPoint = """
+            SELECT * FROM transfers AS t 
+            JOIN locations as l
+            ON t.location_from = l.id
+            JOIN places as p
+            ON l.places_id = p.id
+            WHERE p.id = $currentPlaceId AND t.location_to IS NULL
+            """
     }
 
     /**
