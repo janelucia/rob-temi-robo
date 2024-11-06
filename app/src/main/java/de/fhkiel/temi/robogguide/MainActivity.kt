@@ -73,13 +73,12 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
         } catch (e: IOException) {
             e.printStackTrace()
             tourManager = TourManager(null) // Initialize with null to simulate error
-            tourManager.error = e
+            tourManager.error.value = e
         }
 
         // TODO: Close Icon for top bar on setup and hidden on normal
         setContent {
             val isSetupComplete by setupViewModel.isSetupComplete.observeAsState(false)
-            val hasError = tourManager.error != null
 
             if (isSetupComplete) {
                 Rob_Temi_Robo_UITheme {
@@ -103,7 +102,7 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
                     }
                 }
             } else {
-                Setup(setupViewModel, tourManager, hasError)
+                Setup(setupViewModel, tourManager)
             }
 
         }
@@ -129,6 +128,7 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
 
     override fun onRobotReady(isReady: Boolean) {
         if (isReady) {
+            Log.i("MainActivity", "Robot is ready")
             mRobot = Robot.getInstance()
 
             // ---- DISABLE TEMI UI ELEMENTS ---
@@ -139,7 +139,8 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
                 packageManager.getActivityInfo(componentName, PackageManager.GET_META_DATA)
             Robot.getInstance().onStart(activityInfo)
 
-            showMapData()
+            setupViewModel.robotIsReady()
+            // showMapData()
         }
     }
 
