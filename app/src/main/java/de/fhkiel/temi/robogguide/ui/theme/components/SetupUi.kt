@@ -1,5 +1,6 @@
 package de.fhkiel.temi.robogguide.ui.theme.components
 
+import android.util.Log
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DropdownMenu
@@ -21,6 +23,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,6 +36,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.robotemi.sdk.Robot
 import de.fhkiel.temi.robogguide.R
 import de.fhkiel.temi.robogguide.logic.TourManager
 import de.fhkiel.temi.robogguide.ui.logic.SetupViewModel
@@ -41,6 +45,8 @@ import de.fhkiel.temi.robogguide.ui.logic.SetupViewModel
 fun SetupUi(tourManager: TourManager, setupViewModel: SetupViewModel) {
     var expanded by remember { mutableStateOf(false) }
     var selectedIndex by remember { mutableIntStateOf(1) } // needs to be one
+    val isRobotReady by setupViewModel.isRobotReady.observeAsState(false)
+
     Scaffold(
         topBar = {
             Text(
@@ -136,15 +142,56 @@ fun SetupUi(tourManager: TourManager, setupViewModel: SetupViewModel) {
                 }
             }
 
-            CustomButton(
-                onClick = {
-                    setupViewModel.completeSetup()
-                    // Set the selected place inside the tour manager
-                    tourManager.setPlace(selectedIndex, tourManager.allPlacesMap[selectedIndex]!!)
-                },
-                title = "Setup beenden",
-                modifier = Modifier.padding(16.dp)
-            )
+            Row {
+                CustomButton(
+                    onClick = {
+                        // Set the selected place inside the tour manager
+                        tourManager.setPlace(
+                            selectedIndex,
+                            tourManager.allPlacesMap[selectedIndex]!!
+                        )
+                        setupViewModel.completeSetup()
+                    },
+                    title = "Setup beenden",
+                    modifier = Modifier.padding(16.dp)
+                )
+                Spacer(modifier = Modifier.width(16.dp))
+                if (isRobotReady) {
+                    CustomButton(
+                        onClick = {
+                            val mRobot = Robot.getInstance()
+                            val mapName = mRobot.getMapData()?.mapName
+                            var placeFound = false
+                            var placeSet = false
+                            Log.i("SetupUi", "Reading map name: $mapName")
+                            tourManager.allPlacesMap.forEach { (index, placeName) ->
+                                if (mapName?.startsWith(placeName) == true) {
+                                    placeSet = tourManager.setPlace(index, placeName)
+                                    placeFound = true
+                                    return@forEach
+                                }
+                            }
+                            if (!placeFound) {
+                                Log.e("SetupUi", "Place not found")
+                            } else {
+                                if (placeSet) {
+                                    setupViewModel.completeSetup()
+                                } else {
+                                    Log.e("SetupUi", "Place not set")
+                                }
+                            }
+                        },
+                        title = "Den Roboter auswählen lassen",
+                        modifier = Modifier.padding(16.dp)
+                    )
+                } else {
+                    LoadingSpinner(
+                        messages = listOf("Warte auf Roboter..."),
+                        currentMessageIndex = 0
+                    )
+                }
+
+            }
         }
     }
 }

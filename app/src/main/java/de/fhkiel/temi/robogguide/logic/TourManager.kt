@@ -2,6 +2,8 @@ package de.fhkiel.temi.robogguide.logic
 
 import android.database.sqlite.SQLiteDatabase
 import android.util.Log
+import androidx.lifecycle.MutableLiveData
+import com.robotemi.sdk.Robot
 import de.fhkiel.temi.robogguide.models.Item
 import de.fhkiel.temi.robogguide.models.LevelOfDetail
 import de.fhkiel.temi.robogguide.models.Location
@@ -15,7 +17,10 @@ class TourManager(private val db: SQLiteDatabase?) {
     private var currentPlaceId: Int? = null
     private var currentPlaceName: String? = null
     val allPlacesMap: MutableMap<Int, String> = mutableMapOf()
-    var error: Exception? = null
+
+    val error = MutableLiveData<Exception>(null)
+
+    var doneChecking = false
 
     private val tourStartLocation = mutableMapOf<Int, Int>()
     private val tourEndLocation = mutableMapOf<Int, Int>()
@@ -23,15 +28,13 @@ class TourManager(private val db: SQLiteDatabase?) {
     var selectedPlace: Place? = null
     var selectedLevelOfDetail: LevelOfDetail? = null
 
-
-
-
     init {
         // try catch to handle an error like a wrongly named database
         try {
             checkDatabase()
+            doneChecking = true
         } catch (e: Exception) {
-            error = e
+            error.value = e
             Log.e("TourManager", "Error initializing TourManager: ${e.message}")
         }
     }
@@ -44,8 +47,8 @@ class TourManager(private val db: SQLiteDatabase?) {
         val locationIds = mutableSetOf<Int>()
         val startLocations = mutableSetOf<Int>()
         val endLocations = mutableSetOf<Int>()
-        val fromCount = mutableMapOf<Int, MutableMap<Int,Int>>()
-        val toCount = mutableMapOf<Int, MutableMap<Int,Int>>()
+        val fromCount = mutableMapOf<Int, MutableMap<Int, Int>>()
+        val toCount = mutableMapOf<Int, MutableMap<Int, Int>>()
         val errorMessage =
             "Die Datenbank scheint nicht korrekt befüllt zu sein.\nFolgender Fehler ist aufgetreten:\n"
 
@@ -265,12 +268,19 @@ class TourManager(private val db: SQLiteDatabase?) {
         Log.i("TourManager", "Database is valid")
     }
 
-
-    fun setPlace(placeId: Int, placeName: String) {
+    fun setPlace(placeId: Int, placeName: String): Boolean {
         Log.i("TourManager", "Set current place to $placeName")
         currentPlaceId = placeId
         currentPlaceName = placeName
         fillThePlaceWithData()
+        try {
+            checkPlaceLocationsWithRobot()
+        } catch (e: Exception) {
+            error.value = e
+            Log.e("TourManager", "Error checking place locations with robot: ${e.message}")
+            return false
+        }
+        return true
     }
 
     private fun fillThePlaceWithData() {
@@ -408,5 +418,22 @@ class TourManager(private val db: SQLiteDatabase?) {
             }
         }
         return null
+    }
+
+    private fun checkPlaceLocationsWithRobot() {
+        val mRobot = Robot.getInstance()
+        Log.i("TourManager", "Checking place locations with robot")
+
+        assert(selectedPlace != null)
+        selectedPlace!!.allLocations.forEach { location ->
+            mRobot.locations.forEach { robotLocation ->
+                Log.d("TourManager", "Location: $robotLocation")
+            }
+
+            if (!mRobot.locations.contains(location.name)) {
+                Log.e("TourManager", "Location ${location.name} not found on robot")
+                throw IllegalStateException("Der Ort ${location.name} konnte nicht auf dem Roboter gefunden werden.")
+            }
+        }
     }
 }
