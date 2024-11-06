@@ -1,5 +1,6 @@
 package de.fhkiel.temi.robogguide.ui.theme.components
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -16,12 +17,13 @@ import androidx.compose.material3.Button
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.robotemi.sdk.Robot
 import de.fhkiel.temi.robogguide.models.Location
 import de.fhkiel.temi.robogguide.ui.theme.Purple40
 import androidx.compose.material3.Text as Text
 
 @Composable
-fun LocationPreview(innerPadding: PaddingValues, location: Location) {
+fun LocationPreview(innerPadding: PaddingValues, location: Location, mRobot: Robot?) {
 
     Row(
         modifier = Modifier
@@ -36,7 +38,11 @@ fun LocationPreview(innerPadding: PaddingValues, location: Location) {
         }
         Spacer(modifier = Modifier.width(32.dp))
         Button(
-            onClick = { /*TODO*/ },
+            onClick = {
+                mRobot?.goTo(location = location.name)
+                Log.i("LocationPreview", "Navigating to ${location.name}")
+                Log.d("LocationPreview", "${mRobot?.isReady}")
+            },
         ) {
             Text("Bring mich dort hin")
         }

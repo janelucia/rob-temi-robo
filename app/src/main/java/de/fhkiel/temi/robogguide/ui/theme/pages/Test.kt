@@ -28,7 +28,7 @@ fun Test(innerPadding: PaddingValues, mRobot: Robot?, tourManager: TourManager) 
     ) {
         tourManager.selectedPlace?.allLocations?.forEach { location: Location ->
             Log.d("Test", "Location: ${location.name}")
-            LocationPreview(innerPadding, location = location)
+            LocationPreview(innerPadding, location = location, mRobot)
             Spacer(modifier = Modifier.padding(16.dp))
         }
     }
