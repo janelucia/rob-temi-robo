@@ -25,8 +25,8 @@ fun GuideNavigationButton(
     val navBackStackEntry = navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry.value?.destination?.route
 
-    var numberOfLocations = tourViewModel.numberOfExhibits
-    var currentExhibit = tourViewModel.currentExhibit
+    var numberOfLocations = tourViewModel.numberOfLocations
+    var currentExhibit = tourViewModel.currentLocation
 
     if (currentDestination == "guide") {
         Row(horizontalArrangement = Arrangement.SpaceAround, modifier = Modifier.fillMaxWidth()) {
@@ -50,7 +50,7 @@ fun GuideNavigationButton(
                         fontSize = 64.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.clickable {
-                            tourViewModel.updateCurrentExhibit(currentExhibit - 1)
+                            tourViewModel.updateCurrentLocation(currentExhibit - 1)
                             Log.d("Test", "currentExhibit -1: ${currentExhibit} number of loc: ${numberOfLocations}")
                             //TODO robo und ui stuff
                         }
@@ -64,7 +64,7 @@ fun GuideNavigationButton(
                         fontSize = 64.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.clickable {
-                            tourViewModel.updateCurrentExhibit(currentExhibit + 1)
+                            tourViewModel.updateCurrentLocation(currentExhibit + 1)
                             Log.d("Test", "currentExhibit +1: ${currentExhibit}")
                             //TODO robo und ui stuff
                         }

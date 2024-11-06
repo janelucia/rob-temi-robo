@@ -35,8 +35,8 @@ fun Guide(
     var guideState by remember { mutableStateOf(GuideState.Transfer) }
 
     val tourLocations: List<Location> = tourViewModel.tourLocations
-    var numberOfLocations = tourViewModel.numberOfExhibits
-    var currentExhibit = tourViewModel.currentExhibit
+    var numberOfLocations = tourViewModel.numberOfLocations
+    var currentExhibit = tourViewModel.currentLocation
 
 
     Column(
@@ -114,7 +114,7 @@ fun Guide(
                         title = "Zum nächsten Exponat",
                         onClick = {
                             guideState = GuideState.Transfer
-                            tourViewModel.updateCurrentExhibit(currentExhibit + 1)
+                            tourViewModel.updateCurrentLocation(currentExhibit + 1)
                         }
                     )
                     Spacer(modifier = Modifier.height(16.dp))
