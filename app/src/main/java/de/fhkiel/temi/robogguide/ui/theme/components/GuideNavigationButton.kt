@@ -25,8 +25,9 @@ fun GuideNavigationButton(
     val navBackStackEntry = navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry.value?.destination?.route
 
-    var numberOfLocations = tourViewModel.numberOfLocations
-    var currentExhibit = tourViewModel.currentLocation
+
+    var numberOfItems = tourViewModel.numberOfItemsAtCurrentLocation
+    var currentItem = tourViewModel.currentItemIndex
 
     if (currentDestination == "guide") {
         Row(horizontalArrangement = Arrangement.SpaceAround, modifier = Modifier.fillMaxWidth()) {
@@ -36,7 +37,7 @@ fun GuideNavigationButton(
                     .align(Alignment.CenterVertically),
                 contentAlignment = Alignment.Center
             ) {
-                GuideProgressBar(numberOfLocations, currentExhibit)
+                GuideProgressBar(tourViewModel.numberOfItemsAtCurrentLocation, tourViewModel.currentItemIndex)
             }
 
 
@@ -50,8 +51,8 @@ fun GuideNavigationButton(
                         fontSize = 64.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.clickable {
-                            tourViewModel.updateCurrentLocation(currentExhibit - 1)
-                            Log.d("Test", "currentExhibit -1: ${currentExhibit} number of loc: ${numberOfLocations}")
+                            tourViewModel.updateCurrentItem(currentItem - 1)
+                            Log.d("Test", "currentItem -1: ${currentItem} number of loc: ${numberOfItems}")
                             //TODO robo und ui stuff
                         }
                     )
@@ -64,8 +65,8 @@ fun GuideNavigationButton(
                         fontSize = 64.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.clickable {
-                            tourViewModel.updateCurrentLocation(currentExhibit + 1)
-                            Log.d("Test", "currentExhibit +1: ${currentExhibit}")
+                            tourViewModel.updateCurrentItem(currentItem + 1)
+                            Log.d("Test", "currentExhibit +1: ${currentItem}")
                             //TODO robo und ui stuff
                         }
                     )

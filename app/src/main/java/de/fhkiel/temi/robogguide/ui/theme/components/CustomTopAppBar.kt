@@ -94,7 +94,7 @@ fun CustomTopAppBar(navController: NavController, tourViewModel: TourViewModel) 
         if (currentDestination == "guide") {
             // Exponat Titel anzeigen
             Header(
-                title = tourViewModel.giveCurrentLocation().name,
+                title = tourViewModel.giveCurrentLocation().name + tourViewModel.giveCurrentItem().name,
                 fontWeight = FontWeight.Bold,
                 fontSize = 24.sp,
                 modifier = Modifier

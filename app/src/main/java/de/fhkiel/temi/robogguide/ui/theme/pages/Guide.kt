@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,9 +35,11 @@ fun Guide(
 
     var guideState by remember { mutableStateOf(GuideState.Transfer) }
 
-    val tourLocations: List<Location> = tourViewModel.tourLocations
-    var numberOfLocations = tourViewModel.numberOfLocations
-    var currentExhibit = tourViewModel.currentLocation
+
+    val currentLocationItems by remember { derivedStateOf { tourViewModel.currentLocationItems } }
+    //var numberOfItems = tourViewModel.numberOfItemsAtCurrentLocation
+    val currentItemIndex by remember { derivedStateOf { tourViewModel.currentItemIndex } }
+    val currentItem by remember { derivedStateOf { tourViewModel.giveCurrentItem()} }
 
 
     Column(
@@ -79,18 +82,18 @@ fun Guide(
 
             GuideState.Exhibit -> {
                 Header(
-                    title = "Exponat: Ein super mega toller Computer",
+                    title = currentItem.name,
                     fontSize = 64.sp,
                     fontWeight = FontWeight.Bold
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Header(
-                    title = "Hier ist ganz viel Inhalt:",
-                    fontSize = 32.sp
+                    title = currentItem.conciseText.toString(),
+                    fontSize = 16.sp
                 )
                 Header(
-                    title = "Irgendein Text Inhalt",
-                    fontSize = 20.sp,
+                    title = currentItem.detailedText.toString(),
+                    fontSize = 12.sp,
                     modifier = Modifier.padding(16.dp)
                 )
                 Spacer(modifier = Modifier.height(16.dp))
@@ -114,7 +117,7 @@ fun Guide(
                         title = "Zum nächsten Exponat",
                         onClick = {
                             guideState = GuideState.Transfer
-                            tourViewModel.updateCurrentLocation(currentExhibit + 1)
+                            tourViewModel.updateCurrentItem(currentItemIndex + 1)
                         }
                     )
                     Spacer(modifier = Modifier.height(16.dp))

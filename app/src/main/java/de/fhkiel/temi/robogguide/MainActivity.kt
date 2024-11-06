@@ -88,7 +88,7 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
                     val navController = rememberNavController()
                     Scaffold(
                         modifier = Modifier.fillMaxSize(),
-                        topBar = { CustomTopAppBar(navController) },
+                        topBar = { CustomTopAppBar(navController, tourViewModel) },
                         bottomBar = {
                             GuideNavigationButton(
                                 navController,

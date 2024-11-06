@@ -1,5 +1,6 @@
 package de.fhkiel.temi.robogguide.ui.theme.components
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -51,6 +52,7 @@ fun GuideProgressBar(numberOfExhibits: Int, currentExhibit: Int) {
         ) {
             //Fortschrittselemente, eines hervorgehoben (=das aktuelle)
             repeat(numberOfExhibits) {
+                Log.d("Test", "current bead ${it}")
                 Box(
                     modifier = Modifier
                         .size(24.dp)

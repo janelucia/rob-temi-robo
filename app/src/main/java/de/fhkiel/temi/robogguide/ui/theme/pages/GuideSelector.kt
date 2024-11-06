@@ -76,7 +76,7 @@ fun GuideSelector(innerPadding: PaddingValues, navHostController: NavHostControl
                                 onClick = { selectedInfoLoad = "Highlights"
                                     tourManager.selectedPlace?.importantLocations?.let {
                                         tourViewModel.fillTourLocations(
-                                            it
+                                            it.toMutableList()
                                         )
                                     }
                                     //TODO navigation zur Entwicklung eingebaut
