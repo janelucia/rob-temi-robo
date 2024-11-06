@@ -5,7 +5,7 @@ package de.fhkiel.temi.robogguide.models
  */
 class Location(
     val name: String,
-    val items: List<Item>,
+    val items: MutableList<Item>,
     val detailedText: Text?,
     val conciseText: Text?
 )
