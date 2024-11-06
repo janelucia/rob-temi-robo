@@ -18,11 +18,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.robotemi.sdk.Robot
+import de.fhkiel.temi.robogguide.logic.TourManager
+import de.fhkiel.temi.robogguide.ui.logic.TourViewModel
 import de.fhkiel.temi.robogguide.ui.theme.components.CustomButton
 import de.fhkiel.temi.robogguide.ui.theme.components.Header
 
 @Composable
-fun GuideSelector(innerPadding: PaddingValues, navHostController: NavHostController, mRobot: Robot?){
+fun GuideSelector(innerPadding: PaddingValues, navHostController: NavHostController, mRobot: Robot?, tourManager: TourManager, tourViewModel: TourViewModel){
     var isGuideSelected by remember { mutableStateOf(false) }
     var isExhibitSelected by remember { mutableStateOf(false) }
     var selectedLength by remember { mutableStateOf("") }
@@ -72,6 +74,11 @@ fun GuideSelector(innerPadding: PaddingValues, navHostController: NavHostControl
                                 contentColor = Color.Black,
                                 width = 800.dp,
                                 onClick = { selectedInfoLoad = "Highlights"
+                                    tourManager.selectedPlace?.importantLocations?.let {
+                                        tourViewModel.fillTourLocations(
+                                            it
+                                        )
+                                    }
                                     //TODO navigation zur Entwicklung eingebaut
                                 navHostController.navigate("guide")}
                             )

@@ -16,7 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.rob_temi_robo_ui.ui.theme.pages.Guide
+import de.fhkiel.temi.robogguide.ui.theme.pages.Guide
 import com.robotemi.sdk.Robot
 import com.robotemi.sdk.TtsRequest
 import com.robotemi.sdk.listeners.OnRobotReadyListener
@@ -90,7 +90,13 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
                     Scaffold(
                         modifier = Modifier.fillMaxSize(),
                         topBar = { CustomTopAppBar(navController) },
-                        bottomBar = { GuideNavigationButton(navController, tourManager, tourViewModel) }
+                        bottomBar = {
+                            GuideNavigationButton(
+                                navController,
+                                tourManager,
+                                tourViewModel
+                            )
+                        }
                     ) { innerPadding ->
                         NavHost(navController, startDestination = "homePage") {
                             composable("homePage") { Home(innerPadding, navController, mRobot) }
@@ -98,11 +104,19 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
                                 GuideSelector(
                                     innerPadding,
                                     navController,
-                                    mRobot
+                                    mRobot,
+                                    tourManager,
+                                    tourViewModel
                                 )
                             }
                             composable("guide") {
-                                Guide(innerPadding, navController, mRobot, tourManager, tourViewModel)
+                                Guide(
+                                    innerPadding,
+                                    navController,
+                                    mRobot,
+                                    tourManager,
+                                    tourViewModel
+                                )
                             }
                             composable("test") { Test(mRobot, tourManager) }
                         }

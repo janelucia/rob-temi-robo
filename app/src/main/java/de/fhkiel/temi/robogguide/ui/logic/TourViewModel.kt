@@ -7,31 +7,19 @@ import androidx.compose.runtime.setValue
 import de.fhkiel.temi.robogguide.models.Location
 
 class TourViewModel : ViewModel() {
-    private var currentExhibit by mutableIntStateOf(0)
-    private var tourLocations: List<Location> = emptyList()
-    private var numberOfExhibits: Int = tourLocations.size
+    var currentExhibit by mutableIntStateOf(0)
+    var tourLocations: List<Location> = emptyList()
+    var numberOfExhibits: Int = tourLocations.size
 
-    fun setTourLocations(locations: List<Location>) {
+    fun fillTourLocations(locations: List<Location>) {
         tourLocations = locations
         numberOfExhibits = tourLocations.size
     }
 
-    fun getNumberOfExhibits(): Int {
-        return numberOfExhibits
-    }
-
-    fun getTourLocations(): List<Location> {
-        return tourLocations
-    }
-
-    fun setCurrentExhibit(index: Int) {
+    fun updateCurrentExhibit(index: Int) {
         if (index in 0 until numberOfExhibits) {
             currentExhibit = index
         }
-    }
-
-    fun getCurrentExhibit(): Int {
-        return currentExhibit
     }
 }
 

@@ -1,23 +1,15 @@
 package de.fhkiel.temi.robogguide.ui.theme.components
 
+import android.util.Log
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.snapping.SnapPosition
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -33,8 +25,8 @@ fun GuideNavigationButton(
     val navBackStackEntry = navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry.value?.destination?.route
 
-    var numberOfLocations = tourViewModel.getNumberOfExhibits()
-    var currentExhibit = tourViewModel.getCurrentExhibit()
+    var numberOfLocations = tourViewModel.numberOfExhibits
+    var currentExhibit = tourViewModel.currentExhibit
 
     if (currentDestination == "guide") {
         Row(horizontalArrangement = Arrangement.SpaceAround, modifier = Modifier.fillMaxWidth()) {
@@ -58,7 +50,8 @@ fun GuideNavigationButton(
                         fontSize = 64.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.clickable {
-                            tourViewModel.setCurrentExhibit(currentExhibit - 1)
+                            tourViewModel.updateCurrentExhibit(currentExhibit - 1)
+                            Log.d("Test", "currentExhibit -1: ${currentExhibit} number of loc: ${numberOfLocations}")
                             //TODO robo und ui stuff
                         }
                     )
@@ -71,7 +64,8 @@ fun GuideNavigationButton(
                         fontSize = 64.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.clickable {
-                            tourViewModel.setCurrentExhibit(currentExhibit + 1)
+                            tourViewModel.updateCurrentExhibit(currentExhibit + 1)
+                            Log.d("Test", "currentExhibit +1: ${currentExhibit}")
                             //TODO robo und ui stuff
                         }
                     )

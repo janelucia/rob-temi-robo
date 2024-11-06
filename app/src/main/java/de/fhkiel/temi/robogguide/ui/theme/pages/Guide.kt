@@ -1,4 +1,4 @@
-package com.example.rob_temi_robo_ui.ui.theme.pages
+package de.fhkiel.temi.robogguide.ui.theme.pages
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
@@ -34,9 +34,9 @@ fun Guide(
 
     var guideState by remember { mutableStateOf(GuideState.Transfer) }
 
-    val tourLocations: List<Location> = tourViewModel.getTourLocations()
-    var numberOfLocations = tourViewModel.getNumberOfExhibits()
-    var currentExhibit = tourViewModel.getCurrentExhibit()
+    val tourLocations: List<Location> = tourViewModel.tourLocations
+    var numberOfLocations = tourViewModel.numberOfExhibits
+    var currentExhibit = tourViewModel.currentExhibit
 
 
     Column(
@@ -114,7 +114,7 @@ fun Guide(
                         title = "Zum nächsten Exponat",
                         onClick = {
                             guideState = GuideState.Transfer
-                            tourViewModel.setCurrentExhibit(currentExhibit + 1)
+                            tourViewModel.updateCurrentExhibit(currentExhibit + 1)
                         }
                     )
                     Spacer(modifier = Modifier.height(16.dp))
