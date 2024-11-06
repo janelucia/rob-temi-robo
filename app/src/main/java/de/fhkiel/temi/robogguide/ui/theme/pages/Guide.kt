@@ -6,6 +6,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -37,9 +38,8 @@ fun Guide(
 
 
     val currentLocationItems by remember { derivedStateOf { tourViewModel.currentLocationItems } }
-    //var numberOfItems = tourViewModel.numberOfItemsAtCurrentLocation
-    val currentItemIndex by remember { derivedStateOf { tourViewModel.currentItemIndex } }
-    val currentItem by remember { derivedStateOf { tourViewModel.giveCurrentItem()} }
+
+    val currentItemIndex by tourViewModel.currentItemIndex.observeAsState(0)
 
 
     Column(
@@ -82,17 +82,17 @@ fun Guide(
 
             GuideState.Exhibit -> {
                 Header(
-                    title = currentItem.name,
+                    title = tourViewModel.currentLocationItems[currentItemIndex].name,
                     fontSize = 64.sp,
                     fontWeight = FontWeight.Bold
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Header(
-                    title = currentItem.conciseText.toString(),
+                    title = tourViewModel.currentLocationItems[currentItemIndex].conciseText?.value,
                     fontSize = 16.sp
                 )
                 Header(
-                    title = currentItem.detailedText.toString(),
+                    title = tourViewModel.currentLocationItems[currentItemIndex].detailedText?.value,
                     fontSize = 12.sp,
                     modifier = Modifier.padding(16.dp)
                 )

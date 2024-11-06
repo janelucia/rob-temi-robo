@@ -44,7 +44,7 @@ import de.fhkiel.temi.robogguide.ui.logic.SetupViewModel
 @Composable
 fun SetupUi(tourManager: TourManager, setupViewModel: SetupViewModel) {
     var expanded by remember { mutableStateOf(false) }
-    var selectedIndex by remember { mutableIntStateOf(1) } // needs to be one
+    var selectedIndex by remember { mutableIntStateOf(tourManager.allPlacesMap.size) } // set to the last element of the list
     val isRobotReady by setupViewModel.isRobotReady.observeAsState(false)
 
     Scaffold(

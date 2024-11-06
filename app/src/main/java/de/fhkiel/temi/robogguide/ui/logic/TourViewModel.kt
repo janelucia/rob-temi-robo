@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.lifecycle.ViewModel
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.MutableLiveData
 import de.fhkiel.temi.robogguide.models.Item
 import de.fhkiel.temi.robogguide.models.Location
 
@@ -14,9 +15,11 @@ class TourViewModel : ViewModel() {
     var tourLocationsAsItems: MutableList<Item> = mutableListOf()
     var numberOfLocations: Int = tourLocations.size
 
-    var currentItemIndex by mutableIntStateOf(0)
     var currentLocationItems: MutableList<Item> = mutableListOf()
-    var numberOfItemsAtCurrentLocation: Int = currentLocationItems.size
+
+    val currentItemIndex = MutableLiveData(0)
+    val numberOfItemsAtCurrentLocation = MutableLiveData(currentLocationItems.size)
+
 
 
     /* Initial funssssssssss */
@@ -54,8 +57,8 @@ class TourViewModel : ViewModel() {
         currentLocationItems.addAll(items)
         currentLocationItems.add(0, tourLocationsAsItems[currentLocationIndex])
 
-        numberOfItemsAtCurrentLocation = currentLocationItems.size
-        currentItemIndex = 0
+        numberOfItemsAtCurrentLocation.value = currentLocationItems.size
+        currentItemIndex.value = 0
     }
 
 
@@ -69,14 +72,14 @@ class TourViewModel : ViewModel() {
     }
 
     fun updateCurrentItem(index: Int) {
-        if (index in 0 until numberOfItemsAtCurrentLocation) {
-            currentItemIndex = index
-        } else if (index >= numberOfItemsAtCurrentLocation) {
+        if (index in 0 until numberOfItemsAtCurrentLocation.value!!) {
+            currentItemIndex.value = index
+        } else if (index >= numberOfItemsAtCurrentLocation.value!!) {
             updateCurrentLocation(currentLocationIndex + 1)
-            currentItemIndex = 0
+            currentItemIndex.value = 0
         } else if (index < 0) {
             updateCurrentLocation(currentLocationIndex - 1)
-            currentItemIndex = 0
+            currentItemIndex.value = 0
         }
     }
 
@@ -87,7 +90,6 @@ class TourViewModel : ViewModel() {
     }
 
     fun giveCurrentItem(): Item {
-        return currentLocationItems[currentItemIndex]
+        return currentLocationItems[currentItemIndex.value!!]
     }
 }
-

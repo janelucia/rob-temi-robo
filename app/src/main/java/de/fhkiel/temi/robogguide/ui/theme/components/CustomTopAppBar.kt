@@ -64,6 +64,7 @@ fun CustomTopAppBar(navController: NavController, tourViewModel: TourViewModel) 
                     }
                 }
                 Spacer(modifier = Modifier.width(16.dp))
+                /* Wir sind einsprachige dullies
                 CustomButton(
                     title = "EN",
                     onClick = {},
@@ -76,6 +77,7 @@ fun CustomTopAppBar(navController: NavController, tourViewModel: TourViewModel) 
                     borderWidth = 2.dp,
                 )
                 Spacer(modifier = Modifier.width(16.dp))
+                 */
                 CustomButton(
                     title = "?",
                     onClick = {},
@@ -94,7 +96,7 @@ fun CustomTopAppBar(navController: NavController, tourViewModel: TourViewModel) 
         if (currentDestination == "guide") {
             // Exponat Titel anzeigen
             Header(
-                title = tourViewModel.giveCurrentLocation().name + tourViewModel.giveCurrentItem().name,
+                title = tourViewModel.giveCurrentLocation().name,
                 fontWeight = FontWeight.Bold,
                 fontSize = 24.sp,
                 modifier = Modifier
