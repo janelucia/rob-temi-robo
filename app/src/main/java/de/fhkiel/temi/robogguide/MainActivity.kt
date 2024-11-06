@@ -98,7 +98,7 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
                                 )
                             }
                             composable("guide") { Guide(innerPadding, navController, mRobot) }
-                            composable("test") { Test(mRobot, tourManager) }
+                            composable("test") { Test(innerPadding, mRobot, tourManager) }
                         }
                     }
                 }
