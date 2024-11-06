@@ -27,10 +27,11 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import de.fhkiel.temi.robogguide.R
+import de.fhkiel.temi.robogguide.ui.logic.TourViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CustomTopAppBar(navController: NavController) {
+fun CustomTopAppBar(navController: NavController, tourViewModel: TourViewModel) {
     val navBackStackEntry = navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry.value?.destination?.route
 
@@ -93,7 +94,7 @@ fun CustomTopAppBar(navController: NavController) {
         if (currentDestination == "guide") {
             // Exponat Titel anzeigen
             Header(
-                title = "AKTUELLES EXPONAT",
+                title = tourViewModel.giveCurrentLocation().name,
                 fontWeight = FontWeight.Bold,
                 fontSize = 24.sp,
                 modifier = Modifier
