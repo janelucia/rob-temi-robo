@@ -1,23 +1,18 @@
 package de.fhkiel.temi.robogguide.ui.theme.components
 
-import androidx.compose.foundation.Image
+import android.util.Log
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.robotemi.sdk.Robot
-import de.fhkiel.temi.robogguide.R
 import de.fhkiel.temi.robogguide.logic.robotSpeakText
 import de.fhkiel.temi.robogguide.models.Item
-import de.fhkiel.temi.robogguide.models.LevelOfDetail
 import de.fhkiel.temi.robogguide.ui.logic.TourViewModel
 import kotlinx.coroutines.delay
 
@@ -52,14 +47,7 @@ fun Exhibit(currentItem: Item, mRobot: Robot?, tourViewModel: TourViewModel) {
     )
     Spacer(modifier = Modifier.height(16.dp))
     // Optional: Bild oder weitere Details
-    Image(
-        painter = painterResource(id = R.drawable.computermuseum_maerz_23),
-        contentDescription = "Exponat Image",
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(350.dp),
-        contentScale = ContentScale.Fit
-    )
-
+    Log.d("Exhibit", "Exhibit Image ${currentItem.conciseText?.media?.url}")
+    LoadingImage(currentItem.conciseText?.media?.url.toString())
 
 }
