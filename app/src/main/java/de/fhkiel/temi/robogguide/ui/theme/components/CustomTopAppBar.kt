@@ -35,13 +35,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.robotemi.sdk.Robot
 import de.fhkiel.temi.robogguide.MainActivity
 import de.fhkiel.temi.robogguide.R
 import de.fhkiel.temi.robogguide.ui.logic.TourViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CustomTopAppBar(navController: NavController, tourViewModel: TourViewModel, activity: Activity) {
+fun CustomTopAppBar(navController: NavController, tourViewModel: TourViewModel, activity: Activity, mRobot: Robot?) {
     var showHelpPopup by remember { mutableStateOf(false) }
     var showPopUp by remember { mutableStateOf(false) }
     val navBackStackEntry = navController.currentBackStackEntryAsState()
@@ -52,7 +53,7 @@ fun CustomTopAppBar(navController: NavController, tourViewModel: TourViewModel, 
     }
 
     if (showPopUp) {
-        ClosePopup(onDismiss = { showPopUp = false }, navController)
+        ClosePopup(onDismiss = { showPopUp = false }, navController, mRobot)
     }
 
     Box(modifier = Modifier.fillMaxWidth()) {
@@ -88,6 +89,20 @@ fun CustomTopAppBar(navController: NavController, tourViewModel: TourViewModel, 
                             tint = Color.Black
                         )
                     }
+                }
+                if (currentDestination == "homePage") {
+                    CustomButton(
+                        title = "Roboter zur Ladestation schicken",
+                        onClick = {
+                            mRobot?.goTo("home base")
+                        },
+                        width = 600.dp,
+                        height = 55.dp,
+                        fontSize = 32.sp,
+                        backgroundColor = Color.White,
+                        contentColor = Color.Black,
+                        borderWidth = 2.dp,
+                    )
                 }
                 Spacer(modifier = Modifier.width(16.dp))
                 CustomButton(
