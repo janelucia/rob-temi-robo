@@ -20,29 +20,29 @@ import de.fhkiel.temi.robogguide.ui.logic.TourViewModel
 fun Exhibit(currentItem: Item) {
 
     Header(
-    title = currentItem.name,
-    fontSize = 64.sp,
-    fontWeight = FontWeight.Bold
+        title = currentItem.name,
+        fontSize = 64.sp,
+        fontWeight = FontWeight.Bold
     )
     Spacer(modifier = Modifier.height(16.dp))
     Header(
-    title = currentItem.conciseText?.value,
-    fontSize = 16.sp
+        title = currentItem.conciseText?.value,
+        fontSize = 16.sp
     )
     Header(
-    title = currentItem.detailedText?.value,
-    fontSize = 12.sp,
-    modifier = Modifier.padding(16.dp)
+        title = currentItem.detailedText?.value,
+        fontSize = 12.sp,
+        modifier = Modifier.padding(16.dp)
     )
     Spacer(modifier = Modifier.height(16.dp))
     // Optional: Bild oder weitere Details
     Image(
-    painter = painterResource(id = R.drawable.computermuseum_maerz_23),
-    contentDescription = "Exponat Image",
-    modifier = Modifier
-    .fillMaxWidth()
-    .height(350.dp),
-    contentScale = ContentScale.Fit
+        painter = painterResource(id = R.drawable.computermuseum_maerz_23),
+        contentDescription = "Exponat Image",
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(350.dp),
+        contentScale = ContentScale.Fit
     )
 
 }
