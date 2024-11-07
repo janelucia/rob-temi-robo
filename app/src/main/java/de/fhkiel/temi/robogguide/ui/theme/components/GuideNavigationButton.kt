@@ -61,7 +61,7 @@ fun GuideNavigationButton(
                         fontSize = 64.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.clickable {
-                            if (tourViewModel.wasAlreadySpoken.value == true) {
+                            /*if (tourViewModel.wasAlreadySpoken.value == true) {
                                 assert(tourViewModel.levelOfDetail != null)
                                 if (tourViewModel.levelOfDetail?.isDetailed() == true) {
                                     val text =
@@ -75,8 +75,10 @@ fun GuideNavigationButton(
                                 }
                             } else {
                                 // don't speak
-                            }
+                            }*/
                         }
+
+
                     )
                     Header(title = "⏭",
                         fontSize = 64.sp,

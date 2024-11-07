@@ -20,7 +20,7 @@ import kotlinx.coroutines.delay
 fun Exhibit(currentItem: Item, mRobot: Robot?, tourViewModel: TourViewModel) {
 
     LaunchedEffect(currentItem) {
-        tourViewModel.updateAlreadySpoken()
+        //tourViewModel.updateAlreadySpoken(tourViewModel.wasAlreadySpoken.value)
         delay(2000)
         assert(tourViewModel.levelOfDetail != null)
         if (tourViewModel.levelOfDetail?.isDetailed() == true) {
@@ -29,7 +29,7 @@ fun Exhibit(currentItem: Item, mRobot: Robot?, tourViewModel: TourViewModel) {
         } else {
             robotSpeakText(mRobot, currentItem.conciseText?.value)
         }
-        tourViewModel.updateAlreadySpoken()
+        //tourViewModel.updateAlreadySpoken(tourViewModel.wasAlreadySpoken.value)
     }
 
     Header(
