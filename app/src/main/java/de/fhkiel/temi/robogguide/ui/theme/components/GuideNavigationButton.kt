@@ -54,8 +54,6 @@ fun GuideNavigationButton(
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.clickable {
                             tourViewModel.updateCurrentItem(currentItem - 1)
-                            Log.d("Test", "currentItem -1: ${currentItem} number of loc: ${numberOfItems}")
-                            //TODO robo und ui stuff
                         }
                     )
                     Header(title = "⟲",
@@ -63,19 +61,11 @@ fun GuideNavigationButton(
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.clickable { /* aktuellen text nochmal ausgeben */ }
                     )
-                    //TODO pause button sieht hässlich aus
-                    Header(title = "||",
-                        fontSize = 64.sp,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.clickable { /* Ausgabe/Führung pausieren */ }
-                    )
                     Header(title = "⏭",
                         fontSize = 64.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.clickable {
                             tourViewModel.updateCurrentItem(currentItem + 1)
-                            Log.d("Test", "currentExhibit +1: ${currentItem}")
-                            //TODO robo und ui stuff
                         }
                     )
                     /*Icon(imageVector = Icons.Filled.Refresh,

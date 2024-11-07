@@ -36,4 +36,8 @@ enum class LevelOfDetail(private var _lengthInMinutes: Int?, private var _nrOfEx
         }
         return _nrOfExhibits!!
     }
+
+    fun isDetailed(): Boolean {
+        return this == EVERYTHING_DETAILED || this == ONLY_IMPORTANT_DETAILED
+    }
 }
