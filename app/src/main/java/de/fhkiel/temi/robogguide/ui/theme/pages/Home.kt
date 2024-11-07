@@ -11,11 +11,12 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.robotemi.sdk.Robot
 import com.robotemi.sdk.TtsRequest
+import de.fhkiel.temi.robogguide.logic.TourManager
 import de.fhkiel.temi.robogguide.ui.theme.components.Header
 import de.fhkiel.temi.robogguide.ui.theme.components.CustomButton
 
 @Composable
-fun Home(innerPadding: PaddingValues, navHostController: NavHostController, mRobot: Robot?) {
+fun Home(innerPadding: PaddingValues, navHostController: NavHostController, mRobot: Robot?, tourManager: TourManager) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -29,7 +30,7 @@ fun Home(innerPadding: PaddingValues, navHostController: NavHostController, mRob
         )
         Spacer(modifier = Modifier.height(32.dp))
         Header(
-            title = "Du befindest dich in ${mRobot?.locations?.get(0).toString()}!",
+            title = "Du befindest dich in ${tourManager.selectedPlace?.name}!",
             fontSize = 64.sp,
             fontWeight = FontWeight.Normal
         )
