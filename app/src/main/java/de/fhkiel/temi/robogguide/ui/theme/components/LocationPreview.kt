@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.robotemi.sdk.Robot
@@ -28,7 +29,7 @@ fun LocationPreview(location: Location, mRobot: Robot?, showExhibitions: Mutable
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
-            .border(1.dp, Color.Black, shape = RoundedCornerShape(8.dp)),
+            .border(2.dp, Color.Black, shape = RoundedCornerShape(8.dp)),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -36,10 +37,17 @@ fun LocationPreview(location: Location, mRobot: Robot?, showExhibitions: Mutable
             modifier = Modifier.padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ){
-            Text(text = location.name)
+            Text(
+                text = location.name,
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold
+            )
             Spacer(modifier = Modifier.width(32.dp))
             if (location.conciseText != null) {
-                TextDisplay(text = location.conciseText)
+                TextDisplay(
+                    location.conciseText,
+                    fontSize = 24.sp
+                )
             }
         }
         Spacer(modifier = Modifier.width(32.dp))
@@ -49,9 +57,9 @@ fun LocationPreview(location: Location, mRobot: Robot?, showExhibitions: Mutable
                     showExhibitions.value = location.name
                 },
                 title="Ausstellungsstücke anschauen",
-                fontSize = 16.sp,
-                width = 200.dp,
-                height = 50.dp,
+                fontSize = 24.sp,
+                width = 400.dp,
+                height = 100.dp,
                 backgroundColor = Color.White,
                 contentColor = Color.Black,
                 modifier = Modifier.padding(16.dp),
@@ -63,9 +71,9 @@ fun LocationPreview(location: Location, mRobot: Robot?, showExhibitions: Mutable
                     Log.d("LocationPreview", "${mRobot?.isReady}")
                 },
                 title = "Zeig mir den Weg!",
-                fontSize = 16.sp,
-                width = 200.dp,
-                height = 50.dp,
+                fontSize = 24.sp,
+                width = 400.dp,
+                height = 100.dp,
                 modifier = Modifier.padding(16.dp),
             )
         }
@@ -86,10 +94,17 @@ fun ItemPreview(item: Item, mRobot: Robot?) {
             modifier = Modifier.padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = item.name)
+            Text(
+                text = item.name,
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold
+            )
             Spacer(modifier = Modifier.width(32.dp))
             if (item.conciseText != null) {
-                TextDisplay(text = item.conciseText)
+                TextDisplay(
+                    text = item.conciseText,
+                    fontSize = 24.sp
+                )
             }
         }
         Spacer(modifier = Modifier.width(32.dp))
@@ -101,9 +116,9 @@ fun ItemPreview(item: Item, mRobot: Robot?) {
                     Log.d("ItemPreview", "${mRobot?.isReady}")
                 },
                 title = "Zeig mir den Weg!",
-                fontSize = 16.sp,
-                width = 200.dp,
-                height = 50.dp,
+                fontSize = 24.sp,
+                width = 400.dp,
+                height = 100.dp,
                 modifier = Modifier.padding(16.dp),
             )
         }

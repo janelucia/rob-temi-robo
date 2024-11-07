@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -45,7 +44,7 @@ fun GuideExhibition(innerPadding: PaddingValues, mRobot: Robot?, tourManager: To
         Text(
             text = "Wovon darf ich dir erzählen?",
             modifier = Modifier.padding(16.dp),
-            style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 32.sp)
+            style = TextStyle(fontWeight = FontWeight.Bold, fontSize = 64.sp)
         )
         if (showExhibitions.value.isNotEmpty()) {
             Text(buildAnnotatedString {
@@ -55,7 +54,7 @@ fun GuideExhibition(innerPadding: PaddingValues, mRobot: Robot?, tourManager: To
                 }
                 append(" an.")
             },
-                style = MaterialTheme.typography.headlineMedium,
+                style = TextStyle(fontSize = 32.sp),
                 modifier = Modifier.padding(16.dp))
 
             Row(
@@ -68,16 +67,16 @@ fun GuideExhibition(innerPadding: PaddingValues, mRobot: Robot?, tourManager: To
                 Text(
                     text = "Wähle das Ausstellungsstück, welches dich interessiert!",
                     modifier = Modifier.padding(16.dp),
-                    style = MaterialTheme.typography.headlineMedium
+                    style = TextStyle(fontSize = 32.sp),
                 )
                 CustomButton(
                     onClick = {
                         showExhibitions.value = ""
                     },
                     title = "Zurück zu den Stationen",
-                    fontSize = 16.sp,
-                    width = 200.dp,
-                    height = 50.dp,
+                    fontSize = 24.sp,
+                    width = 400.dp,
+                    height = 100.dp,
                     backgroundColor = androidx.compose.ui.graphics.Color.White,
                     contentColor = androidx.compose.ui.graphics.Color.Black,
                     modifier = Modifier.padding(16.dp),
@@ -94,8 +93,8 @@ fun GuideExhibition(innerPadding: PaddingValues, mRobot: Robot?, tourManager: To
             Text(
                 text = "Wähle die Station, die dich interessiert!",
                 modifier = Modifier.padding(16.dp),
-                style = MaterialTheme.typography.headlineMedium
-            )
+                style = TextStyle(fontSize = 32.sp),
+                )
             tourManager.selectedPlace?.allLocations?.forEach { location: Location ->
                 Log.d("Test", "Location: ${location.name}")
                 LocationPreview(location = location, mRobot, showExhibitions)
