@@ -80,7 +80,6 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
         try {
             database.initializeDatabase() // Initialize the database and copy it from assets
             tourManager = TourManager(database.getDatabase())
-            Robot.getInstance().addOnUserInteractionChangedListener(this)
 
             /*
             // EXAMPLE CODE TO ONLY COPY DATABASE TO DIRECTLY USE THE DATABASE FILE FOR ORM
@@ -157,18 +156,19 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
         super.onStart()
         Robot.getInstance().addOnRobotReadyListener(this)
         Robot.getInstance().addOnRequestPermissionResultListener(this)
+        Robot.getInstance().addOnUserInteractionChangedListener(this)
     }
 
     override fun onStop() {
         super.onStop()
         Robot.getInstance().removeOnRobotReadyListener(this)
         Robot.getInstance().removeOnRequestPermissionResultListener(this)
+        Robot.getInstance().removeOnUserInteractionChangedListener(this)
     }
 
     override fun onDestroy() {
         super.onDestroy()
         database.closeDatabase()
-        Robot.getInstance().removeOnUserInteractionChangedListener(this)
     }
 
     override fun onRobotReady(isReady: Boolean) {
