@@ -26,6 +26,7 @@ import de.fhkiel.temi.robogguide.models.GuideState
 import de.fhkiel.temi.robogguide.models.Location
 import de.fhkiel.temi.robogguide.ui.logic.TourViewModel
 import de.fhkiel.temi.robogguide.ui.theme.components.Exhibit
+import de.fhkiel.temi.robogguide.ui.theme.components.Transfer
 
 @Composable
 fun Guide(
@@ -55,27 +56,7 @@ fun Guide(
                 //nüx
             }
             GuideState.Transfer -> {
-                Header(
-                    title = "Kurze Führung (30 Minuten)",
-                    fontSize = 32.sp,
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                Header(
-                    title = "Bitte folgen Sie mir!",
-                    fontSize = 64.sp,
-                    fontWeight = FontWeight.Bold
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                Header(
-                    title = "Das nächste Exponat ist:",
-                    fontSize = 32.sp
-                )
-                Image(
-                    painter = painterResource(id = R.drawable.computermuseum_maerz_23),
-                    contentDescription = "Example Image",
-                    modifier = Modifier.fillMaxWidth(),
-                    contentScale = ContentScale.Crop
-                )
+                Transfer(tourViewModel.currentLocationItems[currentItemIndex], mRobot, tourViewModel)
                 Spacer(modifier = Modifier.height(16.dp))
                 //TODO aktuell noch Button oder Timer, um die nächste Phase zu triggern (Wechsel zur Exponat-Sequenz)
                 CustomButton(
