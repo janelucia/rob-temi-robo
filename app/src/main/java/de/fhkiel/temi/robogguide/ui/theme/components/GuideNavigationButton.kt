@@ -16,7 +16,6 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.robotemi.sdk.Robot
 import de.fhkiel.temi.robogguide.logic.TourManager
-import de.fhkiel.temi.robogguide.logic.robotSpeakText
 import de.fhkiel.temi.robogguide.ui.logic.TourViewModel
 
 @Composable
@@ -54,7 +53,7 @@ fun GuideNavigationButton(
                         fontSize = 64.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.clickable {
-                            tourViewModel.updateCurrentItem(currentItemIndex - 1)
+                            tourViewModel.decrementCurrentItemIndex()
                         }
                     )
                     Header(title = "⟲",

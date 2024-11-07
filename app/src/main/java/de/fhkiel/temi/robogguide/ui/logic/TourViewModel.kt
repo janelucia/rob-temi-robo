@@ -17,13 +17,13 @@ class TourViewModel : ViewModel() {
     var numberOfLocations: Int = tourLocations.size
     var levelOfDetail: LevelOfDetail? = null
 
-    var currentLocationItems: MutableList<Item> = mutableListOf()
+    private val _currentLocationItems: MutableList<Item> = mutableListOf()
 
     val currentItemIndex = MutableLiveData(0)
-    val numberOfItemsAtCurrentLocation = MutableLiveData(currentLocationItems.size)
+    val numberOfItemsAtCurrentLocation = MutableLiveData(_currentLocationItems.size)
 
     val guideState = MutableLiveData<GuideState>()
-
+    val currentItem = MutableLiveData<Item>()
     val wasAlreadySpoken = MutableLiveData(false)
 
 
@@ -58,12 +58,13 @@ class TourViewModel : ViewModel() {
     /* Items */
 
     private fun fillLocationItems(items: MutableList<Item>) {
-        currentLocationItems.clear()
-        currentLocationItems.addAll(items)
-        currentLocationItems.add(0, tourLocationsAsItems[currentLocationIndex])
+        _currentLocationItems.clear()
+        _currentLocationItems.addAll(items)
+        _currentLocationItems.add(0, tourLocationsAsItems[currentLocationIndex])
 
-        numberOfItemsAtCurrentLocation.value = currentLocationItems.size
+        numberOfItemsAtCurrentLocation.value = _currentLocationItems.size
         currentItemIndex.value = 0
+        currentItem.value = _currentLocationItems[0]
     }
 
 
@@ -76,15 +77,26 @@ class TourViewModel : ViewModel() {
         }
     }
 
+    fun incrementCurrentItemIndex() {
+        updateCurrentItem(currentItemIndex.value!! + 1)
+    }
+
+    fun decrementCurrentItemIndex() {
+        updateCurrentItem(currentItemIndex.value!! - 1)
+    }
+
     fun updateCurrentItem(index: Int) {
         if (index in 0 until numberOfItemsAtCurrentLocation.value!!) {
             currentItemIndex.value = index
+            currentItem.value = _currentLocationItems[index]
         } else if (index >= numberOfItemsAtCurrentLocation.value!!) {
             updateCurrentLocation(currentLocationIndex + 1)
             currentItemIndex.value = 0
+            currentItem.value = _currentLocationItems[0]
         } else if (index < 0) {
             updateCurrentLocation(currentLocationIndex - 1)
             currentItemIndex.value = 0
+            currentItem.value = _currentLocationItems[0]
         }
     }
 
@@ -100,9 +112,5 @@ class TourViewModel : ViewModel() {
 
     fun giveCurrentLocation(): Location {
         return tourLocations[currentLocationIndex]
-    }
-
-    fun giveCurrentItem(): Item {
-        return currentLocationItems[currentItemIndex.value!!]
     }
 }
