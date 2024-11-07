@@ -31,7 +31,6 @@ fun GuideSelector(
     tourViewModel: TourViewModel
 ) {
     var isGuideSelected by remember { mutableStateOf(false) }
-    val isExhibitSelected by remember { mutableStateOf(false) }
     var selectedLength by remember { mutableStateOf("") }
     //TODO make use of Tour object ???
 
@@ -156,11 +155,9 @@ fun GuideSelector(
             }
             /* this needs to be a for loop where all exhibits are displayed*/
         } else {
-            Row(
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(top = 32.dp)
-            ) {
+            Row(modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .padding(vertical = 32.dp, horizontal = 16.dp)) {
                 CustomButton(
                     title = "Führung",
                     onClick = { isGuideSelected = true }
@@ -170,7 +167,8 @@ fun GuideSelector(
                     title = "Stationen & Ausstellungsstücke",
                     backgroundColor = Color.White,
                     contentColor = Color.Black,
-                    onClick = { navHostController.navigate("guideExhibition") }
+                    onClick = { navHostController.navigate("guideExhibition") },
+                    width = 800.dp
                 )
             }
         }
