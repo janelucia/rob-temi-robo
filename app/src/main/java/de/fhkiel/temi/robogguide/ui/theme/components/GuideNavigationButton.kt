@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material.icons.Icons
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -62,6 +63,12 @@ fun GuideNavigationButton(
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.clickable { /* aktuellen text nochmal ausgeben */ }
                     )
+                    //TODO pause button sieht hässlich aus
+                    Header(title = "||",
+                        fontSize = 64.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.clickable { /* Ausgabe/Führung pausieren */ }
+                    )
                     Header(title = "⏭",
                         fontSize = 64.sp,
                         fontWeight = FontWeight.Bold,
@@ -74,23 +81,6 @@ fun GuideNavigationButton(
                     /*Icon(imageVector = Icons.Filled.Refresh,
                         contentDescription = "Play text again",
                         tint = Color.Black)*/
-                }
-                Row(
-                    horizontalArrangement = Arrangement.SpaceAround,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Header(
-                        title = "Zurück zu {exponat}",
-                        fontSize = 16.sp
-                    )
-                    Header(
-                        title = "Ausgabe wiederholen",
-                        fontSize = 16.sp
-                    )
-                    Header(
-                        title = "Weiter zu {exponat}",
-                        fontSize = 16.sp
-                    )
                 }
             }
         }
