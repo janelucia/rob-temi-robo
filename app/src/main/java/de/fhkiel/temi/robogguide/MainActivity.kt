@@ -17,7 +17,6 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import de.fhkiel.temi.robogguide.ui.theme.pages.Guide
 import com.robotemi.sdk.Robot
 import com.robotemi.sdk.TtsRequest
 import com.robotemi.sdk.listeners.OnRobotReadyListener
@@ -31,6 +30,7 @@ import de.fhkiel.temi.robogguide.ui.logic.TourViewModel
 import de.fhkiel.temi.robogguide.ui.theme.Rob_Temi_Robo_UITheme
 import de.fhkiel.temi.robogguide.ui.theme.components.CustomTopAppBar
 import de.fhkiel.temi.robogguide.ui.theme.components.GuideNavigationButton
+import de.fhkiel.temi.robogguide.ui.theme.pages.Guide
 import de.fhkiel.temi.robogguide.ui.theme.pages.GuideExhibition
 import de.fhkiel.temi.robogguide.ui.theme.pages.GuideSelector
 import de.fhkiel.temi.robogguide.ui.theme.pages.Home
