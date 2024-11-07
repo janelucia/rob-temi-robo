@@ -42,14 +42,18 @@ import de.fhkiel.temi.robogguide.ui.logic.TourViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomTopAppBar(navController: NavController, tourViewModel: TourViewModel, activity: Activity) {
-    var showPopup by remember { mutableStateOf(false) }
-
-    if (showPopup) {
-        HelpPopup(onDismiss = { showPopup = false }, activity)
-    }
-
+    var showHelpPopup by remember { mutableStateOf(false) }
+    var showPopUp by remember { mutableStateOf(false) }
     val navBackStackEntry = navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry.value?.destination?.route
+
+    if (showHelpPopup) {
+        HelpPopup(onDismiss = { showHelpPopup = false }, activity)
+    }
+
+    if (showPopUp) {
+        ClosePopup(onDismiss = { showPopUp = false }, navController)
+    }
 
     Box(modifier = Modifier.fillMaxWidth()) {
         TopAppBar(
@@ -66,7 +70,13 @@ fun CustomTopAppBar(navController: NavController, tourViewModel: TourViewModel, 
             actions = {
                 if (currentDestination != "homePage") {
                     IconButton(
-                        onClick = { navController.navigate("homePage") },
+                        onClick = {
+                            if (currentDestination == "guide") {
+                                showPopUp = true
+                            } else {
+                                navController.navigate("homePage")
+                            }
+                        },
                         modifier = Modifier
                             .size(50.dp)
                             .border(2.dp, Color.Black, CircleShape)
@@ -83,7 +93,7 @@ fun CustomTopAppBar(navController: NavController, tourViewModel: TourViewModel, 
                 CustomButton(
                     title = "?",
                     onClick = {
-                        showPopup = true
+                        showHelpPopup = true
                     },
                     width = 60.dp,
                     height = 55.dp,
