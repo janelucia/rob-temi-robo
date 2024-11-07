@@ -38,17 +38,36 @@ import de.fhkiel.temi.robogguide.ui.theme.pages.Setup
 import java.io.IOException
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import android.app.AlertDialog
+import android.os.Handler
+import android.os.Looper
+import com.robotemi.sdk.listeners.OnUserInteractionChangedListener
 
 @OptIn(ExperimentalMaterial3Api::class)
-class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermissionResultListener {
+class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermissionResultListener, OnUserInteractionChangedListener {
     private val setupViewModel: SetupViewModel by viewModels()
     private val tourViewModel: TourViewModel by viewModels()
     private var mRobot: Robot? = null
     private lateinit var database: DatabaseHelper
     private lateinit var tourManager: TourManager
+    private val handler = Handler(Looper.getMainLooper())
+    private var isUserInteracting = false
+    private var dialogShown = false
 
     private val singleThreadExecutor: ExecutorService = Executors.newSingleThreadExecutor()
     private val activity: Activity = this
+
+    private val noInteractionRunnable = Runnable {
+        if (!isUserInteracting) {
+            showInteractionDialog()
+        }
+    }
+
+    private val returnHomeRunnable = Runnable {
+        if (!isUserInteracting) {
+            gotoHomeBase()
+        }
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,6 +80,7 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
         try {
             database.initializeDatabase() // Initialize the database and copy it from assets
             tourManager = TourManager(database.getDatabase())
+            Robot.getInstance().addOnUserInteractionChangedListener(this)
 
             /*
             // EXAMPLE CODE TO ONLY COPY DATABASE TO DIRECTLY USE THE DATABASE FILE FOR ORM
@@ -81,7 +101,6 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
             tourManager.error.value = e
         }
 
-        // TODO: Close Icon for top bar on setup and hidden on normal
         setContent {
             val isSetupComplete by setupViewModel.isSetupComplete.observeAsState(false)
 
@@ -149,6 +168,7 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
     override fun onDestroy() {
         super.onDestroy()
         database.closeDatabase()
+        Robot.getInstance().removeOnUserInteractionChangedListener(this)
     }
 
     override fun onRobotReady(isReady: Boolean) {
@@ -284,6 +304,37 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
             else -> {
                 // do nothing
             }
+        }
+    }
+
+    override fun onUserInteraction(isInteracting: Boolean) {
+        isUserInteracting = isInteracting
+        if (isInteracting) {
+            handler.removeCallbacks(noInteractionRunnable)
+            handler.removeCallbacks(returnHomeRunnable)
+            dialogShown = false
+        } else {
+            handler.postDelayed(noInteractionRunnable, 5000) // 5 minutes
+        }
+    }
+
+    private fun showInteractionDialog() {
+        if (!dialogShown) {
+            dialogShown = true
+            AlertDialog.Builder(this)
+                .setTitle("Tour fortführen?")
+                .setMessage("Möchtest du die Tour fortsetzen oder darf der Roboter zurück zur Homebase?")
+                .setPositiveButton("Tour fortführen") { _, _ ->
+                    isUserInteracting = true
+                    handler.removeCallbacks(returnHomeRunnable)
+                }
+                .setNegativeButton("Tour beenden und Roboter zur Homebase schicken") { _, _ ->
+                    gotoHomeBase()
+                }
+                .setOnDismissListener {
+                    handler.postDelayed(returnHomeRunnable, 1000) // 2 minutes
+                }
+                .show()
         }
     }
 
