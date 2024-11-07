@@ -6,13 +6,17 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import de.fhkiel.temi.robogguide.ui.theme.pages.Guide
 import com.robotemi.sdk.Robot
 import com.robotemi.sdk.TtsRequest
 import com.robotemi.sdk.listeners.OnRobotReadyListener
@@ -21,17 +25,23 @@ import com.robotemi.sdk.permission.OnRequestPermissionResultListener
 import com.robotemi.sdk.permission.Permission
 import de.fhkiel.temi.robogguide.database.DatabaseHelper
 import de.fhkiel.temi.robogguide.logic.TourManager
+import de.fhkiel.temi.robogguide.ui.logic.SetupViewModel
+import de.fhkiel.temi.robogguide.ui.logic.TourViewModel
 import de.fhkiel.temi.robogguide.ui.theme.Rob_Temi_Robo_UITheme
 import de.fhkiel.temi.robogguide.ui.theme.components.CustomTopAppBar
-import de.fhkiel.temi.robogguide.ui.theme.pages.Guide
+import de.fhkiel.temi.robogguide.ui.theme.components.GuideNavigationButton
 import de.fhkiel.temi.robogguide.ui.theme.pages.GuideSelector
 import de.fhkiel.temi.robogguide.ui.theme.pages.Home
+import de.fhkiel.temi.robogguide.ui.theme.pages.Setup
+import de.fhkiel.temi.robogguide.ui.theme.pages.Test
 import java.io.IOException
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 @OptIn(ExperimentalMaterial3Api::class)
 class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermissionResultListener {
+    private val setupViewModel: SetupViewModel by viewModels()
+    private val tourViewModel: TourViewModel by viewModels()
     private var mRobot: Robot? = null
     private lateinit var database: DatabaseHelper
     private lateinit var tourManager: TourManager
@@ -48,7 +58,7 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
 
         try {
             database.initializeDatabase() // Initialize the database and copy it from assets
-            tourManager = TourManager(database)
+            tourManager = TourManager(database.getDatabase())
 
             /*
             // EXAMPLE CODE TO ONLY COPY DATABASE TO DIRECTLY USE THE DATABASE FILE FOR ORM
@@ -58,29 +68,63 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
             */
 
             // use json code to get database objects
-            val places = database.getTableDataAsJson("places") // Fetch data as JSON
-            val locations = database.getTableDataAsJson("locations") // Fetch data as JSON
-            Log.i("MainActivity", "Places: $places")
-            Log.i("MainActivity", "Locations: $locations")
+//            val places = database.getTableDataAsJson("places") // Fetch data as JSON
+//            val locations = database.getTableDataAsJson("locations") // Fetch data as JSON
+//            Log.i("MainActivity", "Places: $places")
+//            Log.i("MainActivity", "Locations: $locations")
 
         } catch (e: IOException) {
             e.printStackTrace()
+            tourManager = TourManager(null) // Initialize with null to simulate error
+            tourManager.error.value = e
         }
 
+        // TODO: Close Icon for top bar on setup and hidden on normal
         setContent {
-            Rob_Temi_Robo_UITheme {
-                val navController = rememberNavController()
-                Scaffold(
-                    modifier = Modifier.fillMaxSize(),
-                    topBar = { CustomTopAppBar(navController) }
-                ) { innerPadding ->
-                    NavHost(navController, startDestination = "homePage") {
-                        composable("homePage") { Home(innerPadding, navController, mRobot) }
-                        composable("guideSelector") { GuideSelector(innerPadding, navController, mRobot) }
-                        composable("guide") { Guide(innerPadding, navController, mRobot) }
+            val isSetupComplete by setupViewModel.isSetupComplete.observeAsState(false)
+
+            if (isSetupComplete) {
+                Rob_Temi_Robo_UITheme {
+                    val navController = rememberNavController()
+                    Scaffold(
+                        modifier = Modifier.fillMaxSize(),
+                        topBar = { CustomTopAppBar(navController, tourViewModel) },
+                        bottomBar = {
+                            GuideNavigationButton(
+                                navController,
+                                tourManager,
+                                tourViewModel
+                            )
+                        }
+                    ) { innerPadding ->
+                        NavHost(navController, startDestination = "homePage") {
+                            composable("homePage") { Home(innerPadding, navController, mRobot) }
+                            composable("guideSelector") {
+                                GuideSelector(
+                                    innerPadding,
+                                    navController,
+                                    mRobot,
+                                    tourManager,
+                                    tourViewModel
+                                )
+                            }
+                            composable("guide") {
+                                Guide(
+                                    innerPadding,
+                                    navController,
+                                    mRobot,
+                                    tourManager,
+                                    tourViewModel
+                                )
+                            }
+                            composable("test") { Test(innerPadding, mRobot, tourManager) }
+                        }
                     }
                 }
+            } else {
+                Setup(setupViewModel, tourManager)
             }
+
         }
 
     }
@@ -103,17 +147,20 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
     }
 
     override fun onRobotReady(isReady: Boolean) {
-        if (isReady){
+        if (isReady) {
+            Log.i("MainActivity", "Robot is ready")
             mRobot = Robot.getInstance()
 
             // ---- DISABLE TEMI UI ELEMENTS ---
             mRobot?.hideTopBar()        // hide top action bar
 
             // hide pull-down bar
-            val activityInfo: ActivityInfo = packageManager.getActivityInfo(componentName, PackageManager.GET_META_DATA)
+            val activityInfo: ActivityInfo =
+                packageManager.getActivityInfo(componentName, PackageManager.GET_META_DATA)
             Robot.getInstance().onStart(activityInfo)
 
-            showMapData()
+            setupViewModel.robotIsReady()
+            // showMapData()
         }
     }
 
@@ -122,9 +169,12 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
      * @param text                          [String] text to speak
      * @param isShowOnConversationLayer     [Boolean] true (default) to show conversation layer while speaking, false to hide it.
      */
-    private fun speakText(text: String, isShowOnConversationLayer: Boolean = true){
+    private fun speakText(text: String, isShowOnConversationLayer: Boolean = true) {
         mRobot.let { robot ->
-            val ttsRequest: TtsRequest = TtsRequest.create(speech = text, isShowOnConversationLayer = isShowOnConversationLayer)
+            val ttsRequest: TtsRequest = TtsRequest.create(
+                speech = text,
+                isShowOnConversationLayer = isShowOnConversationLayer
+            )
             robot?.speak(ttsRequest)
         }
     }
@@ -132,7 +182,7 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
     /**
      * Uses temi tts to speak every listed location on the active map
      */
-    private fun speakLocations(){
+    private fun speakLocations() {
         mRobot.let { robot ->
             var text = "Das sind alle Orte an die ich gehen kann:"
             robot?.locations?.forEach {
@@ -145,7 +195,7 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
     /**
      * Uses temi sdk function to go to home base
      */
-    private fun gotoHomeBase(){
+    private fun gotoHomeBase() {
         mRobot?.goTo(location = "home base")
     }
 
@@ -153,7 +203,7 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
     /**
      * Gets the [MapDataModel] of the robot and shows its data in Logcat
      */
-    private fun showMapData(){
+    private fun showMapData() {
         singleThreadExecutor.execute {
             getMap()?.let { mapDataModel ->
                 Log.i("Map-mapImage", mapDataModel.mapImage.typeId)
@@ -166,7 +216,7 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
             return@execute
         }
 
-        Log.i( "Map-List", "${mRobot?.getMapList()}")
+        Log.i("Map-List", "${mRobot?.getMapList()}")
     }
 
     /**
@@ -208,10 +258,13 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
         grantResult: Int,
         requestCode: Int,
     ) {
-        Log.d("PERMISSION RESULT", "permission $permission with request code $requestCode with result = $grantResult")
+        Log.d(
+            "PERMISSION RESULT",
+            "permission $permission with request code $requestCode with result = $grantResult"
+        )
 
-        when (permission){
-            Permission.MAP -> when (requestCode){
+        when (permission) {
+            Permission.MAP -> when (requestCode) {
                 REQUEST_CODE_MAP -> {
                     showMapData()
                 }
@@ -227,7 +280,7 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
         }
     }
 
-    companion object{
+    companion object {
         const val REQUEST_CODE_MAP = 10
     }
 

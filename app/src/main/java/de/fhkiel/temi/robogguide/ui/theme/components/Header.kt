@@ -17,19 +17,21 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun Header(
-    title: String,
+    title: String?,
     modifier: Modifier = Modifier,
     fontSize: TextUnit = 100.sp,
     fontWeight: FontWeight = FontWeight.Bold
 ) {
     Box(modifier = modifier) {
-        Text(
-            text = title,
-            modifier = Modifier.align(Alignment.Center),
-            fontSize = fontSize,
-            fontWeight = fontWeight,
-            lineHeight = fontSize,
-            textAlign = TextAlign.Center
-        )
+        if (title != null) {
+            Text(
+                text = title,
+                modifier = Modifier.align(Alignment.Center),
+                fontSize = fontSize,
+                fontWeight = fontWeight,
+                lineHeight = fontSize,
+                textAlign = TextAlign.Center
+            )
+        }
     }
 }
