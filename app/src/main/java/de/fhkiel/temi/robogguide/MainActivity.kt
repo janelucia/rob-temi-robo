@@ -31,10 +31,10 @@ import de.fhkiel.temi.robogguide.ui.logic.TourViewModel
 import de.fhkiel.temi.robogguide.ui.theme.Rob_Temi_Robo_UITheme
 import de.fhkiel.temi.robogguide.ui.theme.components.CustomTopAppBar
 import de.fhkiel.temi.robogguide.ui.theme.components.GuideNavigationButton
+import de.fhkiel.temi.robogguide.ui.theme.pages.GuideExhibition
 import de.fhkiel.temi.robogguide.ui.theme.pages.GuideSelector
 import de.fhkiel.temi.robogguide.ui.theme.pages.Home
 import de.fhkiel.temi.robogguide.ui.theme.pages.Setup
-import de.fhkiel.temi.robogguide.ui.theme.pages.Test
 import java.io.IOException
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -105,7 +105,6 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
                                 GuideSelector(
                                     innerPadding,
                                     navController,
-                                    mRobot,
                                     tourManager,
                                     tourViewModel
                                 )
@@ -119,7 +118,7 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
                                     tourViewModel
                                 )
                             }
-                            composable("test") { Test(innerPadding, mRobot, tourManager) }
+                            composable("guideExhibition") { GuideExhibition(innerPadding, mRobot, tourManager) }
                         }
                     }
                 }

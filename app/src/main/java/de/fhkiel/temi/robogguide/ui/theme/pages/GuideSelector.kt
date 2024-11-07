@@ -17,7 +17,6 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.robotemi.sdk.Robot
 import de.fhkiel.temi.robogguide.logic.TourManager
 import de.fhkiel.temi.robogguide.models.LevelOfDetail
 import de.fhkiel.temi.robogguide.ui.logic.TourViewModel
@@ -28,12 +27,11 @@ import de.fhkiel.temi.robogguide.ui.theme.components.Header
 fun GuideSelector(
     innerPadding: PaddingValues,
     navHostController: NavHostController,
-    mRobot: Robot?,
     tourManager: TourManager,
     tourViewModel: TourViewModel
 ) {
     var isGuideSelected by remember { mutableStateOf(false) }
-    var isExhibitSelected by remember { mutableStateOf(false) }
+    val isExhibitSelected by remember { mutableStateOf(false) }
     var selectedLength by remember { mutableStateOf("") }
     //TODO make use of Tour object ???
 
@@ -169,10 +167,10 @@ fun GuideSelector(
                 )
                 Spacer(modifier = Modifier.width(16.dp))
                 CustomButton(
-                    title = "Exponat",
+                    title = "Stationen & Ausstellungsstücke",
                     backgroundColor = Color.White,
                     contentColor = Color.Black,
-                    onClick = { isExhibitSelected = true }
+                    onClick = { navHostController.navigate("guideExhibition") }
                 )
             }
         }
