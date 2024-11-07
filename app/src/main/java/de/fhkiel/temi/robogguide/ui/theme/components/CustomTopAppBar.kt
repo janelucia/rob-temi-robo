@@ -20,6 +20,10 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.vectorResource
@@ -33,7 +37,13 @@ import de.fhkiel.temi.robogguide.ui.logic.TourViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CustomTopAppBar(navController: NavController, tourViewModel: TourViewModel) {
+fun CustomTopAppBar(navController: NavController, tourViewModel: TourViewModel, activity: Activity) {
+    var showPopup by remember { mutableStateOf(false) }
+
+    if (showPopup) {
+        HelpPopup(onDismiss = { showPopup = false }, activity)
+    }
+
     val navBackStackEntry = navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry.value?.destination?.route
 
@@ -68,7 +78,9 @@ fun CustomTopAppBar(navController: NavController, tourViewModel: TourViewModel) 
                 Spacer(modifier = Modifier.width(16.dp))
                 CustomButton(
                     title = "?",
-                    onClick = {},
+                    onClick = {
+                        showPopup = true
+                    },
                     width = 60.dp,
                     height = 55.dp,
                     fontSize = 32.sp,
@@ -82,7 +94,6 @@ fun CustomTopAppBar(navController: NavController, tourViewModel: TourViewModel) 
         )
 
         if (currentDestination == "guide") {
-            // Exponat Titel anzeigen
             Header(
                 title = tourViewModel.giveCurrentLocation().name,
                 fontWeight = FontWeight.Bold,
@@ -128,6 +139,6 @@ fun SetupTopBar(activity: Activity){
     }
 }
 
-private fun exitApp(activity: Activity = MainActivity()) {
+fun exitApp(activity: Activity = MainActivity()) {
     activity.finishAndRemoveTask()
 }
