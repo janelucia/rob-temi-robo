@@ -49,7 +49,7 @@ fun GuideExhibition(innerPadding: PaddingValues, mRobot: Robot?, tourManager: To
         )
         if (showExhibitions.value.isNotEmpty()) {
             Text(buildAnnotatedString {
-                append("Du schaust dir die Exponate von Raum: ")
+                append("Du schaust dir die Ausstellungsstücke von Raum: ")
                 withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
                     append(showExhibitions.value)
                 }
@@ -74,7 +74,7 @@ fun GuideExhibition(innerPadding: PaddingValues, mRobot: Robot?, tourManager: To
                     onClick = {
                         showExhibitions.value = ""
                     },
-                    title = "Zurück zu den Orten",
+                    title = "Zurück zu den Stationen",
                     fontSize = 16.sp,
                     width = 200.dp,
                     height = 50.dp,
@@ -92,7 +92,7 @@ fun GuideExhibition(innerPadding: PaddingValues, mRobot: Robot?, tourManager: To
             }
         } else {
             Text(
-                text = "Wähle den Ort, der dich interessiert!",
+                text = "Wähle die Station, die dich interessiert!",
                 modifier = Modifier.padding(16.dp),
                 style = MaterialTheme.typography.headlineMedium
             )

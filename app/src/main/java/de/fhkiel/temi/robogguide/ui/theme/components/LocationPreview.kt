@@ -48,7 +48,7 @@ fun LocationPreview(location: Location, mRobot: Robot?, showExhibitions: Mutable
                 onClick = {
                     showExhibitions.value = location.name
                 },
-                title="Exponate anschauen",
+                title="Ausstellungsstücke anschauen",
                 fontSize = 16.sp,
                 width = 200.dp,
                 height = 50.dp,

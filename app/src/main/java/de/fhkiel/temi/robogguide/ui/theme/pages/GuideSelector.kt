@@ -30,7 +30,7 @@ fun GuideSelector(
     tourViewModel: TourViewModel
 ) {
     var isGuideSelected by remember { mutableStateOf(false) }
-    var isExhibitSelected by remember { mutableStateOf(false) }
+    val isExhibitSelected by remember { mutableStateOf(false) }
     var selectedLength by remember { mutableStateOf("") }
     var selectedInfoLoad by remember { mutableStateOf("") }
     //TODO make use of Tour object ???
@@ -148,7 +148,7 @@ fun GuideSelector(
                 )
                 Spacer(modifier = Modifier.width(16.dp))
                 CustomButton(
-                    title = "Exponat",
+                    title = "Stationen & Ausstellungsstücke",
                     backgroundColor = Color.White,
                     contentColor = Color.Black,
                     onClick = { navHostController.navigate("guideExhibition") }
