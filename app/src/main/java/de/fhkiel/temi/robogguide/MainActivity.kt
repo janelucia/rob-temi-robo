@@ -99,7 +99,7 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
                             )
                         }
                     ) { innerPadding ->
-                        NavHost(navController, startDestination = "guideExhibition") {
+                        NavHost(navController, startDestination = "homePage") {
                             composable("homePage") { Home(innerPadding, navController, mRobot) }
                             composable("guideSelector") {
                                 GuideSelector(
