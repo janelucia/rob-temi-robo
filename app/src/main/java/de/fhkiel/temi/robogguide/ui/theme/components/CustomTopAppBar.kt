@@ -90,6 +90,20 @@ fun CustomTopAppBar(navController: NavController, tourViewModel: TourViewModel, 
                         )
                     }
                 }
+                if (currentDestination == "homePage") {
+                    CustomButton(
+                        title = "Roboter zur Ladestation schicken",
+                        onClick = {
+                            mRobot?.goTo("home base")
+                        },
+                        width = 600.dp,
+                        height = 55.dp,
+                        fontSize = 32.sp,
+                        backgroundColor = Color.White,
+                        contentColor = Color.Black,
+                        borderWidth = 2.dp,
+                    )
+                }
                 Spacer(modifier = Modifier.width(16.dp))
                 CustomButton(
                     title = "?",
