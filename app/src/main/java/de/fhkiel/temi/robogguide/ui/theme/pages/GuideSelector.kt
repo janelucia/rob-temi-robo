@@ -57,7 +57,7 @@ fun GuideSelector(
                     text = buildAnnotatedString {
                         append("Du hast die ")
                         withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                            append(selectedLength)
+                            append(convertTourName(selectedLength))
                         }
                         append(" Tour gewählt.")
                     },
@@ -157,5 +157,13 @@ fun GuideSelector(
                 )
             }
         }
+    }
+}
+
+fun convertTourName(tourName: String): String {
+    return when (tourName) {
+        "Short" -> "Kurze Führung"
+        "Long" -> "Lange Führung"
+        else -> "Fehler"
     }
 }

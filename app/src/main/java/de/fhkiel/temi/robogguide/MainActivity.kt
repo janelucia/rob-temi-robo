@@ -1,5 +1,6 @@
 package de.fhkiel.temi.robogguide
 
+import android.app.Activity
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -47,6 +48,7 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
     private lateinit var tourManager: TourManager
 
     private val singleThreadExecutor: ExecutorService = Executors.newSingleThreadExecutor()
+    private val activity: Activity = this
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -88,7 +90,7 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
                     val navController = rememberNavController()
                     Scaffold(
                         modifier = Modifier.fillMaxSize(),
-                        topBar = { CustomTopAppBar(navController, tourViewModel) },
+                        topBar = { CustomTopAppBar(navController, tourViewModel, activity) },
                         bottomBar = {
                             GuideNavigationButton(
                                 navController,
@@ -240,12 +242,14 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
     @Suppress("SameParameterValue")
     private fun requestPermissionsIfNeeded(permission: Permission, requestCode: Int): Boolean {
         if (mRobot?.checkSelfPermission(permission) == Permission.GRANTED) {
-            return false;
+            return false
         } else {
             mRobot?.requestPermissions(listOf(permission), requestCode)
             return true
         }
     }
+
+
 
     /**
      * Permission request callback

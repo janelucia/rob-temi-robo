@@ -1,5 +1,6 @@
 package de.fhkiel.temi.robogguide.ui.theme.components
 
+import android.app.Activity
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.*
@@ -19,6 +20,10 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.vectorResource
@@ -26,12 +31,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import de.fhkiel.temi.robogguide.MainActivity
 import de.fhkiel.temi.robogguide.R
 import de.fhkiel.temi.robogguide.ui.logic.TourViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CustomTopAppBar(navController: NavController, tourViewModel: TourViewModel) {
+fun CustomTopAppBar(navController: NavController, tourViewModel: TourViewModel, activity: Activity) {
+    var showPopup by remember { mutableStateOf(false) }
+
+    if (showPopup) {
+        HelpPopup(onDismiss = { showPopup = false }, activity)
+    }
+
     val navBackStackEntry = navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry.value?.destination?.route
 
@@ -64,23 +76,11 @@ fun CustomTopAppBar(navController: NavController, tourViewModel: TourViewModel) 
                     }
                 }
                 Spacer(modifier = Modifier.width(16.dp))
-                /* Wir sind einsprachige dullies
-                CustomButton(
-                    title = "EN",
-                    onClick = {},
-                    width = 100.dp,
-                    height = 50.dp,
-                    fontSize = 32.sp,
-                    backgroundColor = Color.White,
-                    contentColor = Color.Black,
-                    borderColor = Color.Black,
-                    borderWidth = 2.dp,
-                )
-                Spacer(modifier = Modifier.width(16.dp))
-                 */
                 CustomButton(
                     title = "?",
-                    onClick = {},
+                    onClick = {
+                        showPopup = true
+                    },
                     width = 60.dp,
                     height = 55.dp,
                     fontSize = 32.sp,
@@ -94,7 +94,6 @@ fun CustomTopAppBar(navController: NavController, tourViewModel: TourViewModel) 
         )
 
         if (currentDestination == "guide") {
-            // Exponat Titel anzeigen
             Header(
                 title = tourViewModel.giveCurrentLocation().name,
                 fontWeight = FontWeight.Bold,
@@ -107,4 +106,39 @@ fun CustomTopAppBar(navController: NavController, tourViewModel: TourViewModel) 
         }
 
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SetupTopBar(activity: Activity){
+    Box(modifier = Modifier.fillMaxWidth()){
+        TopAppBar(
+            title = {
+                Text(
+                    "Gruppe Pentagram - Temi Setup",
+                    fontSize = 32.sp,
+                    fontWeight = FontWeight.Bold,
+                )
+            },
+            actions = {
+                CustomButton(
+                    title = "App schließen",
+                    onClick = {
+                        exitApp(activity)
+                    },
+                    width = 300.dp,
+                    height = 55.dp,
+                    fontSize = 32.sp,
+                    backgroundColor = Color.Black,
+                    contentColor = Color.White,
+                    borderColor = Color.Black,
+                    borderWidth = 2.dp,
+                )
+            }
+        )
+    }
+}
+
+fun exitApp(activity: Activity = MainActivity()) {
+    activity.finishAndRemoveTask()
 }
