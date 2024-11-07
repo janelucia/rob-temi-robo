@@ -48,7 +48,7 @@ fun LocationPreview(location: Location, mRobot: Robot?, showExhibitions: Mutable
         ){
             if (location.conciseText?.media?.url == null) {
                 Image(
-                    painter = rememberAsyncImagePainter(model = location.conciseText?.media?.url),
+                    painter = rememberAsyncImagePainter(model = location.conciseText?.media?.url.toString()),
                     contentDescription = null,
                     modifier = Modifier
                         .width(200.dp)
@@ -71,18 +71,20 @@ fun LocationPreview(location: Location, mRobot: Robot?, showExhibitions: Mutable
         }
         Spacer(modifier = Modifier.width(32.dp))
         Column {
-            CustomButton(
-                onClick = {
-                    showExhibitions.value = location.name
-                },
-                title="Ausstellungsstücke anschauen",
-                fontSize = 24.sp,
-                width = 400.dp,
-                height = 100.dp,
-                backgroundColor = Color.White,
-                contentColor = Color.Black,
-                modifier = Modifier.padding(top = 8.dp, bottom = 4.dp, end = 8.dp),
-            )
+            if (location.items.isNotEmpty()) {
+                CustomButton(
+                    onClick = {
+                        showExhibitions.value = location.name
+                    },
+                    title="Ausstellungsstücke anschauen",
+                    fontSize = 24.sp,
+                    width = 400.dp,
+                    height = 100.dp,
+                    backgroundColor = Color.White,
+                    contentColor = Color.Black,
+                    modifier = Modifier.padding(top = 8.dp, bottom = 4.dp, end = 8.dp),
+                )
+            }
             CustomButton(
                 onClick = {
                     mRobot?.goTo(location = location.name)
