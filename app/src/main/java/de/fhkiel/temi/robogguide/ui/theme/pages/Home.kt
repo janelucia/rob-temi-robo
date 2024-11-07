@@ -38,13 +38,6 @@ fun Home(innerPadding: PaddingValues, navHostController: NavHostController, mRob
                 title = "Los gehts!",
                 onClick = {navHostController.navigate("guideSelector")}
             )
-            Spacer(modifier = Modifier.width(32.dp))
-            CustomButton(
-                title = "Tutorial",
-                backgroundColor = Color.White,
-                contentColor = Color.Black,
-                onClick = {}
-            )
         }
     }
 }

@@ -17,7 +17,6 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.robotemi.sdk.Robot
 import de.fhkiel.temi.robogguide.logic.TourManager
 import de.fhkiel.temi.robogguide.ui.logic.TourViewModel
 import de.fhkiel.temi.robogguide.ui.theme.components.CustomButton
@@ -27,7 +26,6 @@ import de.fhkiel.temi.robogguide.ui.theme.components.Header
 fun GuideSelector(
     innerPadding: PaddingValues,
     navHostController: NavHostController,
-    mRobot: Robot?,
     tourManager: TourManager,
     tourViewModel: TourViewModel
 ) {
@@ -153,7 +151,7 @@ fun GuideSelector(
                     title = "Exponat",
                     backgroundColor = Color.White,
                     contentColor = Color.Black,
-                    onClick = { isExhibitSelected = true }
+                    onClick = { navHostController.navigate("guideExhibition") }
                 )
             }
         }
