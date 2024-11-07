@@ -86,7 +86,7 @@ fun Guide(
 
             GuideState.Exhibit -> {
 
-                Exhibit(tourViewModel.currentLocationItems[currentItemIndex], mRobot)
+                Exhibit(tourViewModel.currentLocationItems[currentItemIndex], mRobot, tourViewModel)
 
                 Spacer(modifier = Modifier.height(16.dp))
                 Row(

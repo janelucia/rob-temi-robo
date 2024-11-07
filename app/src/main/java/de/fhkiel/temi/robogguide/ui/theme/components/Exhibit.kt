@@ -17,14 +17,21 @@ import com.robotemi.sdk.Robot
 import de.fhkiel.temi.robogguide.R
 import de.fhkiel.temi.robogguide.logic.robotSpeakText
 import de.fhkiel.temi.robogguide.models.Item
+import de.fhkiel.temi.robogguide.models.LevelOfDetail
+import de.fhkiel.temi.robogguide.ui.logic.TourViewModel
 import kotlinx.coroutines.delay
 
 @Composable
-fun Exhibit(currentItem: Item, mRobot: Robot?) {
+fun Exhibit(currentItem: Item, mRobot: Robot?, tourViewModel: TourViewModel) {
 
     LaunchedEffect(currentItem) {
         delay(2000)
-        robotSpeakText(mRobot, currentItem.conciseText?.value)
+        if (tourViewModel.levelOfDetail == LevelOfDetail.EVERYTHING_DETAILED || tourViewModel.levelOfDetail == LevelOfDetail.ONLY_IMPORTANT_DETAILED) {
+            val text = currentItem.conciseText?.value + "\n" + currentItem.detailedText?.value
+            robotSpeakText(mRobot, text)
+        } else {
+            robotSpeakText(mRobot, currentItem.conciseText?.value)
+        }
     }
 
 

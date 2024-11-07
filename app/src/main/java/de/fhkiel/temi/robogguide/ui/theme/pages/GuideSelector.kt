@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.robotemi.sdk.Robot
 import de.fhkiel.temi.robogguide.logic.TourManager
+import de.fhkiel.temi.robogguide.models.LevelOfDetail
 import de.fhkiel.temi.robogguide.ui.logic.TourViewModel
 import de.fhkiel.temi.robogguide.ui.theme.components.CustomButton
 import de.fhkiel.temi.robogguide.ui.theme.components.Header
@@ -34,7 +35,6 @@ fun GuideSelector(
     var isGuideSelected by remember { mutableStateOf(false) }
     var isExhibitSelected by remember { mutableStateOf(false) }
     var selectedLength by remember { mutableStateOf("") }
-    var selectedInfoLoad by remember { mutableStateOf("") }
     //TODO make use of Tour object ???
 
     Column(
@@ -69,33 +69,33 @@ fun GuideSelector(
                     horizontalArrangement = Arrangement.Center
                 ) {
                     CustomButton(
-                        title = "Alle Informationen zu jeder Station",
+                        title = "Nur die wichtigsten Informationen",
                         backgroundColor = Color.White,
                         contentColor = Color.Black,
                         width = 800.dp,
                         onClick = {
-                            selectedInfoLoad = "All"
-                            tourManager.selectedPlace?.allLocations?.let {
-                                tourViewModel.fillTourLocations(
-                                    it.toMutableList()
-                                )
+
+                            if (selectedLength == "Only Important") {
+                                tourViewModel.levelOfDetail = LevelOfDetail.ONLY_IMPORTANT_CONCISE
+                            } else if (selectedLength == "Everything") {
+                                tourViewModel.levelOfDetail = LevelOfDetail.EVERYTHING_CONCISE
                             }
                             navHostController.navigate("guide")
                         }
                     )
                     Spacer(modifier = Modifier.width(32.dp))
                     CustomButton(
-                        title = "Nur die Highlights jeder Station",
+                        title = "Alle Informationen",
                         backgroundColor = Color.White,
                         contentColor = Color.Black,
                         width = 800.dp,
                         onClick = {
-                            selectedInfoLoad = "Highlights"
-                            tourManager.selectedPlace?.importantLocations?.let {
-                                tourViewModel.fillTourLocations(
-                                    it.toMutableList()
-                                )
+                            if (selectedLength == "Only Important") {
+                                tourViewModel.levelOfDetail = LevelOfDetail.ONLY_IMPORTANT_DETAILED
+                            } else if (selectedLength == "Everything") {
+                                tourViewModel.levelOfDetail = LevelOfDetail.EVERYTHING_DETAILED
                             }
+
                             navHostController.navigate("guide")
                         }
                     )
@@ -106,27 +106,44 @@ fun GuideSelector(
                     horizontalArrangement = Arrangement.Center
                 ) {
                     CustomButton(
-                        title = "Kurze Führung\n(? Stationen)",
+                        title = "Highlights Führung\n(${tourManager.selectedPlace?.importantLocations?.size} Stationen)",
                         backgroundColor = Color.White,
                         contentColor = Color.Black,
                         width = 800.dp,
                         modifier = Modifier.wrapContentSize(),
-                        onClick = { selectedLength = "Short" }
+                        onClick = {
+                            selectedLength = "Only Important"
+                            tourManager.selectedPlace?.importantLocations?.let {
+                                tourViewModel.fillTourLocations(
+                                    it.toMutableList()
+                                )
+                            }
+                        }
                     )
                     Spacer(modifier = Modifier.width(32.dp))
                     CustomButton(
-                        title = "Lange Führung\n(Alle Stationen)",
+                        title = "Ausführliche Führung\n" +
+                                "(${tourManager.selectedPlace?.allLocations?.size} Stationen)",
                         backgroundColor = Color.White,
                         contentColor = Color.Black,
                         width = 800.dp,
-                        onClick = { selectedLength = "Long" }
+                        onClick = {
+                            selectedLength = "Everything"
+                            tourManager.selectedPlace?.allLocations?.let {
+                                tourViewModel.fillTourLocations(
+                                    it.toMutableList()
+                                )
+                            }
+                        }
                     )
                 }
             }
         } else if (isExhibitSelected) {
-            Row(modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(top = 32.dp)) {
+            Row(
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(top = 32.dp)
+            ) {
                 CustomButton(
                     title = "Exponat 1",
                     onClick = { /* Handle exhibit 1 selection */ }
@@ -141,9 +158,11 @@ fun GuideSelector(
             }
             /* this needs to be a for loop where all exhibits are displayed*/
         } else {
-            Row(modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(top = 32.dp)) {
+            Row(
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(top = 32.dp)
+            ) {
                 CustomButton(
                     title = "Führung",
                     onClick = { isGuideSelected = true }
@@ -162,8 +181,8 @@ fun GuideSelector(
 
 fun convertTourName(tourName: String): String {
     return when (tourName) {
-        "Short" -> "Kurze Führung"
-        "Long" -> "Lange Führung"
+        "Only Important" -> "Highlights"
+        "Everything" -> "Ausführliche"
         else -> "Fehler"
     }
 }

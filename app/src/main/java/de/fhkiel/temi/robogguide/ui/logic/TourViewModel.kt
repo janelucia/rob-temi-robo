@@ -8,6 +8,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.MutableLiveData
 import de.fhkiel.temi.robogguide.models.GuideState
 import de.fhkiel.temi.robogguide.models.Item
+import de.fhkiel.temi.robogguide.models.LevelOfDetail
 import de.fhkiel.temi.robogguide.models.Location
 
 class TourViewModel : ViewModel() {
@@ -15,6 +16,7 @@ class TourViewModel : ViewModel() {
     var tourLocations: MutableList<Location> = mutableListOf()
     var tourLocationsAsItems: MutableList<Item> = mutableListOf()
     var numberOfLocations: Int = tourLocations.size
+    var levelOfDetail: LevelOfDetail? = null
 
     var currentLocationItems: MutableList<Item> = mutableListOf()
 
