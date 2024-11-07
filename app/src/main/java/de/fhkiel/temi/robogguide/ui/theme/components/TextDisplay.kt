@@ -18,13 +18,13 @@ fun TextDisplay(text: TextModel, modifier: Modifier = Modifier, fontSize: TextUn
         Text(text = text.value,
             fontSize = fontSize
             )
-        text.media?.let { media ->
+        /*text.media?.let { media ->
             Image(
                 painter = rememberAsyncImagePainter(model = media.url),
                 contentDescription = null,
                 modifier = Modifier.fillMaxWidth(),
                 contentScale = ContentScale.Crop
             )
-        }
+        }*/
     }
 }

@@ -135,25 +135,6 @@ fun GuideSelector(
                     )
                 }
             }
-        } else if (isExhibitSelected) {
-            Row(
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(top = 32.dp)
-            ) {
-                CustomButton(
-                    title = "Exponat 1",
-                    onClick = { /* Handle exhibit 1 selection */ }
-                )
-                Spacer(modifier = Modifier.width(16.dp))
-                CustomButton(
-                    title = "Exponat 2",
-                    backgroundColor = Color.White,
-                    contentColor = Color.Black,
-                    onClick = { /* Handle exhibit 2 selection */ }
-                )
-            }
-            /* this needs to be a for loop where all exhibits are displayed*/
         } else {
             Row(modifier = Modifier
                 .align(Alignment.CenterHorizontally)
