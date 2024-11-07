@@ -95,7 +95,8 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
                             GuideNavigationButton(
                                 navController,
                                 tourManager,
-                                tourViewModel
+                                tourViewModel,
+                                mRobot
                             )
                         }
                     ) { innerPadding ->

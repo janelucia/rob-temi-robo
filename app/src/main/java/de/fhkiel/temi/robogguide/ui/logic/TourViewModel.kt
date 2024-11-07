@@ -24,6 +24,8 @@ class TourViewModel : ViewModel() {
 
     val guideState = MutableLiveData<GuideState>()
 
+    val wasAlreadySpoken = MutableLiveData(false)
+
 
     /* Initial funssssssssss */
     fun fillTourLocations(locations: MutableList<Location>) {
@@ -88,6 +90,10 @@ class TourViewModel : ViewModel() {
 
     fun updateGuideState(newState: GuideState) {
         guideState.value = newState
+    }
+
+    fun updateAlreadySpoken() {
+        wasAlreadySpoken.value = wasAlreadySpoken.value == false
     }
 
     /* Access for media */

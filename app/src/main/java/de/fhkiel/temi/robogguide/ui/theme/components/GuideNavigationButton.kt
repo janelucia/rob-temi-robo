@@ -1,12 +1,10 @@
 package de.fhkiel.temi.robogguide.ui.theme.components
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.icons.Icons
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -16,20 +14,23 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.robotemi.sdk.Robot
 import de.fhkiel.temi.robogguide.logic.TourManager
+import de.fhkiel.temi.robogguide.logic.robotSpeakText
 import de.fhkiel.temi.robogguide.ui.logic.TourViewModel
 
 @Composable
 fun GuideNavigationButton(
     navController: NavController,
     tourManager: TourManager,
-    tourViewModel: TourViewModel
+    tourViewModel: TourViewModel,
+    mRobot: Robot?
 ) {
     val navBackStackEntry = navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry.value?.destination?.route
 
     val numberOfItems by tourViewModel.numberOfItemsAtCurrentLocation.observeAsState(0)
-    val currentItem by tourViewModel.currentItemIndex.observeAsState(0)
+    val currentItemIndex by tourViewModel.currentItemIndex.observeAsState(0)
 
     if (currentDestination == "guide") {
         Row(horizontalArrangement = Arrangement.SpaceAround, modifier = Modifier.fillMaxWidth()) {
@@ -39,7 +40,7 @@ fun GuideNavigationButton(
                     .align(Alignment.CenterVertically),
                 contentAlignment = Alignment.Center
             ) {
-                GuideProgressBar(numberOfItems, currentItem)
+                GuideProgressBar(numberOfItems, currentItemIndex)
             }
 
 
@@ -53,19 +54,35 @@ fun GuideNavigationButton(
                         fontSize = 64.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.clickable {
-                            tourViewModel.updateCurrentItem(currentItem - 1)
+                            tourViewModel.updateCurrentItem(currentItemIndex - 1)
                         }
                     )
                     Header(title = "⟲",
                         fontSize = 64.sp,
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.clickable { /* aktuellen text nochmal ausgeben */ }
+                        modifier = Modifier.clickable {
+                            if (tourViewModel.wasAlreadySpoken.value == true) {
+                                assert(tourViewModel.levelOfDetail != null)
+                                if (tourViewModel.levelOfDetail?.isDetailed() == true) {
+                                    val text =
+                                        tourViewModel.giveCurrentItem().conciseText?.value + "\n" + tourViewModel.giveCurrentItem().detailedText?.value
+                                    robotSpeakText(mRobot, text)
+                                } else {
+                                    robotSpeakText(
+                                        mRobot,
+                                        tourViewModel.giveCurrentItem().conciseText?.value
+                                    )
+                                }
+                            } else {
+                                // don't speak
+                            }
+                        }
                     )
                     Header(title = "⏭",
                         fontSize = 64.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.clickable {
-                            tourViewModel.updateCurrentItem(currentItem + 1)
+                            tourViewModel.updateCurrentItem(currentItemIndex + 1)
                         }
                     )
                     /*Icon(imageVector = Icons.Filled.Refresh,
