@@ -26,14 +26,14 @@ fun Exhibit(currentItem: Item, mRobot: Robot?, tourViewModel: TourViewModel) {
 
     LaunchedEffect(currentItem) {
         delay(2000)
-        if (tourViewModel.levelOfDetail == LevelOfDetail.EVERYTHING_DETAILED || tourViewModel.levelOfDetail == LevelOfDetail.ONLY_IMPORTANT_DETAILED) {
+        assert(tourViewModel.levelOfDetail != null)
+        if (tourViewModel.levelOfDetail?.isDetailed() == true) {
             val text = currentItem.conciseText?.value + "\n" + currentItem.detailedText?.value
             robotSpeakText(mRobot, text)
         } else {
             robotSpeakText(mRobot, currentItem.conciseText?.value)
         }
     }
-
 
     Header(
         title = currentItem.name,
