@@ -142,7 +142,6 @@ fun SetupUi(tourManager: TourManager, setupViewModel: SetupViewModel) {
                 }
             }
 
-            // TODO: Setup Beenden erst nachdem der Roboter bereit ist
             Row {
                 CustomButton(
                     onClick = {
