@@ -268,6 +268,12 @@ class TourManager(private val db: SQLiteDatabase?) {
         Log.i("TourManager", "Database is valid")
     }
 
+    /**
+     * Method to set the current place.
+     * @param placeId The place id to set
+     * @param placeName The place name to set
+     * @return True if the place was set successfully, false otherwise
+     */
     fun setPlace(placeId: Int, placeName: String): Boolean {
         Log.i("TourManager", "Set current place to $placeName")
         currentPlaceId = placeId
@@ -409,6 +415,11 @@ class TourManager(private val db: SQLiteDatabase?) {
         return null
     }
 
+    /**
+     * Method to get media for a specific text.
+     * @param textId The text id to search for
+     * @return The media object with its URL
+     */
     private fun getMedia(textId: Int): Media? {
         val query = "SELECT * FROM media WHERE texts_id = $textId"
         db?.rawQuery(query, null)?.use { cursor ->
@@ -420,6 +431,9 @@ class TourManager(private val db: SQLiteDatabase?) {
         return null
     }
 
+    /**
+     * Method to check if the place locations are on the robot.
+     */
     private fun checkPlaceLocationsWithRobot() {
         val mRobot = Robot.getInstance()
         Log.i("TourManager", "Checking place locations with robot")
