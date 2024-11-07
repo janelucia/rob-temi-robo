@@ -1,5 +1,6 @@
 package de.fhkiel.temi.robogguide.ui.theme.components
 
+import android.app.Activity
 import android.util.Log
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -32,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -46,14 +48,11 @@ fun SetupUi(tourManager: TourManager, setupViewModel: SetupViewModel) {
     var expanded by remember { mutableStateOf(false) }
     var selectedIndex by remember { mutableIntStateOf(tourManager.allPlacesMap.size) } // set to the last element of the list
     val isRobotReady by setupViewModel.isRobotReady.observeAsState(false)
+    val context = LocalContext.current as Activity
 
     Scaffold(
         topBar = {
-            Text(
-                "Gruppe Pentagram - Temi Setup",
-                fontSize = 32.sp,
-                fontWeight = FontWeight.Bold,
-            )
+            SetupTopBar(context)
         }
     ) { innerPadding ->
         Column(

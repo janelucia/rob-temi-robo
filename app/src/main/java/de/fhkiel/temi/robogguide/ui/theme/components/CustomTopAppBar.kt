@@ -1,5 +1,6 @@
 package de.fhkiel.temi.robogguide.ui.theme.components
 
+import android.app.Activity
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.*
@@ -26,6 +27,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import de.fhkiel.temi.robogguide.MainActivity
 import de.fhkiel.temi.robogguide.R
 import de.fhkiel.temi.robogguide.ui.logic.TourViewModel
 
@@ -64,20 +66,6 @@ fun CustomTopAppBar(navController: NavController, tourViewModel: TourViewModel) 
                     }
                 }
                 Spacer(modifier = Modifier.width(16.dp))
-                /* Wir sind einsprachige dullies
-                CustomButton(
-                    title = "EN",
-                    onClick = {},
-                    width = 100.dp,
-                    height = 50.dp,
-                    fontSize = 32.sp,
-                    backgroundColor = Color.White,
-                    contentColor = Color.Black,
-                    borderColor = Color.Black,
-                    borderWidth = 2.dp,
-                )
-                Spacer(modifier = Modifier.width(16.dp))
-                 */
                 CustomButton(
                     title = "?",
                     onClick = {},
@@ -107,4 +95,39 @@ fun CustomTopAppBar(navController: NavController, tourViewModel: TourViewModel) 
         }
 
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SetupTopBar(activity: Activity){
+    Box(modifier = Modifier.fillMaxWidth()){
+        TopAppBar(
+            title = {
+                Text(
+                    "Gruppe Pentagram - Temi Setup",
+                    fontSize = 32.sp,
+                    fontWeight = FontWeight.Bold,
+                )
+            },
+            actions = {
+                CustomButton(
+                    title = "App schließen",
+                    onClick = {
+                        exitApp(activity)
+                    },
+                    width = 300.dp,
+                    height = 55.dp,
+                    fontSize = 32.sp,
+                    backgroundColor = Color.Black,
+                    contentColor = Color.White,
+                    borderColor = Color.Black,
+                    borderWidth = 2.dp,
+                )
+            }
+        )
+    }
+}
+
+private fun exitApp(activity: Activity = MainActivity()) {
+    activity.finishAndRemoveTask()
 }
