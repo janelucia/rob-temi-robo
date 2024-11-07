@@ -1,11 +1,10 @@
 package de.fhkiel.temi.robogguide.ui.logic
 
-import android.util.Log
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.lifecycle.ViewModel
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import de.fhkiel.temi.robogguide.models.GuideState
 import de.fhkiel.temi.robogguide.models.Item
 import de.fhkiel.temi.robogguide.models.LevelOfDetail
