@@ -309,6 +309,7 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
 
     override fun onUserInteraction(isInteracting: Boolean) {
         isUserInteracting = isInteracting
+        Log.i("MainActivity", "User is interacting: $isInteracting")
         if (isInteracting) {
             handler.removeCallbacks(noInteractionRunnable)
             handler.removeCallbacks(returnHomeRunnable)
@@ -319,6 +320,7 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
     }
 
     private fun showInteractionDialog() {
+        Log.i("MainActivity", "Show interaction dialog")
         if (!dialogShown) {
             dialogShown = true
             AlertDialog.Builder(this)
