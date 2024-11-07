@@ -22,8 +22,10 @@ import de.fhkiel.temi.robogguide.ui.theme.components.CustomButton
 import de.fhkiel.temi.robogguide.ui.theme.components.Header
 import de.fhkiel.temi.robogguide.R
 import de.fhkiel.temi.robogguide.logic.TourManager
+import de.fhkiel.temi.robogguide.models.GuideState
 import de.fhkiel.temi.robogguide.models.Location
 import de.fhkiel.temi.robogguide.ui.logic.TourViewModel
+import de.fhkiel.temi.robogguide.ui.theme.components.Exhibit
 
 @Composable
 fun Guide(
@@ -34,8 +36,7 @@ fun Guide(
     tourViewModel: TourViewModel
 ) {
 
-    var guideState by remember { mutableStateOf(GuideState.Transfer) }
-
+    val guideState by tourViewModel.guideState.observeAsState(GuideState.Transfer)
 
     val currentLocationItems by remember { derivedStateOf { tourViewModel.currentLocationItems } }
 
@@ -50,6 +51,9 @@ fun Guide(
         verticalArrangement = Arrangement.Center
     ) {
         when (guideState) {
+            null -> {
+                //nüx
+            }
             GuideState.Transfer -> {
                 Header(
                     title = "Kurze Führung (30 Minuten)",
@@ -76,36 +80,13 @@ fun Guide(
                 //TODO aktuell noch Button oder Timer, um die nächste Phase zu triggern (Wechsel zur Exponat-Sequenz)
                 CustomButton(
                     title = "Am Exponat angekommen",
-                    onClick = { guideState = GuideState.Exhibit }
+                    onClick = { tourViewModel.updateGuideState(GuideState.Exhibit) }
                 )
             }
 
             GuideState.Exhibit -> {
-                Header(
-                    title = tourViewModel.currentLocationItems[currentItemIndex].name,
-                    fontSize = 64.sp,
-                    fontWeight = FontWeight.Bold
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                Header(
-                    title = tourViewModel.currentLocationItems[currentItemIndex].conciseText?.value,
-                    fontSize = 16.sp
-                )
-                Header(
-                    title = tourViewModel.currentLocationItems[currentItemIndex].detailedText?.value,
-                    fontSize = 12.sp,
-                    modifier = Modifier.padding(16.dp)
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                // Optional: Bild oder weitere Details
-                Image(
-                    painter = painterResource(id = R.drawable.computermuseum_maerz_23),
-                    contentDescription = "Exponat Image",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(350.dp),
-                    contentScale = ContentScale.Fit
-                )
+
+                Exhibit(tourViewModel.currentLocationItems[currentItemIndex])
 
                 Spacer(modifier = Modifier.height(16.dp))
                 Row(
@@ -116,7 +97,7 @@ fun Guide(
                     CustomButton(
                         title = "Zum nächsten Exponat",
                         onClick = {
-                            guideState = GuideState.Transfer
+                            tourViewModel.updateGuideState(GuideState.Transfer)
                             tourViewModel.updateCurrentItem(currentItemIndex + 1)
                         }
                     )
@@ -127,11 +108,4 @@ fun Guide(
         }
     }
 
-}
-
-
-enum class GuideState {
-    Transfer, // robot leads guest to next exhibit
-    Exhibit     // robot is at exhibit
-    //TODO vielleicht weitere states hinzufügen wie exhibit introduction, exhibit idle, exhibit end (...)
 }

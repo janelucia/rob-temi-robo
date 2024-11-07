@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.MutableLiveData
+import de.fhkiel.temi.robogguide.models.GuideState
 import de.fhkiel.temi.robogguide.models.Item
 import de.fhkiel.temi.robogguide.models.Location
 
@@ -20,6 +21,7 @@ class TourViewModel : ViewModel() {
     val currentItemIndex = MutableLiveData(0)
     val numberOfItemsAtCurrentLocation = MutableLiveData(currentLocationItems.size)
 
+    val guideState = MutableLiveData<GuideState>()
 
 
     /* Initial funssssssssss */
@@ -81,6 +83,10 @@ class TourViewModel : ViewModel() {
             updateCurrentLocation(currentLocationIndex - 1)
             currentItemIndex.value = 0
         }
+    }
+
+    fun updateGuideState(newState: GuideState) {
+        guideState.value = newState
     }
 
     /* Access for media */
