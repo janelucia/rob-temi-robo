@@ -104,8 +104,8 @@ class TourViewModel : ViewModel() {
         guideState.value = newState
     }
 
-    fun updateAlreadySpoken(alreadySpoken: Boolean?) {
-        wasAlreadySpoken.value = !alreadySpoken!!
+    fun updateAlreadySpoken(alreadySpoken: Boolean) {
+        wasAlreadySpoken.value = alreadySpoken
     }
 
     /* Access for media */

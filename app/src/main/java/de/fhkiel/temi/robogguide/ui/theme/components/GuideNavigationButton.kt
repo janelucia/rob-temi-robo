@@ -1,5 +1,6 @@
 package de.fhkiel.temi.robogguide.ui.theme.components
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,6 +17,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.robotemi.sdk.Robot
 import de.fhkiel.temi.robogguide.logic.TourManager
+import de.fhkiel.temi.robogguide.logic.robotSpeakText
 import de.fhkiel.temi.robogguide.ui.logic.TourViewModel
 
 @Composable
@@ -30,6 +32,10 @@ fun GuideNavigationButton(
 
     val numberOfItems by tourViewModel.numberOfItemsAtCurrentLocation.observeAsState(0)
     val currentItemIndex by tourViewModel.currentItemIndex.observeAsState(0)
+    val currentItem by tourViewModel.currentItem.observeAsState(null)
+
+    val wasAlreadySpoken by tourViewModel.wasAlreadySpoken.observeAsState(false)
+
 
     if (currentDestination == "guide") {
         Row(horizontalArrangement = Arrangement.SpaceAround, modifier = Modifier.fillMaxWidth()) {
@@ -60,21 +66,22 @@ fun GuideNavigationButton(
                         fontSize = 64.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.clickable {
-                            /*if (tourViewModel.wasAlreadySpoken.value == true) {
+                            if (wasAlreadySpoken) {
                                 assert(tourViewModel.levelOfDetail != null)
                                 if (tourViewModel.levelOfDetail?.isDetailed() == true) {
                                     val text =
-                                        tourViewModel.giveCurrentItem().conciseText?.value + "\n" + tourViewModel.giveCurrentItem().detailedText?.value
+                                        currentItem?.conciseText?.value + "\n" + currentItem?.detailedText?.value
                                     robotSpeakText(mRobot, text)
                                 } else {
                                     robotSpeakText(
                                         mRobot,
-                                        tourViewModel.giveCurrentItem().conciseText?.value
+                                        currentItem?.conciseText?.value
                                     )
                                 }
                             } else {
                                 // don't speak
-                            }*/
+                                Log.w("GuideNavigationButton", "Stop spamming me!")
+                            }
                         }
 
 
