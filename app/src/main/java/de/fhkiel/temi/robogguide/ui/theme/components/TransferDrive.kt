@@ -14,6 +14,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.robotemi.sdk.Robot
+import de.fhkiel.temi.robogguide.logic.TourManager
 import de.fhkiel.temi.robogguide.logic.robotSpeakText
 import de.fhkiel.temi.robogguide.models.GuideState
 import de.fhkiel.temi.robogguide.models.Location
@@ -21,7 +22,7 @@ import de.fhkiel.temi.robogguide.ui.logic.TourViewModel
 import kotlinx.coroutines.delay
 
 @Composable
-fun TransferDrive(currentLocation: Location, mRobot: Robot?, tourViewModel: TourViewModel) {
+fun TransferDrive(currentLocation: Location, mRobot: Robot?, tourViewModel: TourViewModel, tourManager: TourManager) {
 
 
     val guideState by tourViewModel.guideState.observeAsState(null)
@@ -42,12 +43,13 @@ fun TransferDrive(currentLocation: Location, mRobot: Robot?, tourViewModel: Tour
     if (guideState == GuideState.TransferGoing) {
 
         Log.d("Transfer", "ich versuche zu sprechen :((((, -> ${tourViewModel.guideState.value}")
-        //Sprachausgabe TRANSFER TODO: transfer Objekt mit Texten -> in Datenbank einfügen
+        val transfers = tourManager.selectedPlace?.allTransfers?.get(currentLocation.name)
         if (tourViewModel.levelOfDetail?.isDetailed() == true) {
-            val text = "hier kommt ein detaillierter transfer text hin"
+            val text = transfers?.detailedText?.value
             robotSpeakText(mRobot, text)
         } else {
-            robotSpeakText(mRobot, "hier kommt ein kurzer transfer text hin")
+            val text = transfers?.conciseText?.value
+            robotSpeakText(mRobot, text)
         }
     }
 

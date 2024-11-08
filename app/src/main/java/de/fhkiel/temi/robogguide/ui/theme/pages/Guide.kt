@@ -53,7 +53,7 @@ fun Guide(
             }
             GuideState.TransferStart -> {
                 assert(currentLocation != null)
-                TransferDrive(currentLocation!!, mRobot, tourViewModel)
+                TransferDrive(currentLocation!!, mRobot, tourViewModel, tourManager)
                 /*Spacer(modifier = Modifier.height(16.dp))
                 //TODO aktuell noch Button oder Timer, um die nächste Phase zu triggern (Wechsel zur Exponat-Sequenz)
                 CustomButton(
@@ -90,7 +90,7 @@ fun Guide(
 
             GuideState.TransferGoing -> {
                 assert(currentLocation != null)
-                TransferDrive(currentLocation!!, mRobot, tourViewModel)
+                TransferDrive(currentLocation!!, mRobot, tourViewModel, tourManager)
             }
 
             GuideState.End -> TODO()
