@@ -120,7 +120,7 @@ fun CustomTopAppBar(navController: NavController, tourViewModel: TourViewModel, 
 
         if (currentDestination == "guide") {
             Header(
-                title = tourViewModel.giveCurrentLocation().name,
+                title = "Station ${tourViewModel.currentLocationIndex + 1} von ${tourViewModel.numberOfLocations}: ${tourViewModel.giveCurrentLocation().name}",
                 fontWeight = FontWeight.Bold,
                 fontSize = 24.sp,
                 modifier = Modifier
