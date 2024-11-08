@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -21,7 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -50,23 +49,23 @@ fun GuideSelector(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Header(
-            title = "Wähle deine Tour!",
-            modifier = Modifier
-                .padding(16.dp)
-                .align(Alignment.CenterHorizontally),
-        )
-        Spacer(modifier = Modifier.height(32.dp))
         if (isGuideSelected) {
             if (selectedLength.isNotEmpty()) {
-                Text(
-                    text = buildAnnotatedString {
+                Header(
+                    title = buildAnnotatedString {
                         append("Du hast die ")
-                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                        withStyle(style = SpanStyle(textDecoration = TextDecoration.Underline)) {
                             append(convertTourName(selectedLength))
                         }
                         append(" Tour gewählt.")
-                    },
+                    }.toString(),
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .align(Alignment.CenterHorizontally),
+                )
+                Spacer(modifier = Modifier.height(32.dp))
+                Header(
+                    title = "Wähle, wie ausführlich die Informationen sein sollen.",
                     fontSize = 64.sp
                 )
                 Spacer(modifier = Modifier.height(32.dp))
@@ -76,7 +75,7 @@ fun GuideSelector(
                 ) {
                     CustomButton(
                         title = "Nur die wichtigsten Informationen",
-                        backgroundColor = Color.White,
+                        initialBackgroundColor = Color.White,
                         contentColor = Color.Black,
                         width = 800.dp,
                         onClick = {
@@ -92,7 +91,7 @@ fun GuideSelector(
                     Spacer(modifier = Modifier.width(32.dp))
                     CustomButton(
                         title = "Alle Informationen",
-                        backgroundColor = Color.White,
+                        initialBackgroundColor = Color.White,
                         contentColor = Color.Black,
                         width = 800.dp,
                         onClick = {
@@ -107,13 +106,20 @@ fun GuideSelector(
                     )
                 }
             } else {
+                Header(
+                    title = "Wähle die Länge deiner Führung",
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .align(Alignment.CenterHorizontally),
+                )
+                Spacer(modifier = Modifier.height(32.dp))
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
                 ) {
                     CustomButton(
                         title = "Highlights Führung\n(${tourManager.selectedPlace?.importantLocations?.size} Stationen)",
-                        backgroundColor = Color.White,
+                        initialBackgroundColor = Color.White,
                         contentColor = Color.Black,
                         width = 800.dp,
                         modifier = Modifier.wrapContentSize(),
@@ -130,7 +136,7 @@ fun GuideSelector(
                     CustomButton(
                         title = "Ausführliche Führung\n" +
                                 "(${tourManager.selectedPlace?.allLocations?.size} Stationen)",
-                        backgroundColor = Color.White,
+                        initialBackgroundColor = Color.White,
                         contentColor = Color.Black,
                         width = 800.dp,
                         onClick = {
@@ -145,6 +151,18 @@ fun GuideSelector(
                 }
             }
         } else {
+            Header(
+                title = "Was möchtest du machen?",
+                modifier = Modifier
+                    .padding(16.dp)
+                    .align(Alignment.CenterHorizontally),
+            )
+            Spacer(modifier = Modifier.height(32.dp))
+            Header(
+                title = "Wähle, ob du eine Führung oder einzelne Ausstellungsstücke sehen möchtest.",
+                fontSize = 64.sp
+            )
+            Spacer(modifier = Modifier.height(32.dp))
             Row(modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .padding(vertical = 32.dp, horizontal = 16.dp)) {
@@ -155,7 +173,7 @@ fun GuideSelector(
                 Spacer(modifier = Modifier.width(16.dp))
                 CustomButton(
                     title = "Stationen & Ausstellungsstücke",
-                    backgroundColor = Color.White,
+                    initialBackgroundColor = Color.White,
                     contentColor = Color.Black,
                     onClick = { navHostController.navigate("guideExhibition") },
                     width = 800.dp

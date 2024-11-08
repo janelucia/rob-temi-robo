@@ -12,11 +12,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import coil.compose.AsyncImage
 import coil.request.ErrorResult
+import de.fhkiel.temi.robogguide.R
 
 @Composable
-fun LoadingImage(urlString: String, modifier: Modifier = Modifier.fillMaxWidth()) {
+fun LoadingImage(urlString: String, modifier: Modifier = Modifier.fillMaxWidth(), contentScale: ContentScale = ContentScale.FillBounds) {
 
     var isLoading by remember { mutableStateOf(false) }
     Box(contentAlignment = Alignment.Center, modifier = modifier) {
@@ -24,7 +26,7 @@ fun LoadingImage(urlString: String, modifier: Modifier = Modifier.fillMaxWidth()
             model = urlString,
             contentDescription = "Exponat Image",
             modifier = modifier,
-            contentScale = ContentScale.Fit,
+            contentScale = contentScale,
             onLoading = {
                 isLoading = true
                 Log.i("Exhibit", "Loading image")
@@ -37,7 +39,8 @@ fun LoadingImage(urlString: String, modifier: Modifier = Modifier.fillMaxWidth()
                 isLoading = false
                 val errorResult: ErrorResult = error.result
                 Log.e("Exhibit", "Error loading image. ${errorResult.throwable.message.toString()}")
-            }
+            },
+            error = painterResource(id = R.drawable.computermuseum_maerz_23),
         )
         if (isLoading) {
             CircularProgressIndicator()
