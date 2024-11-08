@@ -20,11 +20,13 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.robotemi.sdk.Robot
 import de.fhkiel.temi.robogguide.R
+import de.fhkiel.temi.robogguide.ui.theme.components.CustomButton
 import de.fhkiel.temi.robogguide.ui.theme.components.Header
 
 @Composable
-fun Feedback(innerPadding: PaddingValues, navHostController: NavHostController) {
+fun EndScreen(innerPadding: PaddingValues, navHostController: NavHostController, robot: Robot?) {
 
     Column(
         modifier = Modifier
@@ -72,5 +74,12 @@ fun Feedback(innerPadding: PaddingValues, navHostController: NavHostController) 
                 contentScale = ContentScale.Fit
             )
         }
+        Spacer(modifier = Modifier.height(64.dp))
+        CustomButton(
+            title = "Führung beenden",
+            onClick = {
+                navHostController.navigate("homePage")
+            },
+        )
     }
 }
