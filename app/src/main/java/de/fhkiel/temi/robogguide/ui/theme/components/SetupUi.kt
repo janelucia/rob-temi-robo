@@ -65,11 +65,10 @@ fun SetupUi(tourManager: TourManager, setupViewModel: SetupViewModel) {
             Header(
                 title = "Hallo Mensch!",
                 modifier = Modifier.padding(16.dp),
-                fontSize = 64.sp,
             )
             Header(
                 title = "Bitte wähle aus der Liste von Orten, wo ich eingesetzt werden soll.",
-                fontSize = 42.sp,
+                fontSize = 64.sp,
                 fontWeight = FontWeight.Normal
             )
             Spacer(modifier = Modifier.height(32.dp))

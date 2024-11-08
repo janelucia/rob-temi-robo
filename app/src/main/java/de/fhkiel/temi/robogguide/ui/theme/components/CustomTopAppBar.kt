@@ -99,7 +99,7 @@ fun CustomTopAppBar(navController: NavController, tourViewModel: TourViewModel, 
                         width = 600.dp,
                         height = 55.dp,
                         fontSize = 32.sp,
-                        backgroundColor = Color.White,
+                        initialBackgroundColor = Color.White,
                         contentColor = Color.Black,
                         borderWidth = 2.dp,
                     )
@@ -113,10 +113,6 @@ fun CustomTopAppBar(navController: NavController, tourViewModel: TourViewModel, 
                     width = 60.dp,
                     height = 55.dp,
                     fontSize = 32.sp,
-                    backgroundColor = Color.Black,
-                    contentColor = Color.White,
-                    borderColor = Color.Black,
-                    borderWidth = 2.dp,
                 )
             },
             modifier = Modifier.fillMaxWidth()
@@ -158,10 +154,6 @@ fun SetupTopBar(activity: Activity){
                     width = 300.dp,
                     height = 55.dp,
                     fontSize = 32.sp,
-                    backgroundColor = Color.Black,
-                    contentColor = Color.White,
-                    borderColor = Color.Black,
-                    borderWidth = 2.dp,
                 )
             }
         )
