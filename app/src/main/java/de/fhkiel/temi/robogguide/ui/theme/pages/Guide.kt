@@ -3,8 +3,10 @@ package de.fhkiel.temi.robogguide.ui.theme.pages
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -14,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.robotemi.sdk.Robot
+import de.fhkiel.temi.robogguide.logic.TourManager
 import de.fhkiel.temi.robogguide.models.GuideState
 import de.fhkiel.temi.robogguide.ui.logic.TourViewModel
 import de.fhkiel.temi.robogguide.ui.theme.components.CustomButton
@@ -24,7 +27,8 @@ import de.fhkiel.temi.robogguide.ui.theme.components.TransferDrive
 fun Guide(
     innerPadding: PaddingValues,
     mRobot: Robot?,
-    tourViewModel: TourViewModel
+    tourViewModel: TourViewModel,
+    tourManager: TourManager
 ) {
 
     val guideState by tourViewModel.guideState.observeAsState(null)
@@ -47,7 +51,7 @@ fun Guide(
             }
             GuideState.TransferStart -> {
                 assert(currentLocation != null)
-                TransferDrive(currentLocation!!, mRobot, tourViewModel)
+                TransferDrive(currentLocation!!, mRobot, tourViewModel, tourManager)
                 Spacer(modifier = Modifier.height(16.dp))
                 //TODO aktuell noch Button oder Timer, um die nächste Phase zu triggern (Wechsel zur Exponat-Sequenz)
                 CustomButton(
@@ -80,7 +84,7 @@ fun Guide(
 
             GuideState.TransferGoing -> {
                 assert(currentLocation != null)
-                TransferDrive(currentLocation!!, mRobot, tourViewModel)
+                TransferDrive(currentLocation!!, mRobot, tourViewModel, tourManager)
             }
 
             GuideState.End -> TODO()

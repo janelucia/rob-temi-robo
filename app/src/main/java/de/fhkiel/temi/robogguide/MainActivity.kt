@@ -150,7 +150,8 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
                                 Guide(
                                     innerPadding,
                                     mRobot,
-                                    tourViewModel
+                                    tourViewModel,
+                                    tourManager
                                 )
                             }
                             composable("guideExhibition") {
@@ -166,7 +167,8 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
                                 Guide(
                                     innerPadding,
                                     mRobot,
-                                    tourViewModel
+                                    tourViewModel,
+                                    tourManager
                                 )
                             }
                             composable("endPage") { EndPage(innerPadding, navController, mRobot) }
