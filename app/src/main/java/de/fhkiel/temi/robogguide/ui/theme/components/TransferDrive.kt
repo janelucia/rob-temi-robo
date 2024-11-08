@@ -16,7 +16,6 @@ import androidx.compose.ui.unit.sp
 import com.robotemi.sdk.Robot
 import de.fhkiel.temi.robogguide.logic.robotSpeakText
 import de.fhkiel.temi.robogguide.models.GuideState
-import de.fhkiel.temi.robogguide.models.Item
 import de.fhkiel.temi.robogguide.models.Location
 import de.fhkiel.temi.robogguide.ui.logic.TourViewModel
 import kotlinx.coroutines.delay
@@ -28,11 +27,13 @@ fun TransferDrive(currentLocation: Location, mRobot: Robot?, tourViewModel: Tour
     val guideState by tourViewModel.guideState.observeAsState(null)
 
     if (guideState == GuideState.TransferStart) {
-        //TODO currentLocation anstelle von currentItem(?)
         LaunchedEffect(currentLocation) {
             delay(3000)
             //Beginnt Fahrt zur nächsten Location
-            Log.d("Transfer", "Ich fahre los zu ${currentLocation.name}, -> ${tourViewModel.guideState.value}")
+            Log.d(
+                "Transfer",
+                "Ich fahre los zu ${currentLocation.name}, -> ${tourViewModel.guideState.value}"
+            )
             mRobot?.goTo(location = currentLocation.name)
         }
     }

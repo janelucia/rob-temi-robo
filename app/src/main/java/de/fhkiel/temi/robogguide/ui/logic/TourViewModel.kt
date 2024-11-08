@@ -38,7 +38,6 @@ class TourViewModel : ViewModel() {
 
         fillLocationItems(currentLocation.value!!.items)
         guideState.value = GuideState.TransferStart
-        //TODO Fahrt zur ersten Location starten
     }
 
     private fun createListOfLocationsAsItems(): MutableList<Item> {
@@ -112,7 +111,7 @@ class TourViewModel : ViewModel() {
             currentItemIndex.value = 0
             currentItem.value = _currentLocationItems[0]
         } else if (index < 0) {
-           decrementCurrentLocationIndex()
+            decrementCurrentLocationIndex()
             currentItemIndex.value = 0
             currentItem.value = _currentLocationItems[0]
         }
