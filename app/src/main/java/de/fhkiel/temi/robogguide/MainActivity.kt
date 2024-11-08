@@ -238,40 +238,12 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
     }
 
     /**
-     * Speaks a text using the tmi tts
-     * @param text                          [String] text to speak
-     * @param isShowOnConversationLayer     [Boolean] true (default) to show conversation layer while speaking, false to hide it.
-     */
-    private fun speakText(text: String, isShowOnConversationLayer: Boolean = true) {
-        mRobot.let { robot ->
-            val ttsRequest: TtsRequest = TtsRequest.create(
-                speech = text,
-                isShowOnConversationLayer = isShowOnConversationLayer
-            )
-            robot?.speak(ttsRequest)
-        }
-    }
-
-    /**
-     * Uses temi tts to speak every listed location on the active map
-     */
-    private fun speakLocations() {
-        mRobot.let { robot ->
-            var text = "Das sind alle Orte an die ich gehen kann:"
-            robot?.locations?.forEach {
-                text += " $it,"
-            }
-            speakText(text, isShowOnConversationLayer = false)
-        }
-    }
-
-    /**
      * Uses temi sdk function to go to home base
      */
     private fun gotoHomeBase() {
+        robotSpeakText(mRobot, "Ich fahre jetzt zur Aufladestation!")
         mRobot?.goTo(location = "home base")
     }
-
 
     /**
      * Gets the [MapDataModel] of the robot and shows its data in Logcat
