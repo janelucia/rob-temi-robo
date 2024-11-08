@@ -24,7 +24,6 @@ import kotlinx.coroutines.delay
 @Composable
 fun TransferDrive(currentLocation: Location, mRobot: Robot?, tourViewModel: TourViewModel, tourManager: TourManager) {
 
-
     val guideState by tourViewModel.guideState.observeAsState(null)
 
     if (guideState == GuideState.TransferStart) {

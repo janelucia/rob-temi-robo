@@ -17,6 +17,7 @@ import androidx.navigation.NavController
 import com.robotemi.sdk.Robot
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.draw.clip
+import de.fhkiel.temi.robogguide.logic.robotSpeakText
 
 @Composable
 fun ClosePopup(onDismiss: () -> Unit, navController: NavController, mRobot: Robot?) {
@@ -61,6 +62,7 @@ fun ClosePopup(onDismiss: () -> Unit, navController: NavController, mRobot: Robo
                         onClick = {
                             onDismiss()
                             mRobot.let { robot ->
+                                robotSpeakText(mRobot, "Ich fahre jetzt zur Aufladestation!")
                                 robot?.goTo("home base")
                             }
                         },

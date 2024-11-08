@@ -15,7 +15,6 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import com.robotemi.sdk.Robot
 import de.fhkiel.temi.robogguide.logic.TourManager
 import de.fhkiel.temi.robogguide.models.GuideState
@@ -27,10 +26,9 @@ import de.fhkiel.temi.robogguide.ui.theme.components.TransferDrive
 @Composable
 fun Guide(
     innerPadding: PaddingValues,
-    navHostController: NavHostController,
     mRobot: Robot?,
-    tourManager: TourManager,
-    tourViewModel: TourViewModel
+    tourViewModel: TourViewModel,
+    tourManager: TourManager
 ) {
 
     val guideState by tourViewModel.guideState.observeAsState(null)
