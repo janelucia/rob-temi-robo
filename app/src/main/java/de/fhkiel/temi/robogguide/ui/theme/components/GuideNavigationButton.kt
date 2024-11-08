@@ -18,7 +18,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.robotemi.sdk.Robot
-import de.fhkiel.temi.robogguide.logic.TourManager
 import de.fhkiel.temi.robogguide.logic.robotSpeakText
 import de.fhkiel.temi.robogguide.ui.logic.TourViewModel
 
