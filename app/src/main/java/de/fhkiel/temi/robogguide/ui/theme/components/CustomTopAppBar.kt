@@ -137,6 +137,12 @@ fun CustomTopAppBar(navController: NavController, tourViewModel: TourViewModel, 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SetupTopBar(activity: Activity){
+    var showPopUp by remember { mutableStateOf(false) }
+
+    if (showPopUp) {
+        PreparationPopUp(onDismiss = { showPopUp = false })
+    }
+
     Box(modifier = Modifier.fillMaxWidth()){
         TopAppBar(
             title = {
@@ -147,6 +153,18 @@ fun SetupTopBar(activity: Activity){
                 )
             },
             actions = {
+                CustomButton(
+                    title = "Vorbereitungen",
+                    onClick = {
+                        showPopUp = true
+                    },
+                    width = 300.dp,
+                    height = 55.dp,
+                    fontSize = 32.sp,
+                    initialBackgroundColor = Color.White,
+                    contentColor = Color.Black,
+                )
+                Spacer(modifier = Modifier.width(16.dp))
                 CustomButton(
                     title = "App schließen",
                     onClick = {

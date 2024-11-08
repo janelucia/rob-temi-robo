@@ -52,3 +52,37 @@ fun HelpPopup(onDismiss: () -> Unit, activity: Activity) {
         }
     }
 }
+
+@Composable
+fun PreparationPopUp(onDismiss: () -> Unit) {
+    Dialog(onDismissRequest = onDismiss) {
+        Box(
+            modifier = Modifier
+                .background(Color.White, shape = RoundedCornerShape(16.dp))
+                .padding(16.dp)
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Header("Vorbereitungen",
+                    fontSize = 64.sp)
+                Spacer(modifier = Modifier.height(32.dp))
+                Text("Schalte den Kioskmodus ein. Du findest einen Schalter auf der Seite: Temi-Setup.",
+                    fontSize = 24.sp,
+                    lineHeight = 32.sp)
+                Spacer(modifier = Modifier.height(16.dp))
+                Text("Stelle sicher, dass Temi den User tracken kann. Dies kannst du unter Einstellungen -> General Settings -> Andere -> Tracking User einschalten.",
+                    fontSize = 24.sp,
+                    lineHeight = 32.sp)
+                Spacer(modifier = Modifier.height(32.dp))
+                CustomButton(
+                    onClick = onDismiss,
+                    title = "Schließen",
+                    width = 400.dp,
+                    height = 50.dp,
+                    fontSize = 32.sp
+                )
+            }
+        }
+    }
+}
