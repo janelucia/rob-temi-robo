@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -21,7 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -31,7 +30,6 @@ import de.fhkiel.temi.robogguide.models.LevelOfDetail
 import de.fhkiel.temi.robogguide.ui.logic.TourViewModel
 import de.fhkiel.temi.robogguide.ui.theme.components.CustomButton
 import de.fhkiel.temi.robogguide.ui.theme.components.Header
-import okhttp3.internal.http2.Header
 
 @Composable
 fun GuideSelector(
@@ -56,7 +54,7 @@ fun GuideSelector(
                 Header(
                     title = buildAnnotatedString {
                         append("Du hast die ")
-                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                        withStyle(style = SpanStyle(textDecoration = TextDecoration.Underline)) {
                             append(convertTourName(selectedLength))
                         }
                         append(" Tour gewählt.")
