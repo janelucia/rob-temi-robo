@@ -110,9 +110,8 @@ fun CustomTopAppBar(navController: NavController, tourViewModel: TourViewModel, 
                     onClick = {
                         showHelpPopup = true
                     },
-                    width = 60.dp,
-                    height = 55.dp,
-                    fontSize = 32.sp,
+                    modifier = Modifier.size(50.dp),
+                    fontSize = 24.sp,
                 )
             },
             modifier = Modifier.fillMaxWidth()
