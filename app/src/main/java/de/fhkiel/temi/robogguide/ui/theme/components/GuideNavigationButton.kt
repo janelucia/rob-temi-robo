@@ -25,7 +25,6 @@ import de.fhkiel.temi.robogguide.ui.logic.TourViewModel
 @Composable
 fun GuideNavigationButton(
     navController: NavController,
-    tourManager: TourManager,
     tourViewModel: TourViewModel,
     mRobot: Robot?
 ) {
