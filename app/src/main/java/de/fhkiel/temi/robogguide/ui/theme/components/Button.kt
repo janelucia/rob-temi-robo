@@ -8,6 +8,10 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
@@ -15,9 +19,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import kotlinx.coroutines.delay
 
 @Composable
 fun CustomButton(
@@ -31,13 +33,24 @@ fun CustomButton(
     contentColor: Color = Color.White,
     borderColor: Color = Color.Black,
     borderWidth: Dp = 2.dp,
-    fontSize: TextUnit = 64.sp
+    fontSize: TextUnit = 64.sp,
+    delayMillis: Long = 100 // Time in milliseconds to switch back to initial color
 ) {
     var backgroundColor by remember { mutableStateOf(initialBackgroundColor) }
+    var isClicked by remember { mutableStateOf(false) }
+
+    LaunchedEffect(isClicked) {
+        if (isClicked) {
+            delay(delayMillis)
+            backgroundColor = initialBackgroundColor
+            isClicked = false
+        }
+    }
 
     Button(
         onClick = {
             backgroundColor = clickedBackgroundColor
+            isClicked = true
             onClick()
         },
         modifier = modifier
