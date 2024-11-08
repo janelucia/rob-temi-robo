@@ -21,6 +21,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -49,6 +50,8 @@ fun SetupUi(tourManager: TourManager, setupViewModel: SetupViewModel) {
     var selectedIndex by remember { mutableIntStateOf(tourManager.allPlacesMap.size) } // set to the last element of the list
     val isRobotReady by setupViewModel.isRobotReady.observeAsState(false)
     val context = LocalContext.current as Activity
+    val isKioskModeEnabled by setupViewModel.isKioskModeEnabled.observeAsState(false)
+
 
     Scaffold(
         topBar = {
@@ -182,6 +185,17 @@ fun SetupUi(tourManager: TourManager, setupViewModel: SetupViewModel) {
                         title = "Den Roboter auswählen lassen",
                         modifier = Modifier.padding(16.dp)
                     )
+                    Column {
+                        Text("Enable Kiosk Mode")
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Switch(
+                            checked = isKioskModeEnabled,
+                            onCheckedChange = { enabled: Boolean ->
+                                setupViewModel.setKioskModeEnabled(enabled)
+                                Log.i("SetupUi", "Kiosk mode enabled: $enabled")
+                            }
+                        )
+                    }
                 } else {
                     LoadingSpinner(
                         messages = listOf("Warte auf Roboter..."),
