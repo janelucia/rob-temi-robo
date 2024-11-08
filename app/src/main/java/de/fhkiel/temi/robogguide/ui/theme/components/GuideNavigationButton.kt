@@ -13,11 +13,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.robotemi.sdk.Robot
+import de.fhkiel.temi.robogguide.R
 import de.fhkiel.temi.robogguide.logic.robotSpeakText
 import de.fhkiel.temi.robogguide.ui.logic.TourViewModel
 
@@ -46,13 +49,8 @@ fun GuideNavigationButton(
                 verticalAlignment = Alignment.CenterVertically
             ) {
 
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically)
-                        .width(200.dp),
-                ) {
+
                     GuideProgressBar(numberOfItems, currentItemIndex)
-                }
 
 
                 Box {
@@ -62,21 +60,28 @@ fun GuideNavigationButton(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        CustomButton(
-                            title = "⏮",
-                            fontSize = 32.sp,
-                            onClick = {
-                                tourViewModel.decrementCurrentItemIndex()
-                            },
-                            modifier = Modifier
-                                .size(150.dp)
-                                .padding(16.dp),
-                        )
-                        CustomButton(title = "⟲",
-                            fontSize = 32.sp,
-                            modifier = Modifier
-                                .size(150.dp)
-                                .padding(16.dp),
+                        if (currentItemIndex == 0 && currentLocationIndex == 0){
+                            CustomIconButton(
+                                iconId = R.drawable.play_disabled_right,
+                                onClick = {
+                                    // do nothing
+                                },
+                                contentDescription = "Kein vorheriges Exponat",
+                                initialContainerColor = Color.Gray,
+                                iconModifier = Modifier.graphicsLayer(rotationZ = 180f)
+                            )
+                        } else {
+                            CustomIconButton(
+                                iconId = R.drawable.play_arrow_left,
+                                onClick = {
+                                    tourViewModel.decrementCurrentItemIndex()
+                                },
+                                contentDescription = "Vorheriges Exponat"
+                            )
+                        }
+                        CustomIconButton(
+                            iconId = R.drawable.replay,
+                            contentDescription = "Exponat wiederholen",
                             onClick = {
                                 if (wasAlreadySpoken) {
                                     assert(tourViewModel.levelOfDetail != null)
@@ -94,7 +99,7 @@ fun GuideNavigationButton(
                                     // don't speak
                                     Log.w("GuideNavigationButton", "Stop spamming me!")
                                 }
-                            }
+                            },
                         )
                         if (currentItemIndex == numberOfItems - 1 && currentLocationIndex == tourViewModel.numberOfLocations - 1) {
                             CustomButton(
@@ -108,14 +113,12 @@ fun GuideNavigationButton(
                                 width = 300.dp
                             )
                         } else {
-                            CustomButton(title = "⏭",
-                                fontSize = 32.sp,
-                                modifier = Modifier
-                                    .size(150.dp)
-                                    .padding(16.dp),
+                            CustomIconButton(
+                                iconId = R.drawable.play_arrow_right,
+                                contentDescription = "Nächstes Exponat",
                                 onClick = {
                                     tourViewModel.incrementCurrentItemIndex()
-                                }
+                                },
                             )
                         }
                     }
