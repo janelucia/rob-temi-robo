@@ -34,7 +34,9 @@ class TourViewModel : ViewModel() {
         tourLocationsAsItems = createListOfLocationsAsItems()
 
         currentLocationIndex.value = 0
-        fillLocationItems(tourLocations[currentLocationIndex.value!!].items)
+        currentLocation.value = tourLocations[currentLocationIndex.value!!]
+
+        fillLocationItems(currentLocation.value!!.items)
         guideState.value = GuideState.TransferStart
         //TODO Fahrt zur ersten Location starten
     }

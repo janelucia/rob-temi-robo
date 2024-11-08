@@ -143,12 +143,14 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
         super.onStart()
         Robot.getInstance().addOnRobotReadyListener(this)
         Robot.getInstance().addOnRequestPermissionResultListener(this)
+        Robot.getInstance().addOnGoToLocationStatusChangedListener(this)
     }
 
     override fun onStop() {
         super.onStop()
         Robot.getInstance().removeOnRobotReadyListener(this)
         Robot.getInstance().removeOnRequestPermissionResultListener(this)
+        Robot.getInstance().addOnGoToLocationStatusChangedListener(this)
     }
 
     override fun onDestroy() {
@@ -302,11 +304,14 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
         descriptionId: Int,
         description: String
     ) {
+        Log.d("Transfer", "Mein GoTO Status ${status} GuideStatus ${tourViewModel.guideState.value}")
         if (status == OnGoToLocationStatusChangedListener.COMPLETE && tourViewModel.guideState.value == GuideState.TransferGoing) {
             // Roboter erreicht Ziel
             tourViewModel.updateGuideState(GuideState.Exhibit)
-        } else if (status == OnGoToLocationStatusChangedListener.GOING && tourViewModel.guideState.value == GuideState.TransferStart) {
+            Log.d("Transfer", "Ich habe mein Ziel erreicht -> ${tourViewModel.guideState.value}")
+        } else if (status == OnGoToLocationStatusChangedListener.START && tourViewModel.guideState.value == GuideState.TransferStart) {
             tourViewModel.updateGuideState(GuideState.TransferGoing)
+            Log.d("Transfer", "Ich beginne mich zu bewegen -> ${tourViewModel.guideState.value}")
         }
     }
 
