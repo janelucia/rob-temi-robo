@@ -47,6 +47,7 @@ import de.fhkiel.temi.robogguide.ui.logic.TourViewModel
 fun CustomTopAppBar(navController: NavController, tourViewModel: TourViewModel, activity: Activity, mRobot: Robot?) {
     var showHelpPopup by remember { mutableStateOf(false) }
     var showPopUp by remember { mutableStateOf(false) }
+    var showConfirmationPopUp by remember { mutableStateOf(false) }
     val navBackStackEntry = navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry.value?.destination?.route
     val currentLocationIndex by tourViewModel.currentLocationIndex.observeAsState(0)
@@ -57,6 +58,19 @@ fun CustomTopAppBar(navController: NavController, tourViewModel: TourViewModel, 
 
     if (showPopUp) {
         ClosePopup(onDismiss = { showPopUp = false }, navController, mRobot)
+    }
+
+    if (showConfirmationPopUp) {
+        ConfirmationPopUp(
+            onDismiss = { showConfirmationPopUp = false },
+            onConfirm = {
+                robotSpeakText(mRobot, "Ich fahre jetzt zur Aufladestation!")
+                mRobot?.goTo("home base")
+            },
+            title = "Roboter zur Ladestation fahren lassen",
+            message = "Möchtest du den Roboter wirklich zur Ladestation fahren lassen?",
+            confirmationButtonText = "Zur Ladestation",
+            dismissButtonText = "Abbrechen")
     }
 
     Box(modifier = Modifier.fillMaxWidth()) {
@@ -97,8 +111,7 @@ fun CustomTopAppBar(navController: NavController, tourViewModel: TourViewModel, 
                     CustomButton(
                         title = "Roboter zur Ladestation schicken",
                         onClick = {
-                            robotSpeakText(mRobot, "Ich fahre jetzt zur Aufladestation!")
-                            mRobot?.goTo("home base")
+                            showConfirmationPopUp = true
                         },
                         width = 600.dp,
                         height = 55.dp,
@@ -147,7 +160,13 @@ fun SetupTopBar(activity: Activity){
     }
 
     if (showConfirmationPopUp) {
-        ConfirmationPopUp(onDismiss = { showConfirmationPopUp = false }, onConfirm = { exitApp(activity) }, title = "App schließen", message = "Möchtest du die App wirklich schließen?", confirmationButtonText = "App schließen", dismissButtonText = "Abbrechen")
+        ConfirmationPopUp(
+            onDismiss = { showConfirmationPopUp = false },
+            onConfirm = { exitApp(activity) },
+            title = "App schließen",
+            message = "Möchtest du die App wirklich schließen?",
+            confirmationButtonText = "App schließen",
+            dismissButtonText = "Abbrechen")
     }
 
     Box(modifier = Modifier.fillMaxWidth()){
