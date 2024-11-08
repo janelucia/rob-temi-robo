@@ -8,4 +8,10 @@ class Location(
     val items: MutableList<Item>,
     val detailedText: Text?,
     val conciseText: Text?
-)
+) {
+    fun fillYourItemsWithYourself() {
+        for (item in items) {
+            item.location = this
+        }
+    }
+}

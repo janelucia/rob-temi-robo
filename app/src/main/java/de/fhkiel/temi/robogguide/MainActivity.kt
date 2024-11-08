@@ -1,9 +1,14 @@
 package de.fhkiel.temi.robogguide
 
 import android.app.Activity
+import android.app.AlertDialog
+import android.content.Context
+import android.content.SharedPreferences
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -21,11 +26,13 @@ import com.robotemi.sdk.Robot
 import com.robotemi.sdk.TtsRequest
 import com.robotemi.sdk.listeners.OnGoToLocationStatusChangedListener
 import com.robotemi.sdk.listeners.OnRobotReadyListener
+import com.robotemi.sdk.listeners.OnUserInteractionChangedListener
 import com.robotemi.sdk.map.MapDataModel
 import com.robotemi.sdk.permission.OnRequestPermissionResultListener
 import com.robotemi.sdk.permission.Permission
 import de.fhkiel.temi.robogguide.database.DatabaseHelper
 import de.fhkiel.temi.robogguide.logic.TourManager
+import de.fhkiel.temi.robogguide.logic.robotSpeakText
 import de.fhkiel.temi.robogguide.models.GuideState
 import de.fhkiel.temi.robogguide.ui.logic.SetupViewModel
 import de.fhkiel.temi.robogguide.ui.logic.TourViewModel
@@ -41,13 +48,6 @@ import de.fhkiel.temi.robogguide.ui.theme.pages.Setup
 import java.io.IOException
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
-import android.app.AlertDialog
-import android.content.Context
-import android.content.SharedPreferences
-import android.os.Handler
-import android.os.Looper
-import com.robotemi.sdk.listeners.OnUserInteractionChangedListener
-import de.fhkiel.temi.robogguide.logic.robotSpeakText
 
 @OptIn(ExperimentalMaterial3Api::class)
 class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermissionResultListener, OnGoToLocationStatusChangedListener,
@@ -149,9 +149,7 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
                             composable("guide") {
                                 Guide(
                                     innerPadding,
-                                    navController,
                                     mRobot,
-                                    tourManager,
                                     tourViewModel
                                 )
                             }
@@ -159,7 +157,16 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
                                 GuideExhibition(
                                     innerPadding,
                                     mRobot,
-                                    tourManager
+                                    tourManager,
+                                    tourViewModel,
+                                    navController
+                                )
+                            }
+                            composable("detailedExhibit") {
+                                Guide(
+                                    innerPadding,
+                                    mRobot,
+                                    tourViewModel
                                 )
                             }
                             composable("endPage") { EndPage(innerPadding, navController, mRobot) }

@@ -21,16 +21,25 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.robotemi.sdk.Robot
 import de.fhkiel.temi.robogguide.R
 import de.fhkiel.temi.robogguide.models.Item
+import de.fhkiel.temi.robogguide.models.LevelOfDetail
 import de.fhkiel.temi.robogguide.models.Location
-import androidx.compose.ui.text.style.TextOverflow
+import de.fhkiel.temi.robogguide.ui.logic.TourViewModel
 
 @Composable
-fun LocationPreview(location: Location, mRobot: Robot?, showExhibitions: MutableState<String>) {
+fun LocationPreview(
+    location: Location,
+    navHostController: NavHostController,
+    mRobot: Robot?,
+    showExhibitions: MutableState<String>,
+    tourViewModel: TourViewModel
+) {
 
     Row(
         modifier = Modifier
@@ -42,7 +51,7 @@ fun LocationPreview(location: Location, mRobot: Robot?, showExhibitions: Mutable
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically
-        ){
+        ) {
             if (location.conciseText?.media?.url != null) {
                 LoadingImage(
                     urlString = location.conciseText.media.url.toString(),
@@ -74,45 +83,55 @@ fun LocationPreview(location: Location, mRobot: Robot?, showExhibitions: Mutable
             }
         }
         Spacer(modifier = Modifier.width(32.dp))
-            Column {
-                if (location.items.isNotEmpty()) {
-                    CustomButton(
-                        onClick = {
-                            showExhibitions.value = location.name
-                        },
-                        title = "Ausstellungsstücke anschauen",
-                        fontSize = 24.sp,
-                        width = 400.dp,
-                        height = 100.dp,
-                        initialBackgroundColor = Color.White,
-                        contentColor = Color.Black,
-                        modifier = Modifier.padding(top = 8.dp, bottom = 4.dp, end = 8.dp),
-                    )
-                } else {
-                    Text(
-                        text = "Keine Ausstellungsstücke vorhanden",
-                        fontSize = 24.sp,
-                        modifier = Modifier.padding(start = 8.dp, top = 8.dp, bottom = 24.dp, end = 8.dp),
-                    )
-                }
+        Column {
+            if (location.items.isNotEmpty()) {
                 CustomButton(
                     onClick = {
-                        mRobot?.goTo(location = location.name)
-                        Log.i("LocationPreview", "Navigating to ${location.name}")
-                        Log.d("LocationPreview", "${mRobot?.isReady}")
+                        showExhibitions.value = location.name
                     },
-                    title = "Führe mich dorthin!",
+                    title = "Ausstellungsstücke anschauen",
                     fontSize = 24.sp,
                     width = 400.dp,
                     height = 100.dp,
-                    modifier = Modifier.padding(top = 4.dp, bottom = 8.dp, end = 8.dp),
+                    initialBackgroundColor = Color.White,
+                    contentColor = Color.Black,
+                    modifier = Modifier.padding(top = 8.dp, bottom = 4.dp, end = 8.dp),
+                )
+            } else {
+                Text(
+                    text = "Keine Ausstellungsstücke vorhanden",
+                    fontSize = 24.sp,
+                    modifier = Modifier.padding(
+                        start = 8.dp,
+                        top = 8.dp,
+                        bottom = 24.dp,
+                        end = 8.dp
+                    ),
                 )
             }
+            CustomButton(
+                onClick = {
+                    mRobot?.goTo(location = location.name)
+                    Log.i("LocationPreview", "Navigating to ${location.name}")
+                    Log.d("LocationPreview", "${mRobot?.isReady}")
+                },
+                title = "Führe mich dorthin!",
+                fontSize = 24.sp,
+                width = 400.dp,
+                height = 100.dp,
+                modifier = Modifier.padding(top = 4.dp, bottom = 8.dp, end = 8.dp),
+            )
+        }
     }
 }
 
 @Composable
-fun ItemPreview(item: Item, mRobot: Robot?) {
+fun ItemPreview(
+    item: Item,
+    mRobot: Robot?,
+    tourViewModel: TourViewModel,
+    navHostController: NavHostController
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -157,9 +176,22 @@ fun ItemPreview(item: Item, mRobot: Robot?) {
         Spacer(modifier = Modifier.width(32.dp))
         CustomButton(
             onClick = {
-                mRobot?.goTo(location = item.name)
-                Log.i("ItemPreview", "Navigating to ${item.name}")
-                Log.d("ItemPreview", "${mRobot?.isReady}")
+
+                // prepare the detailed exhibit page
+                tourViewModel.fillTourLocations(listOf(item.location!!).toMutableList())
+                tourViewModel.levelOfDetail = LevelOfDetail.EVERYTHING_DETAILED
+
+                item.location!!.items.forEachIndexed { index, it ->
+                    if (it.name == item.name) {
+                        tourViewModel.currentItemIndex.value = index + 1
+                        return@forEachIndexed
+                    }
+                }
+
+                tourViewModel.currentItem.value = item
+
+                // navigate to the detailed exhibit page
+                navHostController.navigate("detailedExhibit")
             },
             title = "Führe mich dorthin!",
             fontSize = 24.sp,

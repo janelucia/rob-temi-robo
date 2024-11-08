@@ -27,7 +27,6 @@ class TourManager(private val db: SQLiteDatabase?) {
     private val tourEndLocation = mutableMapOf<Int, Int>()
 
     var selectedPlace: Place? = null
-    var selectedLevelOfDetail: LevelOfDetail? = null
 
     init {
         // try catch to handle an error like a wrongly named database
@@ -352,21 +351,20 @@ class TourManager(private val db: SQLiteDatabase?) {
 
                     Log.i("TourManager", "Transfer: $from -> $to")
                     transfersForLocation[from] = to
-                    allLocations[from] = Location(
+
+                    val newLocation = Location(
                         nameFrom,
                         getItems(id),
                         detailedText,
                         conciseText,
                     )
 
+                    newLocation.fillYourItemsWithYourself()
+
+                    allLocations[from] = newLocation
+
                     if (isImportant) {
-                        importantLocations[from] =
-                            Location(
-                                nameFrom,
-                                getItems(id),
-                                detailedText,
-                                conciseText,
-                            )
+                        importantLocations[from] = newLocation
                     }
                 } while (cursor.moveToNext())
             }
@@ -397,7 +395,7 @@ class TourManager(private val db: SQLiteDatabase?) {
     /**
      * Method to get all items for a location.
      */
-    private fun getItems(locationId: Int): MutableList<Item> {
+    private fun getItems(locationId: Int, ): MutableList<Item> {
         val items = mutableListOf<Item>()
         val query = "SELECT * FROM items WHERE locations_id = $locationId"
         db?.rawQuery(query, null)?.use { cursor ->

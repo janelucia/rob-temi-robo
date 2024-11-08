@@ -52,7 +52,8 @@ class TourViewModel : ViewModel() {
         val curLocationAsItem = Item(
             location.name,
             location.detailedText,
-            location.conciseText
+            location.conciseText,
+            location
         )
         return curLocationAsItem
     }

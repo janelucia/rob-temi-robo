@@ -21,16 +21,26 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.robotemi.sdk.Robot
 import de.fhkiel.temi.robogguide.logic.TourManager
 import de.fhkiel.temi.robogguide.models.Item
 import de.fhkiel.temi.robogguide.models.Location
+import de.fhkiel.temi.robogguide.ui.logic.TourViewModel
 import de.fhkiel.temi.robogguide.ui.theme.components.CustomButton
 import de.fhkiel.temi.robogguide.ui.theme.components.ItemPreview
 import de.fhkiel.temi.robogguide.ui.theme.components.LocationPreview
 
 @Composable
-fun GuideExhibition(innerPadding: PaddingValues, mRobot: Robot?, tourManager: TourManager) {
+fun GuideExhibition(
+    innerPadding: PaddingValues,
+    mRobot: Robot?,
+    tourManager: TourManager,
+    tourViewModel: TourViewModel,
+    navHostController: NavHostController
+) {
+
+
     // Create LazyListState to own it and be able to control scroll behaviour of scrollable Row below
     val listState = rememberLazyListState()
     val showExhibitions = remember { mutableStateOf("") }
@@ -90,7 +100,7 @@ fun GuideExhibition(innerPadding: PaddingValues, mRobot: Robot?, tourManager: To
                 location.name == showExhibitions.value
             }?.items?.forEach { item: Item ->
                 item {
-                    ItemPreview(item = item, mRobot)
+                    ItemPreview(item, mRobot, tourViewModel, navHostController)
                 }
             }
         } else {
@@ -103,7 +113,7 @@ fun GuideExhibition(innerPadding: PaddingValues, mRobot: Robot?, tourManager: To
             }
             tourManager.selectedPlace?.allLocations?.forEach { location: Location ->
                 item {
-                    LocationPreview(location = location, mRobot, showExhibitions)
+                    LocationPreview(location, navHostController, mRobot, showExhibitions, tourViewModel)
                 }
             }
         }
