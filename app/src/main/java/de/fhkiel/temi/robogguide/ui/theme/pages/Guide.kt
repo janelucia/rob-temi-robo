@@ -54,14 +54,12 @@ fun Guide(
             GuideState.TransferStart -> {
                 assert(currentLocation != null)
                 TransferDrive(currentLocation!!, mRobot, tourViewModel, tourManager)
-                /*Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(16.dp))
                 //TODO aktuell noch Button oder Timer, um die nächste Phase zu triggern (Wechsel zur Exponat-Sequenz)
                 CustomButton(
                     title = "Am Exponat angekommen",
                     onClick = { tourViewModel.updateGuideState(GuideState.Exhibit) }
                 )
-
-                 */
             }
 
             GuideState.Exhibit -> {
@@ -74,7 +72,7 @@ fun Guide(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     //TODO aktuell noch Button oder Mechanismus, um zur nächsten Übergangssequenz zu wechseln
-                    /*CustomButton(
+                    CustomButton(
                         title = "Zum nächsten Exponat",
                         onClick = {
                             tourViewModel.updateGuideState(GuideState.TransferStart)
@@ -82,8 +80,6 @@ fun Guide(
                         }
                     )
                     Spacer(modifier = Modifier.height(16.dp))
-
-                     */
                 }
 
             }
