@@ -37,7 +37,7 @@ fun HelpPopup(onDismiss: () -> Unit, activity: Activity) {
                         width = 400.dp,
                         height = 100.dp,
                         fontSize = 32.sp,
-                        backgroundColor = Color.White,
+                        initialBackgroundColor = Color.White,
                         contentColor = Color.Black,
                     )
 

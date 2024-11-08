@@ -53,7 +53,7 @@ fun ClosePopup(onDismiss: () -> Unit, navController: NavController, mRobot: Robo
                         modifier = Modifier.fillMaxWidth(),
                         height = 100.dp,
                         fontSize = 24.sp,
-                        backgroundColor = Color.White,
+                        initialBackgroundColor = Color.White,
                         contentColor = Color.Black
                     )
                     Spacer(modifier = Modifier.padding(16.dp))
@@ -68,7 +68,7 @@ fun ClosePopup(onDismiss: () -> Unit, navController: NavController, mRobot: Robo
                         modifier = Modifier.fillMaxWidth(),
                         height = 100.dp,
                         fontSize = 24.sp,
-                        backgroundColor = Color.White,
+                        initialBackgroundColor = Color.White,
                         contentColor = Color.Black
                     )
                     Spacer(modifier = Modifier.padding(16.dp))

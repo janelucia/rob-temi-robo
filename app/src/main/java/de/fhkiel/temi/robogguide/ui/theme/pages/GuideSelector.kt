@@ -76,7 +76,7 @@ fun GuideSelector(
                 ) {
                     CustomButton(
                         title = "Nur die wichtigsten Informationen",
-                        backgroundColor = Color.White,
+                        initialBackgroundColor = Color.White,
                         contentColor = Color.Black,
                         width = 800.dp,
                         onClick = {
@@ -92,7 +92,7 @@ fun GuideSelector(
                     Spacer(modifier = Modifier.width(32.dp))
                     CustomButton(
                         title = "Alle Informationen",
-                        backgroundColor = Color.White,
+                        initialBackgroundColor = Color.White,
                         contentColor = Color.Black,
                         width = 800.dp,
                         onClick = {
@@ -113,7 +113,7 @@ fun GuideSelector(
                 ) {
                     CustomButton(
                         title = "Highlights Führung\n(${tourManager.selectedPlace?.importantLocations?.size} Stationen)",
-                        backgroundColor = Color.White,
+                        initialBackgroundColor = Color.White,
                         contentColor = Color.Black,
                         width = 800.dp,
                         modifier = Modifier.wrapContentSize(),
@@ -130,7 +130,7 @@ fun GuideSelector(
                     CustomButton(
                         title = "Ausführliche Führung\n" +
                                 "(${tourManager.selectedPlace?.allLocations?.size} Stationen)",
-                        backgroundColor = Color.White,
+                        initialBackgroundColor = Color.White,
                         contentColor = Color.Black,
                         width = 800.dp,
                         onClick = {
@@ -155,7 +155,7 @@ fun GuideSelector(
                 Spacer(modifier = Modifier.width(16.dp))
                 CustomButton(
                     title = "Stationen & Ausstellungsstücke",
-                    backgroundColor = Color.White,
+                    initialBackgroundColor = Color.White,
                     contentColor = Color.Black,
                     onClick = { navHostController.navigate("guideExhibition") },
                     width = 800.dp

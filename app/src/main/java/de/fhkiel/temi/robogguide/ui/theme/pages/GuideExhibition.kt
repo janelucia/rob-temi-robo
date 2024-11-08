@@ -13,6 +13,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -79,8 +80,8 @@ fun GuideExhibition(innerPadding: PaddingValues, mRobot: Robot?, tourManager: To
                         fontSize = 24.sp,
                         width = 400.dp,
                         height = 100.dp,
-                        backgroundColor = androidx.compose.ui.graphics.Color.White,
-                        contentColor = androidx.compose.ui.graphics.Color.Black,
+                        initialBackgroundColor = Color.White,
+                        contentColor = Color.Black,
                         modifier = Modifier.padding(16.dp),
                     )
                 }
