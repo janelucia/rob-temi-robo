@@ -1,20 +1,15 @@
 package de.fhkiel.temi.robogguide.ui.logic
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import de.fhkiel.temi.robogguide.models.GuideState
 import de.fhkiel.temi.robogguide.models.Item
 import de.fhkiel.temi.robogguide.models.LevelOfDetail
 import de.fhkiel.temi.robogguide.models.Location
-import de.fhkiel.temi.robogguide.models.Transfer
 
 class TourViewModel : ViewModel() {
-    var currentLocationIndex by mutableIntStateOf(0)
+    var currentLocationIndex = MutableLiveData(0)
     var tourLocations: MutableList<Location> = mutableListOf()
-    var tourTransferTexts: MutableList<Transfer> = mutableListOf()
     var tourLocationsAsItems: MutableList<Item> = mutableListOf()
     var numberOfLocations: Int = tourLocations.size
     var levelOfDetail: LevelOfDetail? = null
@@ -33,14 +28,13 @@ class TourViewModel : ViewModel() {
     /* Initial funssssssssss */
     fun fillTourLocations(locations: MutableList<Location>) {
         tourLocations.clear()
-        tourTransferTexts.clear()
         tourLocations.addAll(locations)
         //TODO tourTransferTexts befüllen
         numberOfLocations = tourLocations.size
         tourLocationsAsItems = createListOfLocationsAsItems()
 
-        currentLocationIndex = 0
-        fillLocationItems(tourLocations[currentLocationIndex].items)
+        currentLocationIndex.value = 0
+        fillLocationItems(tourLocations[currentLocationIndex.value!!].items)
         guideState.value = GuideState.TransferStart
         //TODO Fahrt zur ersten Location starten
     }
@@ -67,7 +61,7 @@ class TourViewModel : ViewModel() {
     private fun fillLocationItems(items: MutableList<Item>) {
         _currentLocationItems.clear()
         _currentLocationItems.addAll(items)
-        _currentLocationItems.add(0, tourLocationsAsItems[currentLocationIndex])
+        _currentLocationItems.add(0, tourLocationsAsItems[currentLocationIndex.value!!])
 
         numberOfItemsAtCurrentLocation.value = _currentLocationItems.size
         currentItemIndex.value = 0
@@ -79,10 +73,10 @@ class TourViewModel : ViewModel() {
 
     private fun updateCurrentLocation(index: Int) {
         if (index in 0 until numberOfLocations) {
-            currentLocationIndex = index
-            currentLocation.value = tourLocations[currentLocationIndex]
+            currentLocationIndex.value = index
+            currentLocation.value = tourLocations[currentLocationIndex.value!!]
 
-            fillLocationItems(tourLocations[currentLocationIndex].items)
+            fillLocationItems(tourLocations[currentLocationIndex.value!!].items)
             //trigger new transfer navigation
             guideState.value = GuideState.TransferStart
         } else if (index > numberOfLocations) {
@@ -92,11 +86,11 @@ class TourViewModel : ViewModel() {
     }
 
     private fun incrementCurrentLocationIndex() {
-        updateCurrentLocation(currentLocationIndex + 1)
+        updateCurrentLocation(currentLocationIndex.value!! + 1)
     }
 
     private fun decrementCurrentLocationIndex() {
-        updateCurrentLocation(currentLocationIndex - 1)
+        updateCurrentLocation(currentLocationIndex.value!! - 1)
     }
 
     fun incrementCurrentItemIndex() {
@@ -133,6 +127,6 @@ class TourViewModel : ViewModel() {
     /* Access for media */
 
     fun giveCurrentLocation(): Location {
-        return tourLocations[currentLocationIndex]
+        return tourLocations[currentLocationIndex.value!!]
     }
 }
