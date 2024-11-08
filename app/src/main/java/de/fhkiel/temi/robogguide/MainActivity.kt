@@ -41,21 +41,47 @@ import de.fhkiel.temi.robogguide.ui.theme.pages.Setup
 import java.io.IOException
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import android.app.AlertDialog
+import android.content.Context
+import android.content.SharedPreferences
+import android.os.Handler
+import android.os.Looper
+import com.robotemi.sdk.listeners.OnUserInteractionChangedListener
+import de.fhkiel.temi.robogguide.logic.robotSpeakText
 
 @OptIn(ExperimentalMaterial3Api::class)
-class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermissionResultListener, OnGoToLocationStatusChangedListener {
+class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermissionResultListener, OnGoToLocationStatusChangedListener,
+    OnUserInteractionChangedListener {
     private val setupViewModel: SetupViewModel by viewModels()
     private val tourViewModel: TourViewModel by viewModels()
     private var mRobot: Robot? = null
     private lateinit var database: DatabaseHelper
     private lateinit var tourManager: TourManager
+    private val handler = Handler(Looper.getMainLooper())
+    private var isUserInteracting = false
+    private lateinit var sharedPreferences: SharedPreferences
+    private var dialogShown = false
 
     private val singleThreadExecutor: ExecutorService = Executors.newSingleThreadExecutor()
     private val activity: Activity = this
 
+    private val noInteractionRunnable = Runnable {
+        if (!isUserInteracting) {
+            showInteractionDialog()
+        }
+    }
+
+    private val returnHomeRunnable = Runnable {
+        if (!isUserInteracting) {
+            gotoHomeBase()
+        }
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        sharedPreferences = application.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+
 
         // ---- DATABASE ACCESS ----
         val databaseName = "roboguide.db"
@@ -84,7 +110,6 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
             tourManager.error.value = e
         }
 
-        // TODO: Close Icon for top bar on setup and hidden on normal
         setContent {
             val isSetupComplete by setupViewModel.isSetupComplete.observeAsState(false)
 
@@ -94,7 +119,8 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
                     Scaffold(
                         modifier = Modifier.fillMaxSize(),
                         topBar = {
-                            CustomTopAppBar(navController, tourViewModel, activity,
+                            CustomTopAppBar(
+                                navController, tourViewModel, activity,
                                 mRobot
                             )
                         },
@@ -107,8 +133,15 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
                             )
                         }
                     ) { innerPadding ->
-                        NavHost(navController, startDestination = "guideSelector") {
-                            composable("homePage") { Home(innerPadding, navController, mRobot, tourManager) }
+                        NavHost(navController, startDestination = "homePage") {
+                            composable("homePage") {
+                                Home(
+                                    innerPadding,
+                                    navController,
+                                    mRobot,
+                                    tourManager
+                                )
+                            }
                             composable("guideSelector") {
                                 GuideSelector(
                                     innerPadding,
@@ -126,7 +159,13 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
                                     tourViewModel
                                 )
                             }
-                            composable("guideExhibition") { GuideExhibition(innerPadding, mRobot, tourManager) }
+                            composable("guideExhibition") {
+                                GuideExhibition(
+                                    innerPadding,
+                                    mRobot,
+                                    tourManager
+                                )
+                            }
                             composable("endPage") { EndPage(innerPadding, navController, mRobot) }
                         }
                     }
@@ -144,6 +183,7 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
         Robot.getInstance().addOnRobotReadyListener(this)
         Robot.getInstance().addOnRequestPermissionResultListener(this)
         Robot.getInstance().addOnGoToLocationStatusChangedListener(this)
+        Robot.getInstance().addOnUserInteractionChangedListener(this)
     }
 
     override fun onStop() {
@@ -151,6 +191,7 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
         Robot.getInstance().removeOnRobotReadyListener(this)
         Robot.getInstance().removeOnRequestPermissionResultListener(this)
         Robot.getInstance().addOnGoToLocationStatusChangedListener(this)
+        Robot.getInstance().removeOnUserInteractionChangedListener(this)
     }
 
     override fun onDestroy() {
@@ -160,8 +201,24 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
 
     override fun onRobotReady(isReady: Boolean) {
         if (isReady) {
+
             Log.i("MainActivity", "Robot is ready")
             mRobot = Robot.getInstance()
+
+            // request to be kiosk app
+
+
+            // enable the detectionMode
+            mRobot?.setDetectionModeOn(on = false, distance = 0.5f)
+            Log.i("MainActivity", "Detection mode is enabled ${mRobot?.detectionModeOn}")
+
+            mRobot?.isKioskModeOn()?.let { isKioskModeOn ->
+                Log.i("MainActivity", "Kiosk mode is enabled $isKioskModeOn")
+            }
+
+            if (sharedPreferences.getBoolean("kiosk_mode", false)) {
+                mRobot?.requestToBeKioskApp()
+            }
 
             // ---- DISABLE TEMI UI ELEMENTS ---
             mRobot?.hideTopBar()        // hide top action bar
@@ -260,7 +317,6 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
     }
 
 
-
     /**
      * Permission request callback
      * @param   permission      [Permission] that was requested.
@@ -292,6 +348,52 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
                 // do nothing
             }
         }
+    }
+
+    override fun onUserInteraction(isInteracting: Boolean) {
+
+        isUserInteracting = isInteracting
+        Log.i("MainActivity", "User is interacting: $isInteracting")
+        if (isInteracting) {
+            handler.removeCallbacks(noInteractionRunnable)
+            handler.removeCallbacks(returnHomeRunnable)
+            dialogShown = false
+        } else {
+            handler.postDelayed(noInteractionRunnable, 5000) // 5 minutes
+        }
+    }
+
+    private fun showInteractionDialog() {
+        Log.i("MainActivity", "Show interaction dialog")
+        Log.d("MainActivity", "User is not interacting, showing dialog $dialogShown")
+
+        assert(mRobot != null)
+        val oldVolume = mRobot?.volume!!
+
+        if (!dialogShown) {
+            dialogShown = true
+            // scream
+            mRobot?.volume = 100
+            robotSpeakText(mRobot, "Hallo, werde ich noch gebraucht?", false)
+
+            val dialog = AlertDialog.Builder(this)
+                .setTitle("Tour fortführen?")
+                .setMessage("Ich habe längere Zeit keine Interaktion festgestellt.")
+                .setMessage("Möchtest du die Tour fortsetzen oder darf der Roboter zurück zur Homebase?")
+                .setPositiveButton("Tour fortführen") { _, _ ->
+                    isUserInteracting = true
+                    handler.removeCallbacks(returnHomeRunnable)
+                    mRobot?.volume = oldVolume
+                }
+                .setNegativeButton("Tour beenden und Roboter zur Homebase schicken") { _, _ ->
+                    gotoHomeBase()
+                    mRobot?.volume = oldVolume
+                }
+                .show()
+        }
+        // TODO timer starten und ihn nach Hause schicken.. nicht vergessen Lautstärke zurückzusetzen
+        // mRobot?.volume = oldVolume
+        // TODO ggf. den COuntdown timer in dem Dialog anzeigen lassen?
     }
 
     companion object {

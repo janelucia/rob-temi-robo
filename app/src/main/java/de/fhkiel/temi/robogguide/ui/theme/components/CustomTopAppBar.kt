@@ -141,7 +141,7 @@ fun SetupTopBar(activity: Activity){
         TopAppBar(
             title = {
                 Text(
-                    "Gruppe Pentagram - Temi Setup",
+                    "Gruppe Pentagon - Temi Setup",
                     fontSize = 32.sp,
                     fontWeight = FontWeight.Bold,
                 )
