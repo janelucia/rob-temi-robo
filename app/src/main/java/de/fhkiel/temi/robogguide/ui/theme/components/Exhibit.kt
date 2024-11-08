@@ -1,5 +1,6 @@
 package de.fhkiel.temi.robogguide.ui.theme.components
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -19,6 +20,7 @@ import androidx.compose.ui.unit.sp
 import com.robotemi.sdk.Robot
 import de.fhkiel.temi.robogguide.logic.robotSpeakText
 import de.fhkiel.temi.robogguide.models.Item
+import de.fhkiel.temi.robogguide.models.Text
 import de.fhkiel.temi.robogguide.ui.logic.TourViewModel
 import kotlinx.coroutines.delay
 
@@ -50,25 +52,28 @@ fun Exhibit(currentItem: Item, mRobot: Robot?, tourViewModel: TourViewModel) {
         modifier = Modifier.padding(16.dp).fillMaxWidth()
     ) {
         if(tourViewModel.levelOfDetail?.isDetailed() == true){
-            currentItem.conciseText?.media?.let { media ->
-                LoadingImage(media.url.toString(),
-                    modifier = Modifier.size(400.dp),
-                    contentScale = ContentScale.Fit)
-                Spacer(modifier = Modifier.width(16.dp))
-            }
-            currentItem.detailedText?.media?.let { media ->
-                LoadingImage(media.url.toString(),
-                    modifier = Modifier.size(400.dp),
-                    contentScale = ContentScale.Fit)
-                Spacer(modifier = Modifier.width(16.dp))
-            }
+            DisplayMedia(currentItem.detailedText!!)
+            DisplayMedia(currentItem.conciseText!!)
         } else {
-            currentItem.conciseText?.media?.let { media ->
-                LoadingImage(media.url.toString(),
-                    modifier = Modifier.size(400.dp),
-                    contentScale = ContentScale.Fit)
-            }
+            DisplayMedia(currentItem.conciseText!!)
         }
     }
 
+}
+
+@Composable
+fun DisplayMedia(text: Text) {
+   if (text.media?.url.toString().isEmpty()) {
+       StockImage()
+   } else if (text.media?.url?.host == "www.youtube.com") {
+       Log.i("Exhibit", "Video kann ich noch nicht")
+   } else {
+       Log.i("Exhibit", "Bild kann ich noch nicht")
+       LoadingImage(
+           urlString = text.media?.url.toString(),
+           modifier = Modifier.size(400.dp),
+           contentScale = ContentScale.Fit
+       )
+       Spacer(modifier = Modifier.width(16.dp))
+   }
 }

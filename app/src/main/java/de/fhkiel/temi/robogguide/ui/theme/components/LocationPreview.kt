@@ -49,12 +49,7 @@ fun LocationPreview(location: Location, mRobot: Robot?, showExhibitions: Mutable
                     modifier = Modifier.size(400.dp)
                 )
             } else {
-                Image(
-                    painter = painterResource(id = R.drawable.computermuseum_maerz_23),
-                    contentDescription = "Computer Museum",
-                    modifier = Modifier.size(400.dp),
-                    contentScale = ContentScale.FillHeight
-                )
+                StockImage()
             }
             Spacer(modifier = Modifier.width(32.dp))
             Column {
