@@ -66,7 +66,7 @@ fun ClosePopup(onDismiss: () -> Unit, navController: NavController, mRobot: Robo
                                 robot?.goTo("home base")
                             }
                         },
-                        title = "Tour beenden und Roboter zurück zur Ladestation schicken",
+                        title = "Roboter zurück zur Ladestation schicken",
                         modifier = Modifier.fillMaxWidth(),
                         height = 100.dp,
                         fontSize = 24.sp,

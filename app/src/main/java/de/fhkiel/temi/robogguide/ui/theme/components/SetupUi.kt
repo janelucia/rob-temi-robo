@@ -2,6 +2,7 @@ package de.fhkiel.temi.robogguide.ui.theme.components
 
 import android.app.Activity
 import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -33,6 +34,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -122,9 +124,29 @@ fun SetupUi(tourManager: TourManager, setupViewModel: SetupViewModel) {
                     onDismissRequest = { expanded = false },
                     scrollState = rememberScrollState(),
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
+                        .fillMaxSize().padding(16.dp)
                 ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Header(
+                            title = "Bitte wähle aus der Liste von Orten, wo ich eingesetzt werden soll.",
+                            fontSize = 32.sp
+                        )
+                        CustomButton(
+                            onClick = {
+                                expanded = false
+                            },
+                            title = "Schließen",
+                            modifier = Modifier.padding(16.dp),
+                            width = 200.dp,
+                            height = 50.dp,
+                            fontSize = 24.sp
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
                     tourManager.allPlacesMap.forEach { (index, placeName) ->
                         DropdownMenuItem(
                             onClick = {
@@ -132,13 +154,38 @@ fun SetupUi(tourManager: TourManager, setupViewModel: SetupViewModel) {
                                 expanded = false
                             },
                             text = {
-                                Text(
-                                    text = placeName,
-                                    fontSize = 64.sp,
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
                                     modifier = Modifier.padding(8.dp)
-                                )
-                            }
+                                ) {
+                                    Box(
+                                        contentAlignment = Alignment.Center,
+                                        modifier = Modifier.width(50.dp)
+                                    ) {
+                                        if (index == selectedIndex) {
+                                            Image(
+                                                painter = painterResource(id = R.drawable.arrow_right),
+                                                contentDescription = null,
+                                                colorFilter = ColorFilter.tint(Color.Black),
+                                                modifier = Modifier.padding(8.dp).size(50.dp),
+                                            )
+                                        }
+                                    }
+                                    Text(
+                                        text = placeName,
+                                        fontSize = 64.sp,
+                                        modifier = Modifier.padding(8.dp)
+                                    )
+                                }
+
+                            },
+                            modifier = Modifier.fillMaxWidth().border(
+                                width = 2.dp,
+                                color = Color.Black,
+                                shape = RoundedCornerShape(8.dp))
+
                         )
+                        Spacer(modifier = Modifier.height(16.dp))
                     }
                 }
             }

@@ -84,7 +84,7 @@ fun EndPage(innerPadding: PaddingValues, navHostController: NavHostController, r
                 }
             } else {
                 Header(
-                    title = "Führung beenden?",
+                    title = "Die Führung wurde beendet.",
                     fontSize = 64.sp,
                 )
                 Spacer(modifier = Modifier.height(32.dp))
