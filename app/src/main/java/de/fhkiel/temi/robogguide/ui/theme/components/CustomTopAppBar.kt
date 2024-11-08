@@ -20,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -47,6 +48,7 @@ fun CustomTopAppBar(navController: NavController, tourViewModel: TourViewModel, 
     var showPopUp by remember { mutableStateOf(false) }
     val navBackStackEntry = navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry.value?.destination?.route
+    val currentLocationIndex by tourViewModel.currentLocationIndex.observeAsState(0)
 
     if (showHelpPopup) {
         HelpPopup(onDismiss = { showHelpPopup = false }, activity)
@@ -110,9 +112,8 @@ fun CustomTopAppBar(navController: NavController, tourViewModel: TourViewModel, 
                     onClick = {
                         showHelpPopup = true
                     },
-                    width = 60.dp,
-                    height = 55.dp,
-                    fontSize = 32.sp,
+                    modifier = Modifier.size(50.dp),
+                    fontSize = 24.sp,
                 )
             },
             modifier = Modifier.fillMaxWidth()
@@ -120,7 +121,7 @@ fun CustomTopAppBar(navController: NavController, tourViewModel: TourViewModel, 
 
         if (currentDestination == "guide") {
             Header(
-                title = "Station ${tourViewModel.currentLocationIndex.value!! + 1} von ${tourViewModel.numberOfLocations}: ${tourViewModel.giveCurrentLocation().name}",
+                title = "Station ${currentLocationIndex + 1} von ${tourViewModel.numberOfLocations}: ${tourViewModel.giveCurrentLocation().name}",
                 fontWeight = FontWeight.Bold,
                 fontSize = 24.sp,
                 modifier = Modifier

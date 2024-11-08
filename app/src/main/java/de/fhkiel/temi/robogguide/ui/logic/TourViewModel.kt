@@ -1,20 +1,15 @@
 package de.fhkiel.temi.robogguide.ui.logic
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import de.fhkiel.temi.robogguide.models.GuideState
 import de.fhkiel.temi.robogguide.models.Item
 import de.fhkiel.temi.robogguide.models.LevelOfDetail
 import de.fhkiel.temi.robogguide.models.Location
-import de.fhkiel.temi.robogguide.models.Transfer
 
 class TourViewModel : ViewModel() {
     var currentLocationIndex = MutableLiveData(0)
     var tourLocations: MutableList<Location> = mutableListOf()
-    var tourTransferTexts: MutableList<Transfer> = mutableListOf()
     var tourLocationsAsItems: MutableList<Item> = mutableListOf()
     var numberOfLocations: Int = tourLocations.size
     var levelOfDetail: LevelOfDetail? = null
@@ -33,7 +28,6 @@ class TourViewModel : ViewModel() {
     /* Initial funssssssssss */
     fun fillTourLocations(locations: MutableList<Location>) {
         tourLocations.clear()
-        tourTransferTexts.clear()
         tourLocations.addAll(locations)
         //TODO tourTransferTexts befüllen
         numberOfLocations = tourLocations.size

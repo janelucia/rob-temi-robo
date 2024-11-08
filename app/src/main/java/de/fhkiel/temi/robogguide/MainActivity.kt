@@ -32,6 +32,7 @@ import de.fhkiel.temi.robogguide.ui.logic.TourViewModel
 import de.fhkiel.temi.robogguide.ui.theme.Rob_Temi_Robo_UITheme
 import de.fhkiel.temi.robogguide.ui.theme.components.CustomTopAppBar
 import de.fhkiel.temi.robogguide.ui.theme.components.GuideNavigationButton
+import de.fhkiel.temi.robogguide.ui.theme.pages.EndPage
 import de.fhkiel.temi.robogguide.ui.theme.pages.Guide
 import de.fhkiel.temi.robogguide.ui.theme.pages.GuideExhibition
 import de.fhkiel.temi.robogguide.ui.theme.pages.GuideSelector
@@ -106,7 +107,7 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
                             )
                         }
                     ) { innerPadding ->
-                        NavHost(navController, startDestination = "homePage") {
+                        NavHost(navController, startDestination = "guideSelector") {
                             composable("homePage") { Home(innerPadding, navController, mRobot, tourManager) }
                             composable("guideSelector") {
                                 GuideSelector(
@@ -126,6 +127,7 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
                                 )
                             }
                             composable("guideExhibition") { GuideExhibition(innerPadding, mRobot, tourManager) }
+                            composable("endPage") { EndPage(innerPadding, navController, mRobot) }
                         }
                     }
                 }
