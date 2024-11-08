@@ -84,6 +84,12 @@ fun LocationPreview(location: Location, mRobot: Robot?, showExhibitions: Mutable
                     contentColor = Color.Black,
                     modifier = Modifier.padding(top = 8.dp, bottom = 4.dp, end = 8.dp),
                 )
+            } else {
+                Text(
+                    text = "Keine Ausstellungsstücke vorhanden",
+                    fontSize = 24.sp,
+                    modifier = Modifier.padding(top = 8.dp, bottom = 24.dp, end = 8.dp),
+                )
             }
             CustomButton(
                 onClick = {
