@@ -72,11 +72,8 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
     }
 
     private val returnHomeRunnable = Runnable {
-        if (!isUserInteracting) {
-            gotoHomeBase()
-        }
+        gotoHomeBase()
     }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -127,7 +124,6 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
                         bottomBar = {
                             GuideNavigationButton(
                                 navController,
-                                tourManager,
                                 tourViewModel,
                                 mRobot
                             )
@@ -359,13 +355,12 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
             handler.removeCallbacks(returnHomeRunnable)
             dialogShown = false
         } else {
-            handler.postDelayed(noInteractionRunnable, 5000) // 5 minutes
+            handler.postDelayed(noInteractionRunnable, 1000 * 60 * 5) // 5 minutes
         }
     }
 
     private fun showInteractionDialog() {
         Log.i("MainActivity", "Show interaction dialog")
-        Log.d("MainActivity", "User is not interacting, showing dialog $dialogShown")
 
         assert(mRobot != null)
         val oldVolume = mRobot?.volume!!
@@ -378,8 +373,7 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
 
             val dialog = AlertDialog.Builder(this)
                 .setTitle("Tour fortführen?")
-                .setMessage("Ich habe längere Zeit keine Interaktion festgestellt.")
-                .setMessage("Möchtest du die Tour fortsetzen oder darf der Roboter zurück zur Homebase?")
+                .setMessage("Ich habe längere Zeit keine Interaktion festgestellt. Möchtest du die Tour fortsetzen oder darf der Roboter zurück zur Homebase?\nDu hast 2 Minuten Zeit, bevor ich nach Hause fahre.")
                 .setPositiveButton("Tour fortführen") { _, _ ->
                     isUserInteracting = true
                     handler.removeCallbacks(returnHomeRunnable)
@@ -387,9 +381,15 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
                 }
                 .setNegativeButton("Tour beenden und Roboter zur Homebase schicken") { _, _ ->
                     gotoHomeBase()
+                    handler.removeCallbacks(returnHomeRunnable)
                     mRobot?.volume = oldVolume
                 }
                 .show()
+
+            handler.postDelayed({
+                returnHomeRunnable.run()
+                dialog.dismiss()
+            }, 120000) // 3 Sek
         }
         // TODO timer starten und ihn nach Hause schicken.. nicht vergessen Lautstärke zurückzusetzen
         // mRobot?.volume = oldVolume
