@@ -31,6 +31,7 @@ import de.fhkiel.temi.robogguide.models.LevelOfDetail
 import de.fhkiel.temi.robogguide.ui.logic.TourViewModel
 import de.fhkiel.temi.robogguide.ui.theme.components.CustomButton
 import de.fhkiel.temi.robogguide.ui.theme.components.Header
+import okhttp3.internal.http2.Header
 
 @Composable
 fun GuideSelector(
@@ -50,23 +51,23 @@ fun GuideSelector(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Header(
-            title = "Wähle deine Tour!",
-            modifier = Modifier
-                .padding(16.dp)
-                .align(Alignment.CenterHorizontally),
-        )
-        Spacer(modifier = Modifier.height(32.dp))
         if (isGuideSelected) {
             if (selectedLength.isNotEmpty()) {
-                Text(
-                    text = buildAnnotatedString {
+                Header(
+                    title = buildAnnotatedString {
                         append("Du hast die ")
                         withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
                             append(convertTourName(selectedLength))
                         }
                         append(" Tour gewählt.")
-                    },
+                    }.toString(),
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .align(Alignment.CenterHorizontally),
+                )
+                Spacer(modifier = Modifier.height(32.dp))
+                Header(
+                    title = "Wähle, wie ausführlich die Informationen sein sollen.",
                     fontSize = 64.sp
                 )
                 Spacer(modifier = Modifier.height(32.dp))
@@ -107,6 +108,13 @@ fun GuideSelector(
                     )
                 }
             } else {
+                Header(
+                    title = "Wähle die Länge deiner Führung",
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .align(Alignment.CenterHorizontally),
+                )
+                Spacer(modifier = Modifier.height(32.dp))
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
@@ -145,6 +153,18 @@ fun GuideSelector(
                 }
             }
         } else {
+            Header(
+                title = "Was möchtest du machen?",
+                modifier = Modifier
+                    .padding(16.dp)
+                    .align(Alignment.CenterHorizontally),
+            )
+            Spacer(modifier = Modifier.height(32.dp))
+            Header(
+                title = "Wähle, ob du eine Führung oder einzelne Ausstellungsstücke sehen möchtest.",
+                fontSize = 64.sp
+            )
+            Spacer(modifier = Modifier.height(32.dp))
             Row(modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .padding(vertical = 32.dp, horizontal = 16.dp)) {
