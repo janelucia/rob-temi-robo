@@ -127,7 +127,6 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
                         bottomBar = {
                             GuideNavigationButton(
                                 navController,
-                                tourManager,
                                 tourViewModel,
                                 mRobot
                             )
