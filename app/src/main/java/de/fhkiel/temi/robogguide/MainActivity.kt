@@ -19,12 +19,14 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.robotemi.sdk.Robot
 import com.robotemi.sdk.TtsRequest
+import com.robotemi.sdk.listeners.OnGoToLocationStatusChangedListener
 import com.robotemi.sdk.listeners.OnRobotReadyListener
 import com.robotemi.sdk.map.MapDataModel
 import com.robotemi.sdk.permission.OnRequestPermissionResultListener
 import com.robotemi.sdk.permission.Permission
 import de.fhkiel.temi.robogguide.database.DatabaseHelper
 import de.fhkiel.temi.robogguide.logic.TourManager
+import de.fhkiel.temi.robogguide.models.GuideState
 import de.fhkiel.temi.robogguide.ui.logic.SetupViewModel
 import de.fhkiel.temi.robogguide.ui.logic.TourViewModel
 import de.fhkiel.temi.robogguide.ui.theme.Rob_Temi_Robo_UITheme
@@ -40,7 +42,7 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 @OptIn(ExperimentalMaterial3Api::class)
-class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermissionResultListener {
+class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermissionResultListener, OnGoToLocationStatusChangedListener {
     private val setupViewModel: SetupViewModel by viewModels()
     private val tourViewModel: TourViewModel by viewModels()
     private var mRobot: Robot? = null
@@ -290,6 +292,20 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
 
     companion object {
         const val REQUEST_CODE_MAP = 10
+    }
+
+    override fun onGoToLocationStatusChanged(
+        location: String,
+        status: String,
+        descriptionId: Int,
+        description: String
+    ) {
+        if (status == OnGoToLocationStatusChangedListener.COMPLETE && tourViewModel.guideState.value == GuideState.TransferGoing) {
+            // Roboter erreicht Ziel
+            tourViewModel.updateGuideState(GuideState.Exhibit)
+        } else if (status == OnGoToLocationStatusChangedListener.GOING && tourViewModel.guideState.value == GuideState.TransferStart) {
+            tourViewModel.updateGuideState(GuideState.TransferGoing)
+        }
     }
 
 }

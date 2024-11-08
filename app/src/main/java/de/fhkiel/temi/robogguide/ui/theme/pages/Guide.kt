@@ -22,7 +22,7 @@ import de.fhkiel.temi.robogguide.models.GuideState
 import de.fhkiel.temi.robogguide.ui.logic.TourViewModel
 import de.fhkiel.temi.robogguide.ui.theme.components.CustomButton
 import de.fhkiel.temi.robogguide.ui.theme.components.Exhibit
-import de.fhkiel.temi.robogguide.ui.theme.components.Transfer
+import de.fhkiel.temi.robogguide.ui.theme.components.TransferDrive
 
 @Composable
 fun Guide(
@@ -47,12 +47,12 @@ fun Guide(
         when (guideState) {
             null -> {
                 if (currentItem != null) {
-                    tourViewModel.updateGuideState(GuideState.Transfer)
+                    tourViewModel.updateGuideState(GuideState.TransferStart)
                 }
             }
-            GuideState.Transfer -> {
+            GuideState.TransferStart -> {
                 assert(currentItem != null)
-                Transfer(currentItem!!, mRobot, tourViewModel)
+                TransferDrive(currentItem!!, mRobot, tourViewModel)
                 Spacer(modifier = Modifier.height(16.dp))
                 //TODO aktuell noch Button oder Timer, um die nächste Phase zu triggern (Wechsel zur Exponat-Sequenz)
                 CustomButton(
@@ -74,7 +74,7 @@ fun Guide(
                     CustomButton(
                         title = "Zum nächsten Exponat",
                         onClick = {
-                            tourViewModel.updateGuideState(GuideState.Transfer)
+                            tourViewModel.updateGuideState(GuideState.TransferStart)
                             tourViewModel.incrementCurrentItemIndex()
                         }
                     )
@@ -82,6 +82,9 @@ fun Guide(
                 }
 
             }
+
+            GuideState.TransferGoing -> TODO()
+            GuideState.End -> TODO()
         }
     }
 
