@@ -39,6 +39,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.robotemi.sdk.Robot
 import de.fhkiel.temi.robogguide.MainActivity
 import de.fhkiel.temi.robogguide.R
+import de.fhkiel.temi.robogguide.logic.robotSpeakText
 import de.fhkiel.temi.robogguide.ui.logic.TourViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -96,6 +97,7 @@ fun CustomTopAppBar(navController: NavController, tourViewModel: TourViewModel, 
                     CustomButton(
                         title = "Roboter zur Ladestation schicken",
                         onClick = {
+                            robotSpeakText(mRobot, "Ich fahre jetzt zur Aufladestation!")
                             mRobot?.goTo("home base")
                         },
                         width = 600.dp,
