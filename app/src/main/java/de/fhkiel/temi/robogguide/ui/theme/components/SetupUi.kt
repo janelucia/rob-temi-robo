@@ -158,9 +158,9 @@ fun SetupUi(tourManager: TourManager, setupViewModel: SetupViewModel) {
                 )
                 Spacer(modifier = Modifier.width(16.dp))
                 if (isRobotReady) {
+                    val mRobot = Robot.getInstance()
                     CustomButton(
                         onClick = {
-                            val mRobot = Robot.getInstance()
                             val mapName = mRobot.getMapData()?.mapName
                             var placeFound = false
                             var placeSet = false
@@ -193,6 +193,9 @@ fun SetupUi(tourManager: TourManager, setupViewModel: SetupViewModel) {
                             onCheckedChange = { enabled: Boolean ->
                                 setupViewModel.setKioskModeEnabled(enabled)
                                 Log.i("SetupUi", "Kiosk mode enabled: $enabled")
+                                if (enabled) {
+                                    mRobot.requestToBeKioskApp()
+                                }
                             }
                         )
                     }
