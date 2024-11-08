@@ -10,10 +10,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -24,7 +22,7 @@ import de.fhkiel.temi.robogguide.models.GuideState
 import de.fhkiel.temi.robogguide.ui.logic.TourViewModel
 import de.fhkiel.temi.robogguide.ui.theme.components.CustomButton
 import de.fhkiel.temi.robogguide.ui.theme.components.Exhibit
-import de.fhkiel.temi.robogguide.ui.theme.components.Transfer
+import de.fhkiel.temi.robogguide.ui.theme.components.TransferDrive
 
 @Composable
 fun Guide(
@@ -35,12 +33,9 @@ fun Guide(
     tourViewModel: TourViewModel
 ) {
 
-    val guideState by tourViewModel.guideState.observeAsState(GuideState.Transfer)
+    val guideState by tourViewModel.guideState.observeAsState(null)
 
-    val currentLocationItems by remember { derivedStateOf { tourViewModel.currentLocationItems } }
-
-    val currentItemIndex by tourViewModel.currentItemIndex.observeAsState(0)
-
+    val currentItem by tourViewModel.currentItem.observeAsState(null)
 
     Column(
         modifier = Modifier
@@ -51,10 +46,13 @@ fun Guide(
     ) {
         when (guideState) {
             null -> {
-                //nüx
+                if (currentItem != null) {
+                    tourViewModel.updateGuideState(GuideState.TransferStart)
+                }
             }
-            GuideState.Transfer -> {
-                Transfer(tourViewModel.currentLocationItems[currentItemIndex], mRobot, tourViewModel)
+            GuideState.TransferStart -> {
+                assert(currentItem != null)
+                TransferDrive(currentItem!!, mRobot, tourViewModel)
                 Spacer(modifier = Modifier.height(16.dp))
                 //TODO aktuell noch Button oder Timer, um die nächste Phase zu triggern (Wechsel zur Exponat-Sequenz)
                 CustomButton(
@@ -64,8 +62,8 @@ fun Guide(
             }
 
             GuideState.Exhibit -> {
-
-                Exhibit(tourViewModel.currentLocationItems[currentItemIndex], mRobot, tourViewModel)
+                assert(currentItem != null)
+                Exhibit(currentItem!!, mRobot, tourViewModel)
 
                 Spacer(modifier = Modifier.height(16.dp))
                 Row(
@@ -76,14 +74,17 @@ fun Guide(
                     CustomButton(
                         title = "Zum nächsten Exponat",
                         onClick = {
-                            tourViewModel.updateGuideState(GuideState.Transfer)
-                            tourViewModel.updateCurrentItem(currentItemIndex + 1)
+                            tourViewModel.updateGuideState(GuideState.TransferStart)
+                            tourViewModel.incrementCurrentItemIndex()
                         }
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                 }
 
             }
+
+            GuideState.TransferGoing -> TODO()
+            GuideState.End -> TODO()
         }
     }
 

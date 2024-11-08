@@ -1,7 +1,9 @@
 package de.fhkiel.temi.robogguide.models
 
 enum class GuideState {
-    Transfer, // robot leads guest to next exhibit
-    Exhibit     // robot is at exhibit
+    TransferStart, // robot leads guest to next exhibit
+    TransferGoing,
+    Exhibit,     // robot is at exhibit
+    End
     //TODO vielleicht weitere states hinzufügen wie exhibit introduction, exhibit idle, exhibit end (...)
 }

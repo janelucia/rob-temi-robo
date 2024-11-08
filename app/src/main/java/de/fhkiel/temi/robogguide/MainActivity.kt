@@ -19,17 +19,20 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.robotemi.sdk.Robot
 import com.robotemi.sdk.TtsRequest
+import com.robotemi.sdk.listeners.OnGoToLocationStatusChangedListener
 import com.robotemi.sdk.listeners.OnRobotReadyListener
 import com.robotemi.sdk.map.MapDataModel
 import com.robotemi.sdk.permission.OnRequestPermissionResultListener
 import com.robotemi.sdk.permission.Permission
 import de.fhkiel.temi.robogguide.database.DatabaseHelper
 import de.fhkiel.temi.robogguide.logic.TourManager
+import de.fhkiel.temi.robogguide.models.GuideState
 import de.fhkiel.temi.robogguide.ui.logic.SetupViewModel
 import de.fhkiel.temi.robogguide.ui.logic.TourViewModel
 import de.fhkiel.temi.robogguide.ui.theme.Rob_Temi_Robo_UITheme
 import de.fhkiel.temi.robogguide.ui.theme.components.CustomTopAppBar
 import de.fhkiel.temi.robogguide.ui.theme.components.GuideNavigationButton
+import de.fhkiel.temi.robogguide.ui.theme.pages.EndPage
 import de.fhkiel.temi.robogguide.ui.theme.pages.Guide
 import de.fhkiel.temi.robogguide.ui.theme.pages.GuideExhibition
 import de.fhkiel.temi.robogguide.ui.theme.pages.GuideSelector
@@ -47,7 +50,7 @@ import com.robotemi.sdk.listeners.OnUserInteractionChangedListener
 import de.fhkiel.temi.robogguide.logic.robotSpeakText
 
 @OptIn(ExperimentalMaterial3Api::class)
-class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermissionResultListener,
+class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermissionResultListener, OnGoToLocationStatusChangedListener,
     OnUserInteractionChangedListener {
     private val setupViewModel: SetupViewModel by viewModels()
     private val tourViewModel: TourViewModel by viewModels()
@@ -125,7 +128,8 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
                             GuideNavigationButton(
                                 navController,
                                 tourManager,
-                                tourViewModel
+                                tourViewModel,
+                                mRobot
                             )
                         }
                     ) { innerPadding ->
@@ -162,6 +166,7 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
                                     tourManager
                                 )
                             }
+                            composable("endPage") { EndPage(innerPadding, navController, mRobot) }
                         }
                     }
                 }
@@ -185,9 +190,6 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
         Robot.getInstance().removeOnRobotReadyListener(this)
         Robot.getInstance().removeOnRequestPermissionResultListener(this)
         Robot.getInstance().removeOnUserInteractionChangedListener(this)
-        // disable the detectionMode again
-        mRobot?.setDetectionModeOn(on = false, distance = 0.8f)
-        mRobot?.setKioskModeOn(on = false)
     }
 
     override fun onDestroy() {
@@ -394,6 +396,20 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
 
     companion object {
         const val REQUEST_CODE_MAP = 10
+    }
+
+    override fun onGoToLocationStatusChanged(
+        location: String,
+        status: String,
+        descriptionId: Int,
+        description: String
+    ) {
+        if (status == OnGoToLocationStatusChangedListener.COMPLETE && tourViewModel.guideState.value == GuideState.TransferGoing) {
+            // Roboter erreicht Ziel
+            tourViewModel.updateGuideState(GuideState.Exhibit)
+        } else if (status == OnGoToLocationStatusChangedListener.GOING && tourViewModel.guideState.value == GuideState.TransferStart) {
+            tourViewModel.updateGuideState(GuideState.TransferGoing)
+        }
     }
 
 }

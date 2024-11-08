@@ -20,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -47,6 +48,7 @@ fun CustomTopAppBar(navController: NavController, tourViewModel: TourViewModel, 
     var showPopUp by remember { mutableStateOf(false) }
     val navBackStackEntry = navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry.value?.destination?.route
+    val currentLocationIndex by tourViewModel.currentLocationIndex.observeAsState(0)
 
     if (showHelpPopup) {
         HelpPopup(onDismiss = { showHelpPopup = false }, activity)
@@ -119,7 +121,7 @@ fun CustomTopAppBar(navController: NavController, tourViewModel: TourViewModel, 
 
         if (currentDestination == "guide") {
             Header(
-                title = "Station ${tourViewModel.currentLocationIndex + 1} von ${tourViewModel.numberOfLocations}: ${tourViewModel.giveCurrentLocation().name}",
+                title = "Station ${currentLocationIndex + 1} von ${tourViewModel.numberOfLocations}: ${tourViewModel.giveCurrentLocation().name}",
                 fontWeight = FontWeight.Bold,
                 fontSize = 24.sp,
                 modifier = Modifier
@@ -139,7 +141,7 @@ fun SetupTopBar(activity: Activity){
         TopAppBar(
             title = {
                 Text(
-                    "Gruppe Pentagram - Temi Setup",
+                    "Gruppe Pentagon - Temi Setup",
                     fontSize = 32.sp,
                     fontWeight = FontWeight.Bold,
                 )
