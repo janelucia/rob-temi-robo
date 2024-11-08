@@ -43,6 +43,11 @@
             android:name="com.robotemi.sdk.metadata.UI_MODE"
             android:value="4" />
 
+        <!-- TEMI SET KIOSK MODE -->
+        <meta-data
+            android:name="com.robotemi.sdk.metadata.KIOSK"
+            android:value="TRUE" />
+
     </application>
 
 </manifest>
