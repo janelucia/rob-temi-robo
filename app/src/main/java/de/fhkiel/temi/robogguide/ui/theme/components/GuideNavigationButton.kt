@@ -49,7 +49,8 @@ fun GuideNavigationButton(
 
             Box(
                 modifier = Modifier
-                    .align(Alignment.CenterVertically).width(200.dp),
+                    .align(Alignment.CenterVertically)
+                    .width(200.dp),
             ) {
                 GuideProgressBar(numberOfItems, currentItemIndex)
             }
@@ -62,16 +63,21 @@ fun GuideNavigationButton(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    CustomButton(title = "⏮",
+                    CustomButton(
+                        title = "⏮",
                         fontSize = 32.sp,
                         onClick = {
                             tourViewModel.decrementCurrentItemIndex()
                         },
-                        modifier = Modifier.size(150.dp).padding(16.dp),
+                        modifier = Modifier
+                            .size(150.dp)
+                            .padding(16.dp),
                     )
                     CustomButton(title = "⟲",
                         fontSize = 32.sp,
-                        modifier = Modifier.size(150.dp).padding(16.dp),
+                        modifier = Modifier
+                            .size(150.dp)
+                            .padding(16.dp),
                         onClick = {
                             if (wasAlreadySpoken) {
                                 assert(tourViewModel.levelOfDetail != null)
@@ -91,8 +97,9 @@ fun GuideNavigationButton(
                             }
                         }
                     )
-                    if(currentItemIndex == numberOfItems - 1 && currentLocationIndex == tourViewModel.numberOfLocations - 1) {
-                        CustomButton(title = "Führung beenden",
+                    if (currentItemIndex == numberOfItems - 1 && currentLocationIndex == tourViewModel.numberOfLocations - 1) {
+                        CustomButton(
+                            title = "Führung beenden",
                             fontSize = 32.sp,
                             onClick = {
                                 navController.navigate("endPage")
@@ -104,15 +111,14 @@ fun GuideNavigationButton(
                     } else {
                         CustomButton(title = "⏭",
                             fontSize = 32.sp,
-                            modifier = Modifier.size(150.dp).padding(16.dp),
+                            modifier = Modifier
+                                .size(150.dp)
+                                .padding(16.dp),
                             onClick = {
-                                tourViewModel.updateCurrentItem(currentItemIndex + 1)
+                                tourViewModel.incrementCurrentItemIndex()
                             }
                         )
                     }
-                    /*Icon(imageVector = Icons.Filled.Refresh,
-                        contentDescription = "Play text again",
-                        tint = Color.Black)*/
                 }
             }
         }
