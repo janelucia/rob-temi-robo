@@ -140,9 +140,14 @@ fun CustomTopAppBar(navController: NavController, tourViewModel: TourViewModel, 
 @Composable
 fun SetupTopBar(activity: Activity){
     var showPopUp by remember { mutableStateOf(false) }
+    var showConfirmationPopUp by remember { mutableStateOf(false) }
 
     if (showPopUp) {
         PreparationPopUp(onDismiss = { showPopUp = false })
+    }
+
+    if (showConfirmationPopUp) {
+        ConfirmationPopUp(onDismiss = { showConfirmationPopUp = false }, onConfirm = { exitApp(activity) }, title = "App schließen", message = "Möchtest du die App wirklich schließen?", confirmationButtonText = "App schließen", dismissButtonText = "Abbrechen")
     }
 
     Box(modifier = Modifier.fillMaxWidth()){
@@ -170,7 +175,7 @@ fun SetupTopBar(activity: Activity){
                 CustomButton(
                     title = "App schließen",
                     onClick = {
-                        exitApp(activity)
+                        showConfirmationPopUp = true
                     },
                     width = 300.dp,
                     height = 55.dp,

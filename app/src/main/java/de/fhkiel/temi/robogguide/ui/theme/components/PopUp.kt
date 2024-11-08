@@ -86,3 +86,43 @@ fun PreparationPopUp(onDismiss: () -> Unit) {
         }
     }
 }
+
+@Composable
+fun ConfirmationPopUp(onDismiss: () -> Unit, onConfirm: () -> Unit, title: String, message: String, confirmationButtonText: String, dismissButtonText: String) {
+    Dialog(onDismissRequest = onDismiss) {
+        Box(
+            modifier = Modifier
+                .background(Color.White, shape = RoundedCornerShape(16.dp))
+                .padding(16.dp)
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Header(title,
+                    fontSize = 64.sp)
+                Spacer(modifier = Modifier.height(32.dp))
+                Text(message,
+                    fontSize = 24.sp,
+                    lineHeight = 32.sp)
+                Spacer(modifier = Modifier.height(16.dp))
+                CustomButton(
+                    onClick = onConfirm,
+                    title = confirmationButtonText,
+                    width = 400.dp,
+                    height = 50.dp,
+                    fontSize = 32.sp,
+                    initialBackgroundColor = Color.White,
+                    contentColor = Color.Black
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                CustomButton(
+                    onClick = onDismiss,
+                    title = dismissButtonText,
+                    width = 400.dp,
+                    height = 50.dp,
+                    fontSize = 32.sp
+                )
+            }
+        }
+    }
+}
