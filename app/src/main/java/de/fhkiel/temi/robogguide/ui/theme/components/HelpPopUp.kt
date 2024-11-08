@@ -24,11 +24,11 @@ fun HelpPopup(onDismiss: () -> Unit, activity: Activity) {
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.SpaceEvenly,
-                modifier = Modifier.fillMaxSize()
             ) {
-                    Text("Wie kann ich dir helfen?", style = MaterialTheme.typography.headlineLarge)
-
+                    Text("Wie darf ich dir helfen?",
+                        fontSize = 64.sp,
+                        lineHeight = 64.sp)
+                    Spacer(modifier = Modifier.height(16.dp))
                     CustomButton(
                         onClick = {
                             exitApp(activity)
@@ -40,7 +40,7 @@ fun HelpPopup(onDismiss: () -> Unit, activity: Activity) {
                         initialBackgroundColor = Color.White,
                         contentColor = Color.Black,
                     )
-
+                    Spacer(modifier = Modifier.height(16.dp))
                     CustomButton(
                         onClick = onDismiss,
                         title = "Abbrechen",
