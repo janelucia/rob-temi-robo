@@ -1,6 +1,5 @@
 package de.fhkiel.temi.robogguide.ui.theme.components
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -25,7 +24,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.robotemi.sdk.Robot
 import de.fhkiel.temi.robogguide.R
 import de.fhkiel.temi.robogguide.models.Item
 import de.fhkiel.temi.robogguide.models.LevelOfDetail
@@ -36,7 +34,6 @@ import de.fhkiel.temi.robogguide.ui.logic.TourViewModel
 fun LocationPreview(
     location: Location,
     navHostController: NavHostController,
-    mRobot: Robot?,
     showExhibitions: MutableState<String>,
     tourViewModel: TourViewModel
 ) {
@@ -111,9 +108,12 @@ fun LocationPreview(
             }
             CustomButton(
                 onClick = {
-                    mRobot?.goTo(location = location.name)
-                    Log.i("LocationPreview", "Navigating to ${location.name}")
-                    Log.d("LocationPreview", "${mRobot?.isReady}")
+                    // prepare the detailed exhibit page
+                    tourViewModel.fillTourLocations(listOf(location).toMutableList())
+                    tourViewModel.levelOfDetail = LevelOfDetail.EVERYTHING_DETAILED
+
+                    // navigate to the detailed exhibit page
+                    navHostController.navigate("detailedExhibit")
                 },
                 title = "Führe mich dorthin!",
                 fontSize = 24.sp,
@@ -128,7 +128,6 @@ fun LocationPreview(
 @Composable
 fun ItemPreview(
     item: Item,
-    mRobot: Robot?,
     tourViewModel: TourViewModel,
     navHostController: NavHostController
 ) {

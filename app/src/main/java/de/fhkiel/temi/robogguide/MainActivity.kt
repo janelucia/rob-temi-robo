@@ -157,7 +157,6 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
                             composable("guideExhibition") {
                                 GuideExhibition(
                                     innerPadding,
-                                    mRobot,
                                     tourManager,
                                     tourViewModel,
                                     navController

@@ -22,7 +22,6 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.robotemi.sdk.Robot
 import de.fhkiel.temi.robogguide.logic.TourManager
 import de.fhkiel.temi.robogguide.models.Item
 import de.fhkiel.temi.robogguide.models.Location
@@ -34,7 +33,6 @@ import de.fhkiel.temi.robogguide.ui.theme.components.LocationPreview
 @Composable
 fun GuideExhibition(
     innerPadding: PaddingValues,
-    mRobot: Robot?,
     tourManager: TourManager,
     tourViewModel: TourViewModel,
     navHostController: NavHostController
@@ -100,7 +98,7 @@ fun GuideExhibition(
                 location.name == showExhibitions.value
             }?.items?.forEach { item: Item ->
                 item {
-                    ItemPreview(item, mRobot, tourViewModel, navHostController)
+                    ItemPreview(item, tourViewModel, navHostController)
                 }
             }
         } else {
@@ -113,7 +111,7 @@ fun GuideExhibition(
             }
             tourManager.selectedPlace?.allLocations?.forEach { location: Location ->
                 item {
-                    LocationPreview(location, navHostController, mRobot, showExhibitions, tourViewModel)
+                    LocationPreview(location, navHostController, showExhibitions, tourViewModel)
                 }
             }
         }
