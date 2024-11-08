@@ -353,7 +353,7 @@ class TourManager(private val db: SQLiteDatabase?) {
                     Log.i("TourManager", "Transfer: $from -> $to")
                     transfersForLocation[from] = to
                     allLocations[from] = Location(
-                        nameTo,
+                        nameFrom,
                         getItems(id),
                         detailedText,
                         conciseText,
@@ -362,7 +362,7 @@ class TourManager(private val db: SQLiteDatabase?) {
                     if (isImportant) {
                         importantLocations[from] =
                             Location(
-                                nameTo,
+                                nameFrom,
                                 getItems(id),
                                 detailedText,
                                 conciseText,
