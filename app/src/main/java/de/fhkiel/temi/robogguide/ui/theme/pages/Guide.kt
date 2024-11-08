@@ -59,6 +59,23 @@ fun Guide(
             GuideState.Exhibit -> {
                 assert(currentItem != null)
                 Exhibit(currentItem!!, mRobot, tourViewModel)
+
+                Spacer(modifier = Modifier.height(16.dp))
+                Row(
+                    horizontalArrangement = Arrangement.SpaceAround,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    //TODO aktuell noch Button oder Mechanismus, um zur nächsten Übergangssequenz zu wechseln
+                    CustomButton(
+                        title = "Zum nächsten Exponat",
+                        onClick = {
+                            tourViewModel.updateGuideState(GuideState.TransferStart)
+                            tourViewModel.incrementCurrentItemIndex()
+                        }
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
+
             }
 
             GuideState.TransferGoing -> {
