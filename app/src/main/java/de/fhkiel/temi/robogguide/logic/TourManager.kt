@@ -10,6 +10,7 @@ import de.fhkiel.temi.robogguide.models.Location
 import de.fhkiel.temi.robogguide.models.Media
 import de.fhkiel.temi.robogguide.models.Place
 import de.fhkiel.temi.robogguide.models.Text
+import de.fhkiel.temi.robogguide.models.Transfer
 import java.net.URL
 
 class TourManager(private val db: SQLiteDatabase?) {
@@ -292,14 +293,14 @@ class TourManager(private val db: SQLiteDatabase?) {
     private fun fillThePlaceWithData() {
         Log.i("TourManager", "Filling the selected place with data")
 
-        val (allLocations, importantLocations) = getLocations()
-        selectedPlace = Place(currentPlaceName!!, importantLocations, allLocations)
+        val (allLocations, importantLocations, allTransfers) = getLocations()
+        selectedPlace = Place(currentPlaceName!!, importantLocations, allLocations, allTransfers)
     }
 
     /**
      * Method to get all locations for the current place.
      */
-    private fun getLocations(): Pair<List<Location>, List<Location>> {
+    private fun getLocations(): Triple<List<Location>, List<Location>, Map<String, Transfer>> {
 
         val transfersForLocation: MutableMap<Int, Int> = mutableMapOf()
         val startPoint = tourStartLocation[currentPlaceId]!!
@@ -308,9 +309,11 @@ class TourManager(private val db: SQLiteDatabase?) {
         val sortedImportantLocations: MutableList<Location> = mutableListOf()
         val allLocations: MutableMap<Int, Location> = mutableMapOf()
         val importantLocations: MutableMap<Int, Location> = mutableMapOf()
+        val allTransfers: MutableMap<String, Transfer> = mutableMapOf()
 
         val queryGetAllTransfersForLocation = """
-            SELECT t.location_from, t.location_to, l1.id, l1.name, l1.important
+            SELECT t.id as transfer_id, 
+            t.location_from, t.location_to, l1.id, l1.name as name_from, l1.important, l2.name as name_to
             FROM transfers AS t
             LEFT JOIN locations AS l1 
             ON t.location_from = l1.id 
@@ -331,20 +334,39 @@ class TourManager(private val db: SQLiteDatabase?) {
                     val to = cursor.getInt(cursor.getColumnIndexOrThrow("location_to"))
 
                     val id = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
-                    val name = cursor.getString(cursor.getColumnIndexOrThrow("name"))
+                    val transferId = cursor.getInt(cursor.getColumnIndexOrThrow("transfer_id"))
+
+                    val nameTo = cursor.getString(cursor.getColumnIndexOrThrow("name_to"))
+                    val nameFrom = cursor.getString(cursor.getColumnIndexOrThrow("name_from"))
                     val important = cursor.getInt(cursor.getColumnIndexOrThrow("important"))
+
+                    val transferTexts = getTexts("transfers_id", transferId)
+                    val detailedTransferText = transferTexts?.get(true)
+                    val conciceTransferText = transferTexts?.get(false)
                     val isImportant = (important == 1)
                     val texts = getTexts("locations_id", id)
                     val detailedText = texts?.get(true)
                     val conciseText = texts?.get(false)
 
+                    allTransfers[nameTo] = Transfer(detailedTransferText, conciceTransferText)
 
                     Log.i("TourManager", "Transfer: $from -> $to")
                     transfersForLocation[from] = to
-                    allLocations[from] = Location(name, getItems(id), detailedText, conciseText)
+                    allLocations[from] = Location(
+                        nameTo,
+                        getItems(id),
+                        detailedText,
+                        conciseText,
+                    )
+
                     if (isImportant) {
                         importantLocations[from] =
-                            Location(name, getItems(id), detailedText, conciseText)
+                            Location(
+                                nameTo,
+                                getItems(id),
+                                detailedText,
+                                conciseText,
+                            )
                     }
                 } while (cursor.moveToNext())
             }
@@ -368,7 +390,7 @@ class TourManager(private val db: SQLiteDatabase?) {
 
         Log.i("TourManager", "Transfers for location: $transfersForLocation")
 
-        return Pair(sortedAllLocations, sortedImportantLocations)
+        return Triple(sortedAllLocations, sortedImportantLocations, allTransfers)
 
     }
 
