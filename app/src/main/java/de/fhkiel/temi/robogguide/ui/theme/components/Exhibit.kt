@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -49,9 +50,11 @@ fun Exhibit(currentItem: Item, mRobot: Robot?, tourViewModel: TourViewModel) {
     Row(
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(16.dp).fillMaxWidth()
+        modifier = Modifier
+            .padding(16.dp)
+            .fillMaxWidth()
     ) {
-        if(tourViewModel.levelOfDetail?.isDetailed() == true){
+        if (tourViewModel.levelOfDetail?.isDetailed() == true) {
             DisplayMedia(currentItem.detailedText!!)
             DisplayMedia(currentItem.conciseText!!)
         } else {
@@ -59,21 +62,4 @@ fun Exhibit(currentItem: Item, mRobot: Robot?, tourViewModel: TourViewModel) {
         }
     }
 
-}
-
-@Composable
-fun DisplayMedia(text: Text) {
-   if (text.media?.url.toString().isEmpty()) {
-       StockImage()
-   } else if (text.media?.url?.host == "www.youtube.com") {
-       Log.i("Exhibit", "Video kann ich noch nicht")
-   } else {
-       Log.i("Exhibit", "Bild kann ich noch nicht")
-       LoadingImage(
-           urlString = text.media?.url.toString(),
-           modifier = Modifier.size(400.dp),
-           contentScale = ContentScale.Fit
-       )
-       Spacer(modifier = Modifier.width(16.dp))
-   }
 }
