@@ -68,7 +68,7 @@ fun TransferDrive(currentLocation: Location, mRobot: Robot?, tourViewModel: Tour
             urlString = media?.url.toString(),
             modifier = Modifier
                 .fillMaxWidth(),
-            contentScale = ContentScale.FillBounds
+            contentScale = ContentScale.FillHeight
         )
     }
 }
