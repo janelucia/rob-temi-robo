@@ -49,7 +49,14 @@ fun LocationPreview(
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
-            DisplayMedia(location.conciseText)
+            if (location.conciseText?.mediaList?.first()?.url != null) {
+                LoadingImage(
+                    urlString = location.conciseText.mediaList.first().url.toString(),
+                    modifier = Modifier.size(400.dp)
+                )
+            } else {
+                StockImage()
+            }
             Spacer(modifier = Modifier.width(32.dp))
             Column {
                 Text(
@@ -130,7 +137,14 @@ fun ItemPreview(
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
-            DisplayMedia(item.conciseText)
+            if (item.conciseText?.mediaList?.first()?.url != null) {
+                LoadingImage(
+                    urlString = item.conciseText.mediaList.first().url.toString(),
+                    modifier = Modifier.size(400.dp)
+                )
+            } else {
+                StockImage()
+            }
             Spacer(modifier = Modifier.width(32.dp))
             Column {
                 Text(
