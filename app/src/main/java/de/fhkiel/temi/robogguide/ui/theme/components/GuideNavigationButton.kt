@@ -48,10 +48,7 @@ fun GuideNavigationButton(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-
-
-                    GuideProgressBar(numberOfItems, currentItemIndex)
-
+                GuideProgressBar(numberOfItems, currentItemIndex)
 
                 Box {
                     // Navigations-Buttons für Exponate
@@ -60,7 +57,7 @@ fun GuideNavigationButton(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        if (currentItemIndex == 0 && currentLocationIndex == 0){
+                        if (currentItemIndex == 0 && currentLocationIndex == 0) {
                             CustomIconButton(
                                 iconId = R.drawable.play_disabled_right,
                                 onClick = {

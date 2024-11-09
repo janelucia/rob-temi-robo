@@ -1,5 +1,6 @@
 package de.fhkiel.temi.robogguide.ui.theme.pages
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -14,6 +15,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.robotemi.sdk.Robot
 import de.fhkiel.temi.robogguide.logic.TourManager
@@ -52,8 +54,7 @@ fun Guide(
             GuideState.TransferStart -> {
                 assert(currentLocation != null)
                 TransferDrive(currentLocation!!, mRobot, tourViewModel, tourManager)
-                Spacer(modifier = Modifier.height(16.dp))
-                //TODO aktuell noch Button oder Timer, um die nächste Phase zu triggern (Wechsel zur Exponat-Sequenz)
+//                //TODO DEBUG BUTTON
                 CustomButton(
                     title = "Am Exponat angekommen",
                     onClick = { tourViewModel.updateGuideState(GuideState.Exhibit) }
@@ -63,22 +64,14 @@ fun Guide(
             GuideState.Exhibit -> {
                 assert(currentItem != null)
                 Exhibit(currentItem!!, mRobot, tourViewModel)
-
-                Spacer(modifier = Modifier.height(16.dp))
-                Row(
-                    horizontalArrangement = Arrangement.SpaceAround,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    //TODO aktuell noch Button oder Mechanismus, um zur nächsten Übergangssequenz zu wechseln
-                    CustomButton(
-                        title = "Zum nächsten Exponat",
-                        onClick = {
-                            tourViewModel.updateGuideState(GuideState.TransferStart)
-                            tourViewModel.incrementCurrentItemIndex()
-                        }
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                }
+                //TODO DEBUG BUTTON
+                CustomButton(
+                    title = "Zum nächsten Exponat",
+                    onClick = {
+                        tourViewModel.updateGuideState(GuideState.TransferStart)
+                        tourViewModel.incrementCurrentItemIndex()
+                    }
+                )
 
             }
 

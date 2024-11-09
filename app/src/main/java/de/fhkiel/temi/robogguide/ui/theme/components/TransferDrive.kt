@@ -22,7 +22,12 @@ import de.fhkiel.temi.robogguide.ui.logic.TourViewModel
 import kotlinx.coroutines.delay
 
 @Composable
-fun TransferDrive(currentLocation: Location, mRobot: Robot?, tourViewModel: TourViewModel, tourManager: TourManager) {
+fun TransferDrive(
+    currentLocation: Location,
+    mRobot: Robot?,
+    tourViewModel: TourViewModel,
+    tourManager: TourManager
+) {
 
     val guideState by tourViewModel.guideState.observeAsState(null)
 
