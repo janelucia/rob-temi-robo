@@ -49,14 +49,7 @@ fun LocationPreview(
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
-            if (location.conciseText?.media?.url != null) {
-                LoadingImage(
-                    urlString = location.conciseText.media.url.toString(),
-                    modifier = Modifier.size(400.dp)
-                )
-            } else {
-                StockImage()
-            }
+            DisplayMedia(location.conciseText)
             Spacer(modifier = Modifier.width(32.dp))
             Column {
                 Text(
@@ -137,19 +130,7 @@ fun ItemPreview(
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
-            if (item.conciseText?.media?.url != null) {
-                LoadingImage(
-                    urlString = item.conciseText.media.url.toString(),
-                    modifier = Modifier.size(400.dp)
-                )
-            } else {
-                Image(
-                    painter = painterResource(id = R.drawable.computermuseum_maerz_23),
-                    contentDescription = "Computer Museum",
-                    modifier = Modifier.size(400.dp),
-                    contentScale = ContentScale.FillHeight
-                )
-            }
+            DisplayMedia(item.conciseText)
             Spacer(modifier = Modifier.width(32.dp))
             Column {
                 Text(

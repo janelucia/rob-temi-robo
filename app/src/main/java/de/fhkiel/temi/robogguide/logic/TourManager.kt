@@ -8,6 +8,7 @@ import de.fhkiel.temi.robogguide.models.Item
 import de.fhkiel.temi.robogguide.models.LevelOfDetail
 import de.fhkiel.temi.robogguide.models.Location
 import de.fhkiel.temi.robogguide.models.Media
+import de.fhkiel.temi.robogguide.models.MediaType
 import de.fhkiel.temi.robogguide.models.Place
 import de.fhkiel.temi.robogguide.models.Text
 import de.fhkiel.temi.robogguide.models.Transfer
@@ -395,7 +396,7 @@ class TourManager(private val db: SQLiteDatabase?) {
     /**
      * Method to get all items for a location.
      */
-    private fun getItems(locationId: Int, ): MutableList<Item> {
+    private fun getItems(locationId: Int): MutableList<Item> {
         val items = mutableListOf<Item>()
         val query = "SELECT * FROM items WHERE locations_id = $locationId"
         db?.rawQuery(query, null)?.use { cursor ->
@@ -440,15 +441,28 @@ class TourManager(private val db: SQLiteDatabase?) {
      * @param textId The text id to search for
      * @return The media object with its URL
      */
-    private fun getMedia(textId: Int): Media? {
+    private fun getMedia(textId: Int): List<Media> {
+        val result: MutableList<Media> = mutableListOf()
         val query = "SELECT * FROM media WHERE texts_id = $textId"
         db?.rawQuery(query, null)?.use { cursor ->
             if (cursor.moveToFirst()) {
-                val url = cursor.getString(cursor.getColumnIndexOrThrow("url"))
-                return Media(URL(url))
+                do {
+                    val urlString = cursor.getString(cursor.getColumnIndexOrThrow("url"))
+                    val url = URL(urlString)
+                    val type: MediaType =
+                        if (url.host == "www.youtube.com" ||
+                            url.host == "youtube.com" ||
+                            url.host == "youtu.be") {
+                            MediaType.VIDEO
+                        } else {
+                            MediaType.IMAGE
+                        }
+                    result.add(Media(url, type))
+                } while (cursor.moveToNext())
+
             }
         }
-        return null
+        return result
     }
 
     /**

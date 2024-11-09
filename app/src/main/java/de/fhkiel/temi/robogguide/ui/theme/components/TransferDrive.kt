@@ -62,13 +62,13 @@ fun TransferDrive(currentLocation: Location, mRobot: Robot?, tourViewModel: Tour
         title = "Die nächste Station ist: ${currentLocation.name}",
         fontSize = 32.sp
     )
-    currentLocation.conciseText?.media?.let { media ->
+    currentLocation.conciseText?.mediaList?.first().let { media ->
         // Bei Transfers gibt es nur ein Bild, da wir nur wissen müssen, wo es hingeht
         LoadingImage(
-            urlString = media.url.toString(),
+            urlString = media?.url.toString(),
             modifier = Modifier
                 .fillMaxWidth(),
-            contentScale = ContentScale.Crop
+            contentScale = ContentScale.FillBounds
         )
     }
 }

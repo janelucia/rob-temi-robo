@@ -16,13 +16,13 @@ import androidx.compose.ui.unit.dp
 import de.fhkiel.temi.robogguide.models.Text
 
 @Composable
-fun DisplayMedia(text: Text) {
+fun DisplayMedia(text: Text?) {
     LazyRow(
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.padding(16.dp).fillMaxWidth()
     ){
-        text.mediaList.forEach { media ->
+        text?.mediaList?.forEach { media ->
             item {
                 if (media.url.toString().isEmpty()) {
                     StockImage()
