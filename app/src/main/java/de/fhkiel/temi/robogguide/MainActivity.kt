@@ -23,7 +23,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.robotemi.sdk.Robot
-import com.robotemi.sdk.TtsRequest
 import com.robotemi.sdk.listeners.OnGoToLocationStatusChangedListener
 import com.robotemi.sdk.listeners.OnRobotReadyListener
 import com.robotemi.sdk.listeners.OnUserInteractionChangedListener
@@ -170,7 +169,7 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
                                     tourManager
                                 )
                             }
-                            composable("endPage") { EndPage(innerPadding, navController, mRobot) }
+                            composable("endPage") { EndPage(innerPadding, navController, tourViewModel) }
                         }
                     }
                 }

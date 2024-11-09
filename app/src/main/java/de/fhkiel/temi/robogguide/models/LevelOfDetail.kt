@@ -40,4 +40,13 @@ enum class LevelOfDetail(private var _lengthInMinutes: Int?, private var _nrOfEx
     fun isDetailed(): Boolean {
         return this == EVERYTHING_DETAILED || this == ONLY_IMPORTANT_DETAILED
     }
+
+    fun tourName(): String {
+        return when (this) {
+            EVERYTHING_DETAILED -> "Lange Führung mit allen Informationen"
+            EVERYTHING_CONCISE -> "Lange Führung mit kurzen Informationen"
+            ONLY_IMPORTANT_DETAILED -> "Nur wichtige Stationen mit allen Informationen"
+            ONLY_IMPORTANT_CONCISE -> "Nur wichtige Stationen mit kurzen Informationen"
+        }
+    }
 }

@@ -29,7 +29,6 @@ class TourViewModel : ViewModel() {
     fun fillTourLocations(locations: MutableList<Location>) {
         tourLocations.clear()
         tourLocations.addAll(locations)
-        //TODO tourTransferTexts befüllen
         numberOfLocations = tourLocations.size
         tourLocationsAsItems = createListOfLocationsAsItems()
 
