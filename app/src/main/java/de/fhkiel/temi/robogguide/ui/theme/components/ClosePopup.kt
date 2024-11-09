@@ -30,7 +30,9 @@ fun ClosePopup(onDismiss: () -> Unit, navController: NavController, mRobot: Robo
                     .background(Color.White)
             ) {
                 Column(
-                    modifier = Modifier.fillMaxWidth().padding(32.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(32.dp),
                     horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally
                 ) {
                     Text(
@@ -64,6 +66,7 @@ fun ClosePopup(onDismiss: () -> Unit, navController: NavController, mRobot: Robo
                             mRobot.let { robot ->
                                 robotSpeakText(mRobot, "Ich fahre jetzt zur Aufladestation!")
                                 robot?.goTo("home base")
+                                navController.navigate("homePage")
                             }
                         },
                         title = "Roboter zurück zur Ladestation schicken",
