@@ -1,19 +1,17 @@
 package de.fhkiel.temi.robogguide.ui.theme.components
 
-import android.util.Log
+import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -26,6 +24,7 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun Exhibit(currentItem: Item, mRobot: Robot?, tourViewModel: TourViewModel) {
+    val context = LocalContext.current
 
     LaunchedEffect(currentItem) {
         tourViewModel.updateAlreadySpoken(false)
@@ -52,21 +51,23 @@ fun Exhibit(currentItem: Item, mRobot: Robot?, tourViewModel: TourViewModel) {
         modifier = Modifier.padding(16.dp).fillMaxWidth()
     ) {
         if(tourViewModel.levelOfDetail?.isDetailed() == true){
-            DisplayMedia(currentItem.detailedText!!)
-            DisplayMedia(currentItem.conciseText!!)
+            DisplayMedia(context, currentItem.detailedText!!)
+            DisplayMedia(context, currentItem.conciseText!!)
         } else {
-            DisplayMedia(currentItem.conciseText!!)
+            DisplayMedia(context, currentItem.conciseText!!)
         }
     }
 
 }
 
 @Composable
-fun DisplayMedia(text: Text) {
-   if (text.media?.url.toString().isEmpty()) {
+fun DisplayMedia(context: Context, text: Text) {
+    ShowVideo(context, url = text.media?.url.toString())
+   /*if (text.media?.url.toString().isEmpty()) {
        StockImage()
    } else if (text.media?.url?.host == "www.youtube.com") {
        Log.i("Exhibit", "Video kann ich noch nicht")
+       ShowVideo(url = text.media.url.toString())
    } else {
        Log.i("Exhibit", "Bild kann ich noch nicht")
        LoadingImage(
@@ -75,5 +76,7 @@ fun DisplayMedia(text: Text) {
            contentScale = ContentScale.Fit
        )
        Spacer(modifier = Modifier.width(16.dp))
-   }
+   }*/
 }
+
+
