@@ -30,11 +30,13 @@ import com.robotemi.sdk.listeners.OnUserInteractionChangedListener
 import com.robotemi.sdk.map.MapDataModel
 import com.robotemi.sdk.permission.OnRequestPermissionResultListener
 import com.robotemi.sdk.permission.Permission
-import com.robotemi.sdk.voice.ITtsService
 import de.fhkiel.temi.robogguide.database.DatabaseHelper
 import de.fhkiel.temi.robogguide.logic.TourManager
-import de.fhkiel.temi.robogguide.logic.TtsRequestQueue
+import de.fhkiel.temi.robogguide.logic.clearQueue
+import de.fhkiel.temi.robogguide.logic.isSpeaking
+import de.fhkiel.temi.robogguide.logic.processQueue
 import de.fhkiel.temi.robogguide.logic.robotSpeakText
+import de.fhkiel.temi.robogguide.logic.ttsQueue
 import de.fhkiel.temi.robogguide.models.GuideState
 import de.fhkiel.temi.robogguide.ui.logic.SetupViewModel
 import de.fhkiel.temi.robogguide.ui.logic.TourViewModel
@@ -64,7 +66,6 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
     private var isUserInteracting = false
     private lateinit var sharedPreferences: SharedPreferences
     private var dialogShown = false
-    //private var ttsRequestQueue = TtsRequestQueue(mRobot)
 
     private val singleThreadExecutor: ExecutorService = Executors.newSingleThreadExecutor()
     private val activity: Activity = this
@@ -198,11 +199,12 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
 
     override fun onStart() {
         super.onStart()
-        Robot.getInstance().addOnRobotReadyListener(this)
-        Robot.getInstance().addOnRequestPermissionResultListener(this)
-        Robot.getInstance().addOnGoToLocationStatusChangedListener(this)
-        Robot.getInstance().addOnUserInteractionChangedListener(this)
-        Robot.getInstance().addTtsListener(this)
+        val robot = Robot.getInstance()
+        robot.addOnRobotReadyListener(this)
+        robot.addOnRequestPermissionResultListener(this)
+        robot.addOnGoToLocationStatusChangedListener(this)
+        robot.addOnUserInteractionChangedListener(this)
+        robot.addTtsListener(this)
     }
 
     override fun onStop() {
@@ -248,6 +250,14 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
             val activityInfo: ActivityInfo =
                 packageManager.getActivityInfo(componentName, PackageManager.GET_META_DATA)
             Robot.getInstance().onStart(activityInfo)
+
+            // Observe the ttsQueue
+            ttsQueue.observe(this) { queue ->
+                Log.d("MainActivity", "Queue changed: ${queue.size}")
+                if (queue.isNotEmpty() && !isSpeaking.value!!) {
+                    processQueue(mRobot)
+                }
+            }
 
             setupViewModel.robotIsReady()
             // showMapData()
@@ -399,9 +409,6 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
                 dialog.dismiss()
             }, 120000) // 2 Min
         }
-        // TODO timer starten und ihn nach Hause schicken.. nicht vergessen Lautstärke zurückzusetzen
-        // mRobot?.volume = oldVolume
-        // TODO ggf. den COuntdown timer in dem Dialog anzeigen lassen?
     }
 
     companion object {
@@ -417,7 +424,7 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
     ) {
         Log.d(
             "Transfer",
-            "Mein GoTO Status ${status} GuideStatus ${tourViewModel.guideState.value} Description ID ${description}"
+            "Mein GoTO Status $status GuideStatus ${tourViewModel.guideState.value} Description ID $description"
         )
         when (status) {
             OnGoToLocationStatusChangedListener.START -> {
@@ -442,13 +449,21 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
             }
 
             OnGoToLocationStatusChangedListener.ABORT -> {
-                if (tourViewModel.guideState.value == GuideState.TransferGoing) {
-                    Robot.getInstance().cancelAllTtsRequests()
+
+                if (descriptionId == 1006) {
+                    // Robot is stuck outside of mapped area.
+                    Log.e("Transfer", "Robot is stuck outside of mapped area.")
+                    tourViewModel.updateGuideState(GuideState.TransferError)
+                    clearQueue(mRobot)
+                    robotSpeakText(mRobot, "Ich kann hier nicht weiterfahren. Bitte schieben Sie mich zurück in den Raum. Oder holen Sie Hilfe", clearQueue = true)
+                } else if (tourViewModel.guideState.value == GuideState.TransferGoing || tourViewModel.guideState.value == GuideState.TransferStart) {
+                    clearQueue(mRobot)
                     // Roboter erreicht Ziel nicht
+                    robotSpeakText(mRobot, "Hilfe, ich komme hier gerade leider nicht weiter.", clearQueue = true)
                     tourViewModel.updateGuideState(GuideState.TransferError)
                     Log.d(
                         "Transfer",
-                        "NACH ABORT: Mein GoTO Status ${status} GuideStatus ${tourViewModel.guideState.value} Description ID ${description}"
+                        "NACH ABORT: Mein GoTO Status $status GuideStatus ${tourViewModel.guideState.value} Description ID $description"
                     )
 
                 }
@@ -465,11 +480,22 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
     }
 
     override fun onTtsStatusChanged(ttsRequest: TtsRequest) {
-        Log.d(
-            "Transfer",
-            "${ttsRequest.status}"
-        )
+        Log.d("SpeakTextListener", "TtsRequest.Status: ${ttsRequest.status}")
+        when (ttsRequest.status) {
+            TtsRequest.Status.COMPLETED, TtsRequest.Status.CANCELED, TtsRequest.Status.ERROR -> {
+                isSpeaking.value = false
+                ttsQueue.value!!.poll()
+                ttsQueue.value = ttsQueue.value
+            }
 
+            TtsRequest.Status.STARTED -> {
+                isSpeaking.value = true
+            }
+
+            else -> {
+                Log.w("SpeakTextListener", "Unexpected TtsRequest.Status: ${ttsRequest.status}")
+            }
+        }
     }
 
 }

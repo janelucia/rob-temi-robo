@@ -20,6 +20,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.robotemi.sdk.Robot
 import de.fhkiel.temi.robogguide.R
+import de.fhkiel.temi.robogguide.logic.clearQueue
 import de.fhkiel.temi.robogguide.logic.robotSpeakText
 import de.fhkiel.temi.robogguide.ui.logic.TourViewModel
 
@@ -84,11 +85,12 @@ fun GuideNavigationButton(
                                     if (tourViewModel.levelOfDetail?.isDetailed() == true) {
                                         val text =
                                             currentItem?.conciseText?.value + "\n" + currentItem?.detailedText?.value
-                                        robotSpeakText(mRobot, text)
+                                        robotSpeakText(mRobot, text, clearQueue = true)
                                     } else {
                                         robotSpeakText(
                                             mRobot,
-                                            currentItem?.conciseText?.value
+                                            currentItem?.conciseText?.value,
+                                            clearQueue = true
                                         )
                                     }
                                 } else {
@@ -103,6 +105,7 @@ fun GuideNavigationButton(
                                 fontSize = 32.sp,
                                 onClick = {
                                     navController.navigate("endPage")
+                                    clearQueue(mRobot)
                                 },
                                 modifier = Modifier.padding(16.dp),
                                 height = 100.dp,
@@ -114,6 +117,7 @@ fun GuideNavigationButton(
                                 contentDescription = "Nächstes Exponat",
                                 onClick = {
                                     tourViewModel.incrementCurrentItemIndex()
+                                    clearQueue(mRobot)
                                 },
                             )
                         }
@@ -161,6 +165,7 @@ fun GuideNavigationButton(
                                 iconId = R.drawable.play_arrow_left,
                                 onClick = {
                                     tourViewModel.decrementCurrentItemIndex()
+                                    clearQueue(mRobot)
                                 },
                                 contentDescription = "Vorheriges Exponat"
                             )
@@ -174,18 +179,19 @@ fun GuideNavigationButton(
                                     if (tourViewModel.levelOfDetail?.isDetailed() == true) {
                                         val text =
                                             currentItem?.conciseText?.value + "\n" + currentItem?.detailedText?.value
-                                        robotSpeakText(mRobot, text)
+                                        robotSpeakText(mRobot, text, clearQueue = true)
                                     } else {
                                         robotSpeakText(
                                             mRobot,
-                                            currentItem?.conciseText?.value
+                                            currentItem?.conciseText?.value,
+                                            clearQueue = true
                                         )
                                     }
                                 } else {
                                     // don't speak
                                     Log.w("GuideNavigationButton", "Stop spamming me!")
                                 }
-                            },
+                            }
                         )
                         if (currentItemIndex == numberOfItems - 1) {
                             CustomIconButton(
@@ -202,6 +208,7 @@ fun GuideNavigationButton(
                                 contentDescription = "Nächstes Exponat",
                                 onClick = {
                                     tourViewModel.incrementCurrentItemIndex()
+                                    clearQueue(mRobot)
                                 },
                             )
                         }
@@ -211,6 +218,7 @@ fun GuideNavigationButton(
                             fontSize = 32.sp,
                             onClick = {
                                 navController.popBackStack()
+                                clearQueue(mRobot)
                             },
                             modifier = Modifier.padding(16.dp),
                             height = 100.dp,

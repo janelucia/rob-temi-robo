@@ -52,6 +52,7 @@ fun TransferDrive(
 
     if (guideState == GuideState.TransferGoing) {
 
+        robotSpeakText(mRobot, "Bitte folgen Sie mir zum Ausstellungsstück!", false)
         Log.d("Transfer", "ich spreche und fahre, -> ${tourViewModel.guideState.value}")
         val transfers = tourManager.selectedPlace?.allTransfers?.get(currentLocation.name)
         if (tourViewModel.levelOfDetail?.isDetailed() == true) {
@@ -68,7 +69,7 @@ fun TransferDrive(
             onDismiss = { showErrorPopup = false },
             "Es ist ein Navigationsfehler aufgetreten! :(",
             "Leider habe ich keine Route zum gewünschten Standort gefunden.\nBitte achten Sie darauf, dass ich genug Platz habe, um mich zu bewegen. Treten Sie eventuell einen Schritt zurück oder schieben Sie mich ein wenig von umstehenden Objekten weg und versuchen es gerne nochmal.\nAnsonsten können Sie mich auch zurück zur Ladestation schicken.",
-            "Hilfe, ich komme hier gerade leider nicht weiter.",
+            "",
             onClick = {
                 tourViewModel.updateGuideState(GuideState.TransferStart)
                 showErrorPopup = false
