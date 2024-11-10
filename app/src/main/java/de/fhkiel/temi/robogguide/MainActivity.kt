@@ -235,8 +235,7 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
             mRobot?.hideTopBar()        // hide top action bar
 
             // hide pull-down bar
-            val activityInfo: ActivityInfo =
-                packageManager.getActivityInfo(componentName, PackageManager.GET_META_DATA)
+            val activityInfo: ActivityInfo = packageManager.getActivityInfo(componentName, PackageManager.GET_META_DATA)
             Robot.getInstance().onStart(activityInfo)
 
             setupViewModel.robotIsReady()
@@ -366,7 +365,7 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
         if (!dialogShown && !isCharging!!) {
             dialogShown = true
             // scream
-            mRobot?.volume = 10
+            mRobot?.volume = 7
             robotSpeakText(mRobot, "Hallo, werde ich noch gebraucht?", false)
 
             val dialog = AlertDialog.Builder(this)
