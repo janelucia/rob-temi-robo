@@ -211,6 +211,7 @@ fun GuideNavigationButton(
                             fontSize = 32.sp,
                             onClick = {
                                 navController.popBackStack()
+                                mRobot?.stopMovement()
                             },
                             modifier = Modifier.padding(16.dp),
                             height = 100.dp,
