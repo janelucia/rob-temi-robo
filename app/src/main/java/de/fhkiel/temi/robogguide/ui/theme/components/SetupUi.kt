@@ -53,12 +53,12 @@ fun SetupUi(tourManager: TourManager, setupViewModel: SetupViewModel) {
     val isRobotReady by setupViewModel.isRobotReady.observeAsState(false)
     val context = LocalContext.current as Activity
     val isKioskModeEnabled by setupViewModel.isKioskModeEnabled.observeAsState(false)
-    val isDebugModeEnabled by setupViewModel.isDebugFlagEnabled.observeAsState(false)
+    val isDebugFlagEnabled by setupViewModel.isDebugFlagEnabled.observeAsState(false)
 
 
     Scaffold(
         topBar = {
-            SetupTopBar(context)
+            SetupTopBar(context, setupViewModel)
         }
     ) { innerPadding ->
         Column(
@@ -250,7 +250,7 @@ fun SetupUi(tourManager: TourManager, setupViewModel: SetupViewModel) {
                         Text("Debug Flag anmachen")
                         Spacer(modifier = Modifier.width(8.dp))
                         Switch(
-                            checked = isDebugModeEnabled,
+                            checked = isDebugFlagEnabled,
                             onCheckedChange = { enabled: Boolean ->
                                 setupViewModel.setDebugFlagEnabled(enabled)
                                 Log.i("SetupUi", "Debug mode: $enabled")

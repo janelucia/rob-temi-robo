@@ -40,6 +40,7 @@ import com.robotemi.sdk.Robot
 import de.fhkiel.temi.robogguide.MainActivity
 import de.fhkiel.temi.robogguide.R
 import de.fhkiel.temi.robogguide.logic.robotSpeakText
+import de.fhkiel.temi.robogguide.ui.logic.SetupViewModel
 import de.fhkiel.temi.robogguide.ui.logic.TourViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -160,12 +161,13 @@ fun CustomTopAppBar(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SetupTopBar(activity: Activity) {
+fun SetupTopBar(activity: Activity, setupViewModel: SetupViewModel) {
     var showPopUp by remember { mutableStateOf(false) }
     var showConfirmationPopUp by remember { mutableStateOf(false) }
+    val isDebugFlagEnabled by setupViewModel.isDebugFlagEnabled.observeAsState(false)
 
     if (showPopUp) {
-        PreparationPopUp(onDismiss = { showPopUp = false })
+        PreparationPopUp(onDismiss = { showPopUp = false }, isDebugFlagEnabled, setupViewModel)
     }
 
     if (showConfirmationPopUp) {
