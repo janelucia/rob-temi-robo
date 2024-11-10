@@ -23,14 +23,17 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.robotemi.sdk.Robot
+import com.robotemi.sdk.TtsRequest
 import com.robotemi.sdk.listeners.OnGoToLocationStatusChangedListener
 import com.robotemi.sdk.listeners.OnRobotReadyListener
 import com.robotemi.sdk.listeners.OnUserInteractionChangedListener
 import com.robotemi.sdk.map.MapDataModel
 import com.robotemi.sdk.permission.OnRequestPermissionResultListener
 import com.robotemi.sdk.permission.Permission
+import com.robotemi.sdk.voice.ITtsService
 import de.fhkiel.temi.robogguide.database.DatabaseHelper
 import de.fhkiel.temi.robogguide.logic.TourManager
+import de.fhkiel.temi.robogguide.logic.TtsRequestQueue
 import de.fhkiel.temi.robogguide.logic.robotSpeakText
 import de.fhkiel.temi.robogguide.models.GuideState
 import de.fhkiel.temi.robogguide.ui.logic.SetupViewModel
@@ -51,7 +54,7 @@ import java.util.concurrent.Executors
 @OptIn(ExperimentalMaterial3Api::class)
 class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermissionResultListener,
     OnGoToLocationStatusChangedListener,
-    OnUserInteractionChangedListener {
+    OnUserInteractionChangedListener, Robot.TtsListener {
     private val setupViewModel: SetupViewModel by viewModels()
     private val tourViewModel: TourViewModel by viewModels()
     private var mRobot: Robot? = null
@@ -61,6 +64,7 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
     private var isUserInteracting = false
     private lateinit var sharedPreferences: SharedPreferences
     private var dialogShown = false
+    //private var ttsRequestQueue = TtsRequestQueue(mRobot)
 
     private val singleThreadExecutor: ExecutorService = Executors.newSingleThreadExecutor()
     private val activity: Activity = this
@@ -196,6 +200,7 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
         Robot.getInstance().addOnRequestPermissionResultListener(this)
         Robot.getInstance().addOnGoToLocationStatusChangedListener(this)
         Robot.getInstance().addOnUserInteractionChangedListener(this)
+        Robot.getInstance().addTtsListener(this)
     }
 
     override fun onStop() {
@@ -204,6 +209,7 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
         Robot.getInstance().removeOnRequestPermissionResultListener(this)
         Robot.getInstance().addOnGoToLocationStatusChangedListener(this)
         Robot.getInstance().removeOnUserInteractionChangedListener(this)
+        Robot.getInstance().removeTtsListener(this)
     }
 
     override fun onDestroy() {
@@ -435,6 +441,7 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
 
             OnGoToLocationStatusChangedListener.ABORT -> {
                 if (tourViewModel.guideState.value == GuideState.TransferGoing) {
+                    Robot.getInstance().cancelAllTtsRequests()
                     // Roboter erreicht Ziel nicht
                     tourViewModel.updateGuideState(GuideState.TransferError)
                     Log.d(
@@ -453,6 +460,14 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
 
             }
         }
+    }
+
+    override fun onTtsStatusChanged(ttsRequest: TtsRequest) {
+        Log.d(
+            "Transfer",
+            "${ttsRequest.status}"
+        )
+
     }
 
 }
