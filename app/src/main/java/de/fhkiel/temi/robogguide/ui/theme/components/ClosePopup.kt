@@ -64,7 +64,7 @@ fun ClosePopup(onDismiss: () -> Unit, navController: NavController, mRobot: Robo
                         onClick = {
                             onDismiss()
                             mRobot.let { robot ->
-                                robotSpeakText(mRobot, "Ich fahre jetzt zur Aufladestation!")
+                                robotSpeakText(mRobot, "Ich fahre jetzt zur Aufladestation!", false)
                                 robot?.goTo("home base")
                                 navController.navigate("homePage")
                             }

@@ -49,7 +49,8 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 @OptIn(ExperimentalMaterial3Api::class)
-class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermissionResultListener, OnGoToLocationStatusChangedListener,
+class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermissionResultListener,
+    OnGoToLocationStatusChangedListener,
     OnUserInteractionChangedListener {
     private val setupViewModel: SetupViewModel by viewModels()
     private val tourViewModel: TourViewModel by viewModels()
@@ -169,7 +170,13 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
                                     tourManager
                                 )
                             }
-                            composable("endPage") { EndPage(innerPadding, navController, tourViewModel) }
+                            composable("endPage") {
+                                EndPage(
+                                    innerPadding,
+                                    navController,
+                                    tourViewModel
+                                )
+                            }
                         }
                     }
                 }
@@ -208,8 +215,9 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
             Log.i("MainActivity", "Robot is ready")
             mRobot = Robot.getInstance()
 
-            // request to be kiosk app
-
+            // request needed Permissions
+            requestPermissionsIfNeeded(Permission.MAP, REQUEST_CODE_MAP)
+            requestPermissionsIfNeeded(Permission.SETTINGS, REQUEST_CODE_SETTINGS)
 
             // enable the detectionMode
             mRobot?.setDetectionModeOn(on = false, distance = 0.5f)
@@ -240,7 +248,7 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
      * Uses temi sdk function to go to home base
      */
     private fun gotoHomeBase() {
-        robotSpeakText(mRobot, "Ich fahre jetzt zur Aufladestation!")
+        robotSpeakText(mRobot, "Ich fahre jetzt zur Aufladestation!", false)
         mRobot?.goTo(location = "home base")
     }
 
@@ -283,10 +291,13 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
      */
     @Suppress("SameParameterValue")
     private fun requestPermissionsIfNeeded(permission: Permission, requestCode: Int): Boolean {
+        Log.d("PERMISSION", "Request permission $permission with request code $requestCode")
         if (mRobot?.checkSelfPermission(permission) == Permission.GRANTED) {
+            Log.d("PERMISSION", "Permission $permission already granted")
             return false
         } else {
             mRobot?.requestPermissions(listOf(permission), requestCode)
+            Log.d("PERMISSION", "Requesting permission $permission")
             return true
         }
     }
@@ -304,7 +315,7 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
         requestCode: Int,
     ) {
         Log.d(
-            "PERMISSION RESULT",
+            "PERMISSION",
             "permission $permission with request code $requestCode with result = $grantResult"
         )
 
@@ -316,7 +327,13 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
             }
 
             // Permission.FACE_RECOGNITION -> TODO
-            // Permission.SETTINGS -> TODO
+            Permission.SETTINGS -> {
+                if (grantResult == Permission.GRANTED) {
+                    Log.i("MainActivity", "Settings permission granted")
+                } else {
+                    Log.e("MainActivity", "Settings permission denied")
+                }
+            }
             // Permission.UNKNOWN -> TODO
 
             else -> {
@@ -343,11 +360,13 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
 
         assert(mRobot != null)
         val oldVolume = mRobot?.volume!!
+        val isCharging = mRobot?.batteryData?.isCharging
 
-        if (!dialogShown) {
+        // check if dialog is already shown and robot is not charging
+        if (!dialogShown && !isCharging!!) {
             dialogShown = true
             // scream
-            mRobot?.volume = 100
+            mRobot?.volume = 10
             robotSpeakText(mRobot, "Hallo, werde ich noch gebraucht?", false)
 
             val dialog = AlertDialog.Builder(this)
@@ -368,7 +387,7 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
             handler.postDelayed({
                 returnHomeRunnable.run()
                 dialog.dismiss()
-            }, 120000) // 3 Sek
+            }, 120000) // 2 Min
         }
         // TODO timer starten und ihn nach Hause schicken.. nicht vergessen Lautstärke zurückzusetzen
         // mRobot?.volume = oldVolume
@@ -377,6 +396,7 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
 
     companion object {
         const val REQUEST_CODE_MAP = 10
+        const val REQUEST_CODE_SETTINGS = 1
     }
 
     override fun onGoToLocationStatusChanged(
@@ -384,7 +404,6 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
         status: String,
         descriptionId: Int,
         description: String
-
     ) {
         Log.d("Transfer", "Mein GoTO Status ${status} GuideStatus ${tourViewModel.guideState.value}")
         when (status) {
