@@ -61,4 +61,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.coil.compose)
+    // third-party dependencies
+    implementation(libs.youtube)
+// end third-party dependencies
 }

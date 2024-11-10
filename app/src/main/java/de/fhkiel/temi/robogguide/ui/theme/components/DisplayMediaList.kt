@@ -1,7 +1,6 @@
 package de.fhkiel.temi.robogguide.ui.theme.components
 
 import android.util.Log
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -45,7 +44,11 @@ fun DisplayMediaList(vararg texts: TextModel?) {
                             when (media.type) {
                                 MediaType.VIDEO -> {
                                     Log.d("DisplayMediaList", "Displaying video: ${media.url}")
-                                    //TODO: Implement video player
+                                    LoadingVideo(
+                                        url = media.url,
+                                        modifier = Modifier.fillMaxSize(),
+                                        contentScale = ContentScale.FillBounds
+                                    )
                                 }
 
                                 MediaType.IMAGE -> {

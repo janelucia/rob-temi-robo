@@ -17,9 +17,17 @@ class SetupViewModel(application: Application) : AndroidViewModel(application) {
     private val _isKioskModeEnabled = MutableLiveData(sharedPreferences.getBoolean("kiosk_mode", false))
     val isKioskModeEnabled: LiveData<Boolean> get() = _isKioskModeEnabled
 
+    private val _isDebugFlagEnabled = MutableLiveData(sharedPreferences.getBoolean("debug_flag", false))
+    val isDebugFlagEnabled: LiveData<Boolean> get() = _isDebugFlagEnabled
+
     fun setKioskModeEnabled(enabled: Boolean) {
         _isKioskModeEnabled.value = enabled
         sharedPreferences.edit().putBoolean("kiosk_mode", enabled).apply()
+    }
+
+    fun setDebugFlagEnabled(enabled: Boolean) {
+        _isDebugFlagEnabled.value = enabled
+        sharedPreferences.edit().putBoolean("debug_flag", enabled).apply()
     }
 
     fun completeSetup() {

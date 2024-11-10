@@ -53,6 +53,7 @@ fun SetupUi(tourManager: TourManager, setupViewModel: SetupViewModel) {
     val isRobotReady by setupViewModel.isRobotReady.observeAsState(false)
     val context = LocalContext.current as Activity
     val isKioskModeEnabled by setupViewModel.isKioskModeEnabled.observeAsState(false)
+    val isDebugModeEnabled by setupViewModel.isDebugFlagEnabled.observeAsState(false)
 
 
     Scaffold(
@@ -233,18 +234,29 @@ fun SetupUi(tourManager: TourManager, setupViewModel: SetupViewModel) {
                         modifier = Modifier.padding(16.dp)
                     )
                     Column {
-                        Text("Enable Kiosk Mode")
+                        Text("Kiosk Mode anmachen")
                         Spacer(modifier = Modifier.width(8.dp))
                         Switch(
                             checked = isKioskModeEnabled,
                             onCheckedChange = { enabled: Boolean ->
                                 setupViewModel.setKioskModeEnabled(enabled)
-                                Log.i("SetupUi", "Kiosk mode enabled: $enabled")
+                                Log.i("SetupUi", "Kiosk mode: $enabled")
                                 if (enabled) {
                                     mRobot.requestToBeKioskApp()
                                 }
                             }
                         )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text("Debug Flag anmachen")
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Switch(
+                            checked = isDebugModeEnabled,
+                            onCheckedChange = { enabled: Boolean ->
+                                setupViewModel.setDebugFlagEnabled(enabled)
+                                Log.i("SetupUi", "Debug mode: $enabled")
+                            }
+                        )
+
                     }
                 } else {
                     LoadingSpinner(
