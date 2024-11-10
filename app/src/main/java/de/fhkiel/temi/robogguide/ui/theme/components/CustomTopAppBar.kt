@@ -44,7 +44,12 @@ import de.fhkiel.temi.robogguide.ui.logic.TourViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CustomTopAppBar(navController: NavController, tourViewModel: TourViewModel, activity: Activity, mRobot: Robot?) {
+fun CustomTopAppBar(
+    navController: NavController,
+    tourViewModel: TourViewModel,
+    activity: Activity,
+    mRobot: Robot?
+) {
     var showHelpPopup by remember { mutableStateOf(false) }
     var showPopUp by remember { mutableStateOf(false) }
     var showConfirmationPopUp by remember { mutableStateOf(false) }
@@ -62,15 +67,19 @@ fun CustomTopAppBar(navController: NavController, tourViewModel: TourViewModel, 
 
     if (showConfirmationPopUp) {
         ConfirmationPopUp(
-            onDismiss = { showConfirmationPopUp = false },
+            onDismiss = {
+                showConfirmationPopUp = false
+            },
             onConfirm = {
                 robotSpeakText(mRobot, "Ich fahre jetzt zur Aufladestation!", false)
                 mRobot?.goTo("home base")
+                showConfirmationPopUp = false
             },
             title = "Roboter zur Ladestation fahren lassen",
             message = "Möchtest du den Roboter wirklich zur Ladestation fahren lassen?",
             confirmationButtonText = "Zur Ladestation",
-            dismissButtonText = "Abbrechen")
+            dismissButtonText = "Abbrechen"
+        )
     }
 
     Box(modifier = Modifier.fillMaxWidth()) {
@@ -151,7 +160,7 @@ fun CustomTopAppBar(navController: NavController, tourViewModel: TourViewModel, 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SetupTopBar(activity: Activity){
+fun SetupTopBar(activity: Activity) {
     var showPopUp by remember { mutableStateOf(false) }
     var showConfirmationPopUp by remember { mutableStateOf(false) }
 
@@ -166,10 +175,11 @@ fun SetupTopBar(activity: Activity){
             title = "App schließen",
             message = "Möchtest du die App wirklich schließen?",
             confirmationButtonText = "App schließen",
-            dismissButtonText = "Abbrechen")
+            dismissButtonText = "Abbrechen"
+        )
     }
 
-    Box(modifier = Modifier.fillMaxWidth()){
+    Box(modifier = Modifier.fillMaxWidth()) {
         TopAppBar(
             title = {
                 Text(
