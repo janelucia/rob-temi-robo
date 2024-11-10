@@ -22,7 +22,10 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.robotemi.sdk.BatteryData
 import com.robotemi.sdk.Robot
+import com.robotemi.sdk.TtsRequest
+import com.robotemi.sdk.listeners.OnBatteryStatusChangedListener
 import com.robotemi.sdk.listeners.OnGoToLocationStatusChangedListener
 import com.robotemi.sdk.listeners.OnRobotLiftedListener
 import com.robotemi.sdk.listeners.OnRobotReadyListener
@@ -32,7 +35,10 @@ import com.robotemi.sdk.permission.OnRequestPermissionResultListener
 import com.robotemi.sdk.permission.Permission
 import de.fhkiel.temi.robogguide.database.DatabaseHelper
 import de.fhkiel.temi.robogguide.logic.TourManager
+import de.fhkiel.temi.robogguide.logic.isSpeaking
+import de.fhkiel.temi.robogguide.logic.processQueue
 import de.fhkiel.temi.robogguide.logic.robotSpeakText
+import de.fhkiel.temi.robogguide.logic.ttsQueue
 import de.fhkiel.temi.robogguide.models.GuideState
 import de.fhkiel.temi.robogguide.ui.logic.SetupViewModel
 import de.fhkiel.temi.robogguide.ui.logic.TourViewModel
@@ -53,7 +59,9 @@ import java.util.concurrent.Executors
 class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermissionResultListener,
     OnGoToLocationStatusChangedListener,
     OnUserInteractionChangedListener,
-    OnRobotLiftedListener{
+    Robot.TtsListener,
+    OnBatteryStatusChangedListener,
+    OnRobotLiftedListener {
     private val setupViewModel: SetupViewModel by viewModels()
     private val tourViewModel: TourViewModel by viewModels()
     private var mRobot: Robot? = null
@@ -153,7 +161,9 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
                                     innerPadding,
                                     mRobot,
                                     tourViewModel,
-                                    tourManager
+                                    tourManager,
+                                    navController,
+                                    setupViewModel
                                 )
                             }
                             composable("guideExhibition") {
@@ -169,7 +179,9 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
                                     innerPadding,
                                     mRobot,
                                     tourViewModel,
-                                    tourManager
+                                    tourManager,
+                                    navController,
+                                    setupViewModel
                                 )
                             }
                             composable("endPage") {
@@ -192,12 +204,14 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
 
     override fun onStart() {
         super.onStart()
-        Robot.getInstance().addOnRobotReadyListener(this)
-        Robot.getInstance().addOnRequestPermissionResultListener(this)
-        Robot.getInstance().addOnGoToLocationStatusChangedListener(this)
-        Robot.getInstance().addOnUserInteractionChangedListener(this)
-        Robot.getInstance().addOnRobotLiftedListener(this)
-        Log.i("MainActivity", "alle listener hinzugefügt")
+        val robot = Robot.getInstance()
+        robot.addOnRobotReadyListener(this)
+        robot.addOnRequestPermissionResultListener(this)
+        robot.addOnGoToLocationStatusChangedListener(this)
+        robot.addOnUserInteractionChangedListener(this)
+        robot.addTtsListener(this)
+        robot.addOnBatteryStatusChangedListener(this)
+        robot.addOnRobotLiftedListener(this)
     }
 
     override fun onStop() {
@@ -206,6 +220,7 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
         Robot.getInstance().removeOnRequestPermissionResultListener(this)
         Robot.getInstance().addOnGoToLocationStatusChangedListener(this)
         Robot.getInstance().removeOnUserInteractionChangedListener(this)
+        Robot.getInstance().removeTtsListener(this)
         Robot.getInstance().removeOnRobotLiftedListener(this)
     }
 
@@ -240,8 +255,21 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
             mRobot?.hideTopBar()        // hide top action bar
 
             // hide pull-down bar
-            val activityInfo: ActivityInfo = packageManager.getActivityInfo(componentName, PackageManager.GET_META_DATA)
+            val activityInfo: ActivityInfo =
+                packageManager.getActivityInfo(componentName, PackageManager.GET_META_DATA)
             Robot.getInstance().onStart(activityInfo)
+
+            // Observe the ttsQueue
+            ttsQueue.observe(this) { queue ->
+                Log.d("MainActivity", "Queue changed: ${queue.size}")
+                if (queue.isNotEmpty() && !isSpeaking.value!!) {
+                    processQueue(mRobot)
+                }
+            }
+
+            mRobot?.batteryData?.isCharging?.let { isCharging ->
+                tourViewModel.isAtHomeBase.value = isCharging
+            }
 
             setupViewModel.robotIsReady()
             // showMapData()
@@ -393,9 +421,6 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
                 dialog.dismiss()
             }, 120000) // 2 Min
         }
-        // TODO timer starten und ihn nach Hause schicken.. nicht vergessen Lautstärke zurückzusetzen
-        // mRobot?.volume = oldVolume
-        // TODO ggf. den COuntdown timer in dem Dialog anzeigen lassen?
     }
 
     companion object {
@@ -411,15 +436,97 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
     ) {
         Log.d(
             "Transfer",
-            "Mein GoTO Status ${status} GuideStatus ${tourViewModel.guideState.value}"
+            "Mein GoTO Status $status GuideStatus ${tourViewModel.guideState.value} Description ID $description"
         )
-        if (status == OnGoToLocationStatusChangedListener.COMPLETE && tourViewModel.guideState.value == GuideState.TransferGoing) {
-            // Roboter erreicht Ziel
-            tourViewModel.updateGuideState(GuideState.Exhibit)
-            Log.d("Transfer", "Ich habe mein Ziel erreicht -> ${tourViewModel.guideState.value}")
-        } else if (status == OnGoToLocationStatusChangedListener.START && tourViewModel.guideState.value == GuideState.TransferStart) {
-            tourViewModel.updateGuideState(GuideState.TransferGoing)
-            Log.d("Transfer", "Ich beginne mich zu bewegen -> ${tourViewModel.guideState.value}")
+        when (status) {
+            OnGoToLocationStatusChangedListener.START -> {
+                if (tourViewModel.guideState.value == GuideState.TransferStart) {
+                    tourViewModel.updateGuideState(GuideState.TransferGoing)
+                    Log.d(
+                        "Transfer",
+                        "Ich beginne mich zu bewegen -> ${tourViewModel.guideState.value}"
+                    )
+                }
+            }
+
+            OnGoToLocationStatusChangedListener.COMPLETE -> {
+                if (tourViewModel.guideState.value == GuideState.TransferGoing) {
+                    // Roboter erreicht Ziel
+                    tourViewModel.updateGuideState(GuideState.Exhibit)
+                    Log.d(
+                        "Transfer",
+                        "Ich habe mein Ziel erreicht -> ${tourViewModel.guideState.value}"
+                    )
+                }
+            }
+
+            OnGoToLocationStatusChangedListener.ABORT -> {
+                Log.d(
+                    "Transfer",
+                    "NACH ABORT: Mein GoTO Status $status GuideStatus ${tourViewModel.guideState.value} Description ID $description"
+                )
+
+                if (descriptionId == 0) {
+                    // general abort -> nothing to do
+                    return
+                }
+
+                if (descriptionId == 1006) {
+                    // Robot is stuck outside of mapped area.
+                    Log.e("Transfer", "Robot is stuck outside of mapped area.")
+                    robotSpeakText(
+                        mRobot,
+                        "Ich kann hier nicht weiterfahren. Bitte schieben Sie mich zurück in den Raum. Oder holen Sie Hilfe",
+                        clearQueue = true
+                    )
+                    tourViewModel.updateGuideState(GuideState.TransferError)
+                } else if (tourViewModel.guideState.value == GuideState.TransferGoing || tourViewModel.guideState.value == GuideState.TransferStart) {
+                    // Roboter erreicht Ziel nicht
+                    robotSpeakText(
+                        mRobot,
+                        "Hilfe, ich komme hier gerade leider nicht weiter.",
+                        clearQueue = true
+                    )
+                    tourViewModel.updateGuideState(GuideState.TransferError)
+                }
+            }
+
+            OnGoToLocationStatusChangedListener.REPOSING -> {
+                if (tourViewModel.guideState.value == GuideState.TransferGoing) {
+                    //Ladespinner anzeigen?
+                    robotSpeakText(mRobot, "Einen Moment, ich berechne meine Route.", false)
+                }
+
+            }
+        }
+    }
+
+    override fun onTtsStatusChanged(ttsRequest: TtsRequest) {
+        Log.d("SpeakTextListener", "TtsRequest.Status: ${ttsRequest.status}")
+        when (ttsRequest.status) {
+            TtsRequest.Status.COMPLETED,
+            TtsRequest.Status.CANCELED,
+            TtsRequest.Status.ERROR,
+            TtsRequest.Status.PROCESSING -> {
+                isSpeaking.value = false
+                ttsQueue.value!!.poll()
+                ttsQueue.value = ttsQueue.value
+            }
+
+            TtsRequest.Status.STARTED -> {
+                isSpeaking.value = true
+            }
+
+            else -> {
+                Log.w("SpeakTextListener", "Unexpected TtsRequest.Status: ${ttsRequest.status}")
+            }
+        }
+    }
+
+    override fun onBatteryStatusChanged(batteryData: BatteryData?) {
+        Log.d("BatteryStatus", "BatteryData: $batteryData")
+        if (batteryData != null) {
+            tourViewModel.isAtHomeBase.value = batteryData.isCharging
         }
     }
 

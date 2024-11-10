@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -21,6 +20,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.robotemi.sdk.Robot
 import de.fhkiel.temi.robogguide.R
+import de.fhkiel.temi.robogguide.logic.clearQueue
 import de.fhkiel.temi.robogguide.logic.robotSpeakText
 import de.fhkiel.temi.robogguide.ui.logic.TourViewModel
 
@@ -85,11 +85,12 @@ fun GuideNavigationButton(
                                     if (tourViewModel.levelOfDetail?.isDetailed() == true) {
                                         val text =
                                             currentItem?.conciseText?.value + "\n" + currentItem?.detailedText?.value
-                                        robotSpeakText(mRobot, text)
+                                        robotSpeakText(mRobot, text, clearQueue = true)
                                     } else {
                                         robotSpeakText(
                                             mRobot,
-                                            currentItem?.conciseText?.value
+                                            currentItem?.conciseText?.value,
+                                            clearQueue = true
                                         )
                                     }
                                 } else {
@@ -98,12 +99,20 @@ fun GuideNavigationButton(
                                 }
                             },
                         )
+                        CustomIconButton(
+                            iconId = R.drawable.stop,
+                            contentDescription = "Sprachausgabe stoppen",
+                            onClick = {
+                                clearQueue(mRobot)
+                            },
+                        )
                         if (currentItemIndex == numberOfItems - 1 && currentLocationIndex == tourViewModel.numberOfLocations - 1) {
                             CustomButton(
                                 title = "Führung beenden",
                                 fontSize = 32.sp,
                                 onClick = {
                                     navController.navigate("endPage")
+                                    clearQueue(mRobot)
                                 },
                                 modifier = Modifier.padding(16.dp),
                                 height = 100.dp,
@@ -115,6 +124,7 @@ fun GuideNavigationButton(
                                 contentDescription = "Nächstes Exponat",
                                 onClick = {
                                     tourViewModel.incrementCurrentItemIndex()
+                                    clearQueue(mRobot)
                                 },
                             )
                         }
@@ -147,32 +157,41 @@ fun GuideNavigationButton(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        CustomButton(
-                            title = "⏮",
-                            fontSize = 32.sp,
-                            onClick = {
-                                tourViewModel.decrementCurrentItemIndex()
-                            },
-                            modifier = Modifier
-                                .size(150.dp)
-                                .padding(16.dp),
-                        )
-                        CustomButton(title = "⟲",
-                            fontSize = 32.sp,
-                            modifier = Modifier
-                                .size(150.dp)
-                                .padding(16.dp),
+                        if (currentItemIndex == 0) {
+                            CustomIconButton(
+                                iconId = R.drawable.play_disabled_right,
+                                onClick = {
+                                    // do nothing
+                                },
+                                contentDescription = "Kein vorheriges Exponat",
+                                initialContainerColor = Color.Gray,
+                                iconModifier = Modifier.graphicsLayer(rotationZ = 180f)
+                            )
+                        } else {
+                            CustomIconButton(
+                                iconId = R.drawable.play_arrow_left,
+                                onClick = {
+                                    tourViewModel.decrementCurrentItemIndex()
+                                    clearQueue(mRobot)
+                                },
+                                contentDescription = "Vorheriges Exponat"
+                            )
+                        }
+                        CustomIconButton(
+                            iconId = R.drawable.replay,
+                            contentDescription = "Exponat wiederholen",
                             onClick = {
                                 if (wasAlreadySpoken) {
                                     assert(tourViewModel.levelOfDetail != null)
                                     if (tourViewModel.levelOfDetail?.isDetailed() == true) {
                                         val text =
                                             currentItem?.conciseText?.value + "\n" + currentItem?.detailedText?.value
-                                        robotSpeakText(mRobot, text)
+                                        robotSpeakText(mRobot, text, clearQueue = true)
                                     } else {
                                         robotSpeakText(
                                             mRobot,
-                                            currentItem?.conciseText?.value
+                                            currentItem?.conciseText?.value,
+                                            clearQueue = true
                                         )
                                     }
                                 } else {
@@ -181,21 +200,40 @@ fun GuideNavigationButton(
                                 }
                             }
                         )
-                        CustomButton(title = "⏭",
-                            fontSize = 32.sp,
-                            modifier = Modifier
-                                .size(150.dp)
-                                .padding(16.dp),
+                        CustomIconButton(
+                            iconId = R.drawable.stop,
+                            contentDescription = "Sprachausgabe stoppen",
                             onClick = {
-                                tourViewModel.incrementCurrentItemIndex()
-                            }
+                                clearQueue(mRobot)
+                            },
                         )
+                        if (currentItemIndex == numberOfItems - 1) {
+                            CustomIconButton(
+                                iconId = R.drawable.play_disabled_right,
+                                onClick = {
+                                    // do nothing
+                                },
+                                contentDescription = "Kein vorheriges Exponat",
+                                initialContainerColor = Color.Gray,
+                            )
+                        } else {
+                            CustomIconButton(
+                                iconId = R.drawable.play_arrow_right,
+                                contentDescription = "Nächstes Exponat",
+                                onClick = {
+                                    tourViewModel.incrementCurrentItemIndex()
+                                    clearQueue(mRobot)
+                                },
+                            )
+                        }
 
                         CustomButton(
                             title = "Zurück zur Liste",
                             fontSize = 32.sp,
                             onClick = {
                                 navController.popBackStack()
+                                mRobot?.stopMovement()
+                                clearQueue(mRobot)
                             },
                             modifier = Modifier.padding(16.dp),
                             height = 100.dp,

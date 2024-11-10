@@ -40,6 +40,7 @@ import com.robotemi.sdk.Robot
 import de.fhkiel.temi.robogguide.MainActivity
 import de.fhkiel.temi.robogguide.R
 import de.fhkiel.temi.robogguide.logic.robotSpeakText
+import de.fhkiel.temi.robogguide.ui.logic.SetupViewModel
 import de.fhkiel.temi.robogguide.ui.logic.TourViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -57,6 +58,8 @@ fun CustomTopAppBar(
     val currentDestination = navBackStackEntry.value?.destination?.route
     val currentLocationIndex by tourViewModel.currentLocationIndex.observeAsState(0)
 
+    val isAtHomeBase by tourViewModel.isAtHomeBase.observeAsState(true)
+
     if (showHelpPopup) {
         HelpPopup(onDismiss = { showHelpPopup = false }, activity)
     }
@@ -71,7 +74,11 @@ fun CustomTopAppBar(
                 showConfirmationPopUp = false
             },
             onConfirm = {
-                robotSpeakText(mRobot, "Ich fahre jetzt zur Aufladestation!", false)
+                robotSpeakText(
+                    mRobot, "Ich fahre jetzt zur Aufladestation!",
+                    isShowOnConversationLayer = false,
+                    clearQueue = true
+                )
                 mRobot?.goTo("home base")
                 showConfirmationPopUp = false
             },
@@ -98,11 +105,16 @@ fun CustomTopAppBar(
                 if (currentDestination != "homePage") {
                     IconButton(
                         onClick = {
-                            if (currentDestination == "guide") {
-                                showPopUp = true
-                            } else {
-                                navController.navigate("homePage")
+                            when (currentDestination) {
+                                "guide", "guideExhibition", "detailedExhibit" -> {
+                                    showPopUp = true
+                                }
+
+                                else -> {
+                                    navController.navigate("homePage")
+                                }
                             }
+
                         },
                         modifier = Modifier
                             .size(50.dp)
@@ -116,7 +128,7 @@ fun CustomTopAppBar(
                         )
                     }
                 }
-                if (currentDestination == "homePage") {
+                if (currentDestination == "homePage" && isAtHomeBase == false) {
                     CustomButton(
                         title = "Roboter zur Ladestation schicken",
                         onClick = {
@@ -160,12 +172,13 @@ fun CustomTopAppBar(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SetupTopBar(activity: Activity) {
+fun SetupTopBar(activity: Activity, setupViewModel: SetupViewModel) {
     var showPopUp by remember { mutableStateOf(false) }
     var showConfirmationPopUp by remember { mutableStateOf(false) }
+    val isDebugFlagEnabled by setupViewModel.isDebugFlagEnabled.observeAsState(false)
 
     if (showPopUp) {
-        PreparationPopUp(onDismiss = { showPopUp = false })
+        PreparationPopUp(onDismiss = { showPopUp = false }, isDebugFlagEnabled, setupViewModel)
     }
 
     if (showConfirmationPopUp) {
