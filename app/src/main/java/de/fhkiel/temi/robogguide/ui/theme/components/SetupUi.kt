@@ -25,6 +25,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
@@ -45,16 +46,38 @@ import com.robotemi.sdk.Robot
 import de.fhkiel.temi.robogguide.R
 import de.fhkiel.temi.robogguide.logic.TourManager
 import de.fhkiel.temi.robogguide.ui.logic.SetupViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Composable
 fun SetupUi(tourManager: TourManager, setupViewModel: SetupViewModel) {
+    val mRobot = Robot.getInstance()
     var expanded by remember { mutableStateOf(false) }
     var selectedIndex by remember { mutableIntStateOf(tourManager.allPlacesMap.size) } // set to the last element of the list
     val isRobotReady by setupViewModel.isRobotReady.observeAsState(false)
     val context = LocalContext.current as Activity
     val isKioskModeEnabled by setupViewModel.isKioskModeEnabled.observeAsState(false)
     val isDebugFlagEnabled by setupViewModel.isDebugFlagEnabled.observeAsState(false)
+    val showErrorPopUp = remember { mutableStateOf(false) }
+    val clickCounter = remember { mutableIntStateOf(0) }
+    val loading = remember { mutableStateOf(false) }
 
+    if (showErrorPopUp.value) {
+        ErrorPopUp(
+            title = "Fehler",
+            message = "Ich konnte leider keinen Ort finden. Bitte wähle einen Ort aus der Liste.",
+            onDismiss = { showErrorPopUp.value = false },
+            onClick = {
+                // is not used
+            },
+            mRobot = mRobot,
+            spokenText = "Ich konnte leider keinen Ort finden. Bitte wähle einen Ort aus der Liste.",
+            ladestation = false,
+            navController = null,
+        )
+    }
 
     Scaffold(
         topBar = {
@@ -125,7 +148,8 @@ fun SetupUi(tourManager: TourManager, setupViewModel: SetupViewModel) {
                     onDismissRequest = { expanded = false },
                     scrollState = rememberScrollState(),
                     modifier = Modifier
-                        .fillMaxSize().padding(16.dp)
+                        .fillMaxSize()
+                        .padding(16.dp)
                 ) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -168,7 +192,9 @@ fun SetupUi(tourManager: TourManager, setupViewModel: SetupViewModel) {
                                                 painter = painterResource(id = R.drawable.arrow_right),
                                                 contentDescription = null,
                                                 colorFilter = ColorFilter.tint(Color.Black),
-                                                modifier = Modifier.padding(8.dp).size(50.dp),
+                                                modifier = Modifier
+                                                    .padding(8.dp)
+                                                    .size(50.dp),
                                             )
                                         }
                                     }
@@ -180,10 +206,13 @@ fun SetupUi(tourManager: TourManager, setupViewModel: SetupViewModel) {
                                 }
 
                             },
-                            modifier = Modifier.fillMaxWidth().border(
-                                width = 2.dp,
-                                color = Color.Black,
-                                shape = RoundedCornerShape(8.dp))
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .border(
+                                    width = 2.dp,
+                                    color = Color.Black,
+                                    shape = RoundedCornerShape(8.dp)
+                                )
 
                         )
                         Spacer(modifier = Modifier.height(16.dp))
@@ -206,33 +235,40 @@ fun SetupUi(tourManager: TourManager, setupViewModel: SetupViewModel) {
                 )
                 Spacer(modifier = Modifier.width(16.dp))
                 if (isRobotReady) {
-                    val mRobot = Robot.getInstance()
-                    CustomButton(
-                        onClick = {
-                            val mapName = mRobot.getMapData()?.mapName
-                            var placeFound = false
-                            var placeSet = false
-                            Log.i("SetupUi", "Reading map name: $mapName")
-                            tourManager.allPlacesMap.forEach { (index, placeName) ->
-                                if (mapName?.startsWith(placeName) == true) {
-                                    placeSet = tourManager.setPlace(index, placeName)
-                                    placeFound = true
-                                    return@forEach
-                                }
-                            }
-                            if (!placeFound) {
-                                Log.e("SetupUi", "Place not found")
-                            } else {
-                                if (placeSet) {
-                                    setupViewModel.completeSetup()
-                                } else {
-                                    Log.e("SetupUi", "Place not set")
-                                }
-                            }
-                        },
-                        title = "Den Roboter auswählen lassen",
-                        modifier = Modifier.padding(16.dp)
-                    )
+                    Box(
+                        modifier = Modifier
+                            .border(
+                                width = 2.dp,
+                                color = Color.Black,
+                                shape = RoundedCornerShape(8.dp)
+                            )
+                    ) {
+                        if (clickCounter.intValue == 0 && !loading.value) {
+                            CustomButton(
+                                onClick = {
+                                    loading.value = true
+                                    CoroutineScope(Dispatchers.Main).launch {
+                                        searchForPlace(
+                                            mRobot,
+                                            tourManager,
+                                            setupViewModel,
+                                            showErrorPopUp,
+                                            clickCounter,
+                                            loading
+                                        )
+                                    }
+                                },
+                                title = "Den Roboter auswählen lassen",
+                                modifier = Modifier.padding(16.dp)
+                            )
+                        } else if (loading.value) {
+                            LoadingSpinner(
+                                messages = listOf("Suche nach Ort..."),
+                                currentMessageIndex = 0,
+                                modifier = Modifier.width(600.dp).height(200.dp)
+                            )
+                        }
+                    }
                     Column {
                         Text("Kiosk Mode anmachen")
                         Spacer(modifier = Modifier.width(8.dp))
@@ -240,7 +276,10 @@ fun SetupUi(tourManager: TourManager, setupViewModel: SetupViewModel) {
                             checked = isKioskModeEnabled,
                             onCheckedChange = { enabled: Boolean ->
                                 setupViewModel.setKioskModeEnabled(enabled)
-                                Log.i("SetupUi", "Kiosk mode: $enabled")
+                                Log.i(
+                                    "de.fhkiel.temi.robogguide.ui.theme.components.SetupUi",
+                                    "Kiosk mode: $enabled"
+                                )
                                 if (enabled) {
                                     mRobot.requestToBeKioskApp()
                                 }
@@ -253,7 +292,10 @@ fun SetupUi(tourManager: TourManager, setupViewModel: SetupViewModel) {
                             checked = isDebugFlagEnabled,
                             onCheckedChange = { enabled: Boolean ->
                                 setupViewModel.setDebugFlagEnabled(enabled)
-                                Log.i("SetupUi", "Debug mode: $enabled")
+                                Log.i(
+                                    "de.fhkiel.temi.robogguide.ui.theme.components.SetupUi",
+                                    "Debug mode: $enabled"
+                                )
                             }
                         )
 
@@ -265,6 +307,51 @@ fun SetupUi(tourManager: TourManager, setupViewModel: SetupViewModel) {
                     )
                 }
 
+            }
+        }
+    }
+}
+
+fun searchForPlace(
+    mRobot: Robot,
+    tourManager: TourManager,
+    setupViewModel: SetupViewModel,
+    showErrorPopUp: MutableState<Boolean>,
+    clickCounter: MutableState<Int>,
+    loading: MutableState<Boolean>
+) {
+    CoroutineScope(Dispatchers.IO).launch {
+        try {
+            val mapName = mRobot.getMapData()?.mapName
+            var placeFound = false
+            var placeSet = false
+            Log.i("SetupUi", "Reading map name: $mapName")
+            tourManager.allPlacesMap.forEach { (index, placeName) ->
+                if (mapName?.startsWith(placeName) == true) {
+                    placeSet = tourManager.setPlace(index, placeName)
+                    placeFound = true
+                    return@forEach
+                }
+            }
+            withContext(Dispatchers.Main) {
+                if (!placeFound) {
+                    Log.e("SetupUi", "Place not found")
+                    showErrorPopUp.value = true
+                    clickCounter.value++
+                } else {
+                    if (placeSet) {
+                        setupViewModel.completeSetup()
+                    } else {
+                        Log.e("SetupUi", "Place not set")
+                    }
+                }
+                loading.value = false
+            }
+        } catch (e: Exception) {
+            Log.e("SetupUi", "Error in searchForPlace", e)
+            withContext(Dispatchers.Main) {
+                showErrorPopUp.value = true
+                loading.value = false
             }
         }
     }
