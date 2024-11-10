@@ -152,7 +152,8 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
                                     mRobot,
                                     tourViewModel,
                                     tourManager,
-                                    navController
+                                    navController,
+                                    setupViewModel
                                 )
                             }
                             composable("guideExhibition") {
@@ -169,7 +170,8 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
                                     mRobot,
                                     tourViewModel,
                                     tourManager,
-                                    navController
+                                    navController,
+                                    setupViewModel
                                 )
                             }
                             composable("endPage") {
