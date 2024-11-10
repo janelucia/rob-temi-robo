@@ -16,9 +16,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun LoadingSpinner(messages : List<String>, currentMessageIndex : Int) {
+fun LoadingSpinner(
+    messages: List<String>,
+    currentMessageIndex: Int,
+    modifier: Modifier = Modifier.fillMaxSize()
+) {
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier,
         contentAlignment = Alignment.Center
     ) {
         Column(

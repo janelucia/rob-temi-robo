@@ -106,7 +106,7 @@ fun PreparationPopUp(
                     checked = isDebugFlagEnabled,
                     onCheckedChange = { enabled: Boolean ->
                         setupViewModel.setDebugFlagEnabled(enabled)
-                        Log.i("SetupUi", "Debug mode: $enabled")
+                        Log.i("de.fhkiel.temi.robogguide.ui.theme.components.SetupUi", "Debug mode: $enabled")
                     }
                 )
                 Spacer(modifier = Modifier.height(32.dp))
@@ -253,8 +253,9 @@ fun ErrorPopUp(
     message: String,
     spokenText: String,
     onClick: () -> Unit,
-    navController: NavController,
-    mRobot: Robot?
+    navController: NavController?,
+    mRobot: Robot?,
+    ladestation: Boolean = true
 ) {
     robotSpeakText(mRobot, spokenText, false)
     Dialog(
@@ -283,36 +284,38 @@ fun ErrorPopUp(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,
                 ) {
-                    CustomButton(
-                        onClick = {
-                            onDismiss()
-                            onClick()
-                        },
-                        title = "Erneut versuchen",
-                        width = 400.dp,
-                        height = 50.dp,
-                        fontSize = 32.sp
-                    )
-                    Spacer(modifier = Modifier.height(32.dp))
-                    CustomButton(
-                        onClick = {
-                            onDismiss
-                            navController.navigate("homePage")
-                            robotSpeakText(
-                                mRobot,
-                                "Nagut, dann fahre ich erstmal wieder zurück zu meiner Ladestation. Bitte entschuldigen Sie.",
-                                false
-                            )
-                            mRobot?.goTo("home base")
-                        },
-                        title = "Zur Ladestation fahren",
-                        width = 400.dp,
-                        height = 50.dp,
-                        fontSize = 32.sp,
-                        initialBackgroundColor = Color.White,
-                        contentColor = Color.Black
-                    )
-                    Spacer(modifier = Modifier.height(32.dp))
+                    if(ladestation){
+                        CustomButton(
+                            onClick = {
+                                onDismiss()
+                                onClick()
+                            },
+                            title = "Erneut versuchen",
+                            width = 400.dp,
+                            height = 50.dp,
+                            fontSize = 32.sp
+                        )
+                        Spacer(modifier = Modifier.height(32.dp))
+                        CustomButton(
+                            onClick = {
+                                onDismiss
+                                navController?.navigate("homePage")
+                                robotSpeakText(
+                                    mRobot,
+                                    "Nagut, dann fahre ich erstmal wieder zurück zu meiner Ladestation. Bitte entschuldigen Sie.",
+                                    false
+                                )
+                                mRobot?.goTo("home base")
+                            },
+                            title = "Zur Ladestation fahren",
+                            width = 400.dp,
+                            height = 50.dp,
+                            fontSize = 32.sp,
+                            initialBackgroundColor = Color.White,
+                            contentColor = Color.Black
+                        )
+                        Spacer(modifier = Modifier.height(32.dp))
+                    }
                     CustomButton(
                         onClick = onDismiss,
                         title = "Schließen",
