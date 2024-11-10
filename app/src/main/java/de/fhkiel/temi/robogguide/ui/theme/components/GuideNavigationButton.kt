@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -147,21 +146,28 @@ fun GuideNavigationButton(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        CustomButton(
-                            title = "⏮",
-                            fontSize = 32.sp,
-                            onClick = {
-                                tourViewModel.decrementCurrentItemIndex()
-                            },
-                            modifier = Modifier
-                                .size(150.dp)
-                                .padding(16.dp),
-                        )
-                        CustomButton(title = "⟲",
-                            fontSize = 32.sp,
-                            modifier = Modifier
-                                .size(150.dp)
-                                .padding(16.dp),
+                        if (currentItemIndex == 0) {
+                            CustomIconButton(
+                                iconId = R.drawable.play_disabled_right,
+                                onClick = {
+                                    // do nothing
+                                },
+                                contentDescription = "Kein vorheriges Exponat",
+                                initialContainerColor = Color.Gray,
+                                iconModifier = Modifier.graphicsLayer(rotationZ = 180f)
+                            )
+                        } else {
+                            CustomIconButton(
+                                iconId = R.drawable.play_arrow_left,
+                                onClick = {
+                                    tourViewModel.decrementCurrentItemIndex()
+                                },
+                                contentDescription = "Vorheriges Exponat"
+                            )
+                        }
+                        CustomIconButton(
+                            iconId = R.drawable.replay,
+                            contentDescription = "Exponat wiederholen",
                             onClick = {
                                 if (wasAlreadySpoken) {
                                     assert(tourViewModel.levelOfDetail != null)
@@ -179,17 +185,26 @@ fun GuideNavigationButton(
                                     // don't speak
                                     Log.w("GuideNavigationButton", "Stop spamming me!")
                                 }
-                            }
+                            },
                         )
-                        CustomButton(title = "⏭",
-                            fontSize = 32.sp,
-                            modifier = Modifier
-                                .size(150.dp)
-                                .padding(16.dp),
-                            onClick = {
-                                tourViewModel.incrementCurrentItemIndex()
-                            }
-                        )
+                        if (currentItemIndex == numberOfItems - 1) {
+                            CustomIconButton(
+                                iconId = R.drawable.play_disabled_right,
+                                onClick = {
+                                    // do nothing
+                                },
+                                contentDescription = "Kein vorheriges Exponat",
+                                initialContainerColor = Color.Gray,
+                            )
+                        } else {
+                            CustomIconButton(
+                                iconId = R.drawable.play_arrow_right,
+                                contentDescription = "Nächstes Exponat",
+                                onClick = {
+                                    tourViewModel.incrementCurrentItemIndex()
+                                },
+                            )
+                        }
 
                         CustomButton(
                             title = "Zurück zur Liste",
