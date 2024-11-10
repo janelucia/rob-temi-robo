@@ -99,6 +99,13 @@ fun GuideNavigationButton(
                                 }
                             },
                         )
+                        CustomIconButton(
+                            iconId = R.drawable.stop,
+                            contentDescription = "Sprachausgabe stoppen",
+                            onClick = {
+                                clearQueue(mRobot)
+                            },
+                        )
                         if (currentItemIndex == numberOfItems - 1 && currentLocationIndex == tourViewModel.numberOfLocations - 1) {
                             CustomButton(
                                 title = "Führung beenden",
@@ -193,6 +200,13 @@ fun GuideNavigationButton(
                                 }
                             }
                         )
+                        CustomIconButton(
+                            iconId = R.drawable.stop,
+                            contentDescription = "Sprachausgabe stoppen",
+                            onClick = {
+                                clearQueue(mRobot)
+                            },
+                        )
                         if (currentItemIndex == numberOfItems - 1) {
                             CustomIconButton(
                                 iconId = R.drawable.play_disabled_right,
@@ -218,6 +232,7 @@ fun GuideNavigationButton(
                             fontSize = 32.sp,
                             onClick = {
                                 navController.popBackStack()
+                                mRobot?.stopMovement()
                                 clearQueue(mRobot)
                             },
                             modifier = Modifier.padding(16.dp),

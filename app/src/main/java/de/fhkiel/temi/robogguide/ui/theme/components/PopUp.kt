@@ -204,6 +204,7 @@ fun ClosePopup(onDismiss: () -> Unit, navController: NavController, mRobot: Robo
                     CustomButton(
                         onClick = {
                             navController.navigate("homePage")
+                            mRobot?.stopMovement()
                             onDismiss()
                         },
                         title = "Zum Startbildschirm",
