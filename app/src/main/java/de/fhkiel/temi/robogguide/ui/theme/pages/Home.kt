@@ -45,8 +45,12 @@ fun Home(innerPadding: PaddingValues, navHostController: NavHostController, mRob
                 title = "Los gehts!",
                 onClick = {
                     navHostController.navigate("guideSelector")
-                    mRobot?.volume = 5 // volume needs to be between 0 and 10
-                    Log.d("Home", "Volume set to ${mRobot?.volume}")
+                    mRobot?.let {
+                        if (mRobot.volume == 0) {
+                            mRobot.volume = 5 // volume needs to be between 0 and 10
+                            Log.d("Home", "Volume set to ${mRobot.volume}")
+                        }
+                    }
                 }
             )
         }
