@@ -6,5 +6,4 @@ enum class GuideState {
     TransferError,
     Exhibit,     // robot is at exhibit
     End
-    //TODO vielleicht weitere states hinzufügen wie exhibit introduction, exhibit idle, exhibit end (...)
 }

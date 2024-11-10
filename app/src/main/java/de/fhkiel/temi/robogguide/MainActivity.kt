@@ -37,7 +37,6 @@ import de.fhkiel.temi.robogguide.ui.logic.SetupViewModel
 import de.fhkiel.temi.robogguide.ui.logic.TourViewModel
 import de.fhkiel.temi.robogguide.ui.theme.Rob_Temi_Robo_UITheme
 import de.fhkiel.temi.robogguide.ui.theme.components.CustomTopAppBar
-import de.fhkiel.temi.robogguide.ui.theme.components.ErrorPopUp
 import de.fhkiel.temi.robogguide.ui.theme.components.GuideNavigationButton
 import de.fhkiel.temi.robogguide.ui.theme.pages.EndPage
 import de.fhkiel.temi.robogguide.ui.theme.pages.Guide
@@ -238,7 +237,8 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
             mRobot?.hideTopBar()        // hide top action bar
 
             // hide pull-down bar
-            val activityInfo: ActivityInfo = packageManager.getActivityInfo(componentName, PackageManager.GET_META_DATA)
+            val activityInfo: ActivityInfo =
+                packageManager.getActivityInfo(componentName, PackageManager.GET_META_DATA)
             Robot.getInstance().onStart(activityInfo)
 
             setupViewModel.robotIsReady()

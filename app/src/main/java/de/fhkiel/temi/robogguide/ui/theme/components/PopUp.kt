@@ -2,10 +2,16 @@ package de.fhkiel.temi.robogguide.ui.theme.components
 
 import android.app.Activity
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,29 +34,31 @@ fun HelpPopup(onDismiss: () -> Unit, activity: Activity) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                    Text("Wie darf ich dir helfen?",
-                        fontSize = 64.sp,
-                        lineHeight = 64.sp)
-                    Spacer(modifier = Modifier.height(16.dp))
-                    CustomButton(
-                        onClick = {
-                            exitApp(activity)
-                        },
-                        title = "App schließen",
-                        width = 400.dp,
-                        height = 100.dp,
-                        fontSize = 32.sp,
-                        initialBackgroundColor = Color.White,
-                        contentColor = Color.Black,
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    CustomButton(
-                        onClick = onDismiss,
-                        title = "Abbrechen",
-                        width = 400.dp,
-                        height = 100.dp,
-                        fontSize = 32.sp
-                    )
+                Text(
+                    "Wie darf ich dir helfen?",
+                    fontSize = 64.sp,
+                    lineHeight = 64.sp
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                CustomButton(
+                    onClick = {
+                        exitApp(activity)
+                    },
+                    title = "App schließen",
+                    width = 400.dp,
+                    height = 100.dp,
+                    fontSize = 32.sp,
+                    initialBackgroundColor = Color.White,
+                    contentColor = Color.Black,
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                CustomButton(
+                    onClick = onDismiss,
+                    title = "Abbrechen",
+                    width = 400.dp,
+                    height = 100.dp,
+                    fontSize = 32.sp
+                )
             }
         }
     }
@@ -67,16 +75,22 @@ fun PreparationPopUp(onDismiss: () -> Unit) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Header("Vorbereitungen",
-                    fontSize = 64.sp)
+                Header(
+                    "Vorbereitungen",
+                    fontSize = 64.sp
+                )
                 Spacer(modifier = Modifier.height(32.dp))
-                Text("Schalte den Kioskmodus ein. Du findest einen Schalter auf der Seite: Temi-Setup.",
+                Text(
+                    "Schalte den Kioskmodus ein. Du findest einen Schalter auf der Seite: Temi-Setup.",
                     fontSize = 24.sp,
-                    lineHeight = 32.sp)
+                    lineHeight = 32.sp
+                )
                 Spacer(modifier = Modifier.height(16.dp))
-                Text("Stelle sicher, dass Temi den User tracken kann. Dies kannst du unter Einstellungen -> General Settings -> Andere -> Tracking User einschalten.",
+                Text(
+                    "Stelle sicher, dass Temi den User tracken kann. Dies kannst du unter Einstellungen -> General Settings -> Andere -> Tracking User einschalten.",
                     fontSize = 24.sp,
-                    lineHeight = 32.sp)
+                    lineHeight = 32.sp
+                )
                 Spacer(modifier = Modifier.height(32.dp))
                 CustomButton(
                     onClick = onDismiss,
@@ -91,7 +105,14 @@ fun PreparationPopUp(onDismiss: () -> Unit) {
 }
 
 @Composable
-fun ConfirmationPopUp(onDismiss: () -> Unit, onConfirm: () -> Unit, title: String, message: String, confirmationButtonText: String, dismissButtonText: String) {
+fun ConfirmationPopUp(
+    onDismiss: () -> Unit,
+    onConfirm: () -> Unit,
+    title: String,
+    message: String,
+    confirmationButtonText: String,
+    dismissButtonText: String
+) {
     Dialog(onDismissRequest = onDismiss) {
         Box(
             modifier = Modifier
@@ -101,12 +122,16 @@ fun ConfirmationPopUp(onDismiss: () -> Unit, onConfirm: () -> Unit, title: Strin
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Header(title,
-                    fontSize = 64.sp)
+                Header(
+                    title,
+                    fontSize = 64.sp
+                )
                 Spacer(modifier = Modifier.height(32.dp))
-                Text(message,
+                Text(
+                    message,
                     fontSize = 24.sp,
-                    lineHeight = 32.sp)
+                    lineHeight = 32.sp
+                )
                 Spacer(modifier = Modifier.height(16.dp))
                 CustomButton(
                     onClick = onConfirm,
@@ -203,7 +228,15 @@ fun ClosePopup(onDismiss: () -> Unit, navController: NavController, mRobot: Robo
 }
 
 @Composable
-fun ErrorPopUp(onDismiss: () -> Unit, title: String, message: String, spokenText: String, onClick: () -> Unit, navController: NavController, mRobot: Robot?) {
+fun ErrorPopUp(
+    onDismiss: () -> Unit,
+    title: String,
+    message: String,
+    spokenText: String,
+    onClick: () -> Unit,
+    navController: NavController,
+    mRobot: Robot?
+) {
     robotSpeakText(mRobot, spokenText, false)
     Dialog(
         onDismissRequest = onDismiss,
@@ -246,8 +279,13 @@ fun ErrorPopUp(onDismiss: () -> Unit, title: String, message: String, spokenText
                         onClick = {
                             onDismiss
                             navController.navigate("homePage")
-                            robotSpeakText(mRobot, "Nagut, dann fahre ich erstmal wieder zurück zu meiner Ladestation. Bitte entschuldigen Sie.", false)
-                            mRobot?.goTo("home base") },
+                            robotSpeakText(
+                                mRobot,
+                                "Nagut, dann fahre ich erstmal wieder zurück zu meiner Ladestation. Bitte entschuldigen Sie.",
+                                false
+                            )
+                            mRobot?.goTo("home base")
+                        },
                         title = "Zur Ladestation fahren",
                         width = 400.dp,
                         height = 50.dp,
