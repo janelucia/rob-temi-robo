@@ -151,7 +151,8 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
                                     innerPadding,
                                     mRobot,
                                     tourViewModel,
-                                    tourManager
+                                    tourManager,
+                                    navController
                                 )
                             }
                             composable("guideExhibition") {
@@ -167,7 +168,8 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
                                     innerPadding,
                                     mRobot,
                                     tourViewModel,
-                                    tourManager
+                                    tourManager,
+                                    navController
                                 )
                             }
                             composable("endPage") {
@@ -235,7 +237,8 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
             mRobot?.hideTopBar()        // hide top action bar
 
             // hide pull-down bar
-            val activityInfo: ActivityInfo = packageManager.getActivityInfo(componentName, PackageManager.GET_META_DATA)
+            val activityInfo: ActivityInfo =
+                packageManager.getActivityInfo(componentName, PackageManager.GET_META_DATA)
             Robot.getInstance().onStart(activityInfo)
 
             setupViewModel.robotIsReady()
@@ -406,15 +409,49 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
     ) {
         Log.d(
             "Transfer",
-            "Mein GoTO Status ${status} GuideStatus ${tourViewModel.guideState.value}"
+            "Mein GoTO Status ${status} GuideStatus ${tourViewModel.guideState.value} Description ID ${description}"
         )
-        if (status == OnGoToLocationStatusChangedListener.COMPLETE && tourViewModel.guideState.value == GuideState.TransferGoing) {
-            // Roboter erreicht Ziel
-            tourViewModel.updateGuideState(GuideState.Exhibit)
-            Log.d("Transfer", "Ich habe mein Ziel erreicht -> ${tourViewModel.guideState.value}")
-        } else if (status == OnGoToLocationStatusChangedListener.START && tourViewModel.guideState.value == GuideState.TransferStart) {
-            tourViewModel.updateGuideState(GuideState.TransferGoing)
-            Log.d("Transfer", "Ich beginne mich zu bewegen -> ${tourViewModel.guideState.value}")
+        when (status) {
+            OnGoToLocationStatusChangedListener.START -> {
+                if (tourViewModel.guideState.value == GuideState.TransferStart) {
+                    tourViewModel.updateGuideState(GuideState.TransferGoing)
+                    Log.d(
+                        "Transfer",
+                        "Ich beginne mich zu bewegen -> ${tourViewModel.guideState.value}"
+                    )
+                }
+            }
+
+            OnGoToLocationStatusChangedListener.COMPLETE -> {
+                if (tourViewModel.guideState.value == GuideState.TransferGoing) {
+                    // Roboter erreicht Ziel
+                    tourViewModel.updateGuideState(GuideState.Exhibit)
+                    Log.d(
+                        "Transfer",
+                        "Ich habe mein Ziel erreicht -> ${tourViewModel.guideState.value}"
+                    )
+                }
+            }
+
+            OnGoToLocationStatusChangedListener.ABORT -> {
+                if (tourViewModel.guideState.value == GuideState.TransferGoing) {
+                    // Roboter erreicht Ziel nicht
+                    tourViewModel.updateGuideState(GuideState.TransferError)
+                    Log.d(
+                        "Transfer",
+                        "NACH ABORT: Mein GoTO Status ${status} GuideStatus ${tourViewModel.guideState.value} Description ID ${description}"
+                    )
+
+                }
+            }
+
+            OnGoToLocationStatusChangedListener.REPOSING -> {
+                if (tourViewModel.guideState.value == GuideState.TransferGoing) {
+                    //Ladespinner anzeigen?
+                    robotSpeakText(mRobot, "Einen Moment, ich berechne meine Route.", false)
+                }
+
+            }
         }
     }
 
