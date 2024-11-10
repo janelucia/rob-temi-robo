@@ -4,7 +4,7 @@ import com.robotemi.sdk.Robot
 import com.robotemi.sdk.TtsRequest
 
 
-fun robotSpeakText(mRobot: Robot?, text: String?, isShowOnConversationLayer: Boolean = true) {
+fun robotSpeakText(mRobot: Robot?, text: String?, isShowOnConversationLayer: Boolean = false) {
 
     text?.let { txt ->
         mRobot?.let { robot ->
