@@ -97,6 +97,13 @@ fun GuideNavigationButton(
                                 }
                             },
                         )
+                        CustomIconButton(
+                            iconId = R.drawable.stop,
+                            contentDescription = "Sprachausgabe stoppen",
+                            onClick = {
+                                // TODO: queue clearen
+                            },
+                        )
                         if (currentItemIndex == numberOfItems - 1 && currentLocationIndex == tourViewModel.numberOfLocations - 1) {
                             CustomButton(
                                 title = "Führung beenden",
@@ -185,6 +192,13 @@ fun GuideNavigationButton(
                                     // don't speak
                                     Log.w("GuideNavigationButton", "Stop spamming me!")
                                 }
+                            },
+                        )
+                        CustomIconButton(
+                            iconId = R.drawable.stop,
+                            contentDescription = "Sprachausgabe stoppen",
+                            onClick = {
+                                // TODO: queue clearen
                             },
                         )
                         if (currentItemIndex == numberOfItems - 1) {
