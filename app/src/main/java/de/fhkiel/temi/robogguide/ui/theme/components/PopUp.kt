@@ -253,8 +253,9 @@ fun ErrorPopUp(
     message: String,
     spokenText: String,
     onClick: () -> Unit,
-    navController: NavController,
-    mRobot: Robot?
+    navController: NavController?,
+    mRobot: Robot?,
+    ladestation: Boolean = true
 ) {
     robotSpeakText(mRobot, spokenText, false)
     Dialog(
