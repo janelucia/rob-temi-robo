@@ -14,6 +14,7 @@ import androidx.navigation.NavController
 import com.robotemi.sdk.Robot
 import de.fhkiel.temi.robogguide.logic.TourManager
 import de.fhkiel.temi.robogguide.models.GuideState
+import de.fhkiel.temi.robogguide.ui.logic.SetupViewModel
 import de.fhkiel.temi.robogguide.ui.logic.TourViewModel
 import de.fhkiel.temi.robogguide.ui.theme.components.CustomButton
 import de.fhkiel.temi.robogguide.ui.theme.components.Exhibit
@@ -25,13 +26,15 @@ fun Guide(
     mRobot: Robot?,
     tourViewModel: TourViewModel,
     tourManager: TourManager,
-    navController: NavController
+    navController: NavController,
+    setupUiViewModel: SetupViewModel
 ) {
 
     val guideState by tourViewModel.guideState.observeAsState(null)
 
     val currentItem by tourViewModel.currentItem.observeAsState(null)
     val currentLocation by tourViewModel.currentLocation.observeAsState(null)
+    val isDebugFlagEnabled by setupUiViewModel.isDebugFlagEnabled.observeAsState(false)
 
     Column(
         modifier = Modifier
@@ -50,25 +53,26 @@ fun Guide(
             GuideState.TransferStart -> {
                 assert(currentLocation != null)
                 TransferDrive(currentLocation!!, mRobot, tourViewModel, tourManager, navController)
-//                //TODO DEBUG BUTTON
-                CustomButton(
-                    title = "Am Exponat angekommen",
-                    onClick = { tourViewModel.updateGuideState(GuideState.Exhibit) }
-                )
+                if (isDebugFlagEnabled) {
+                    CustomButton(
+                        title = "Am Exponat angekommen",
+                        onClick = { tourViewModel.updateGuideState(GuideState.Exhibit) }
+                    )
+                }
             }
 
             GuideState.Exhibit -> {
                 assert(currentItem != null)
                 Exhibit(currentItem!!, mRobot, tourViewModel)
-                //TODO DEBUG BUTTON
-                CustomButton(
-                    title = "Zum nächsten Exponat",
-                    onClick = {
-                        tourViewModel.updateGuideState(GuideState.TransferStart)
-                        tourViewModel.incrementCurrentItemIndex()
-                    }
-                )
-
+                if (isDebugFlagEnabled) {
+                    CustomButton(
+                        title = "Zum nächsten Exponat",
+                        onClick = {
+                            tourViewModel.updateGuideState(GuideState.TransferStart)
+                            tourViewModel.incrementCurrentItemIndex()
+                        }
+                    )
+                }
             }
 
             GuideState.TransferGoing -> {
