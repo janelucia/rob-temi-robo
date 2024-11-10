@@ -32,7 +32,6 @@ import com.robotemi.sdk.permission.OnRequestPermissionResultListener
 import com.robotemi.sdk.permission.Permission
 import de.fhkiel.temi.robogguide.database.DatabaseHelper
 import de.fhkiel.temi.robogguide.logic.TourManager
-import de.fhkiel.temi.robogguide.logic.clearQueue
 import de.fhkiel.temi.robogguide.logic.isSpeaking
 import de.fhkiel.temi.robogguide.logic.processQueue
 import de.fhkiel.temi.robogguide.logic.robotSpeakText
@@ -449,23 +448,27 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
             }
 
             OnGoToLocationStatusChangedListener.ABORT -> {
-
+                Log.d(
+                    "Transfer",
+                    "NACH ABORT: Mein GoTO Status $status GuideStatus ${tourViewModel.guideState.value} Description ID $description"
+                )
                 if (descriptionId == 1006) {
                     // Robot is stuck outside of mapped area.
                     Log.e("Transfer", "Robot is stuck outside of mapped area.")
-                    tourViewModel.updateGuideState(GuideState.TransferError)
-                    clearQueue(mRobot)
-                    robotSpeakText(mRobot, "Ich kann hier nicht weiterfahren. Bitte schieben Sie mich zurück in den Raum. Oder holen Sie Hilfe", clearQueue = true)
-                } else if (tourViewModel.guideState.value == GuideState.TransferGoing || tourViewModel.guideState.value == GuideState.TransferStart) {
-                    clearQueue(mRobot)
-                    // Roboter erreicht Ziel nicht
-                    robotSpeakText(mRobot, "Hilfe, ich komme hier gerade leider nicht weiter.", clearQueue = true)
-                    tourViewModel.updateGuideState(GuideState.TransferError)
-                    Log.d(
-                        "Transfer",
-                        "NACH ABORT: Mein GoTO Status $status GuideStatus ${tourViewModel.guideState.value} Description ID $description"
+                    robotSpeakText(
+                        mRobot,
+                        "Ich kann hier nicht weiterfahren. Bitte schieben Sie mich zurück in den Raum. Oder holen Sie Hilfe",
+                        clearQueue = true
                     )
-
+                    tourViewModel.updateGuideState(GuideState.TransferError)
+                } else if (tourViewModel.guideState.value == GuideState.TransferGoing || tourViewModel.guideState.value == GuideState.TransferStart) {
+                    // Roboter erreicht Ziel nicht
+                    robotSpeakText(
+                        mRobot,
+                        "Hilfe, ich komme hier gerade leider nicht weiter.",
+                        clearQueue = true
+                    )
+                    tourViewModel.updateGuideState(GuideState.TransferError)
                 }
             }
 
@@ -482,7 +485,10 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
     override fun onTtsStatusChanged(ttsRequest: TtsRequest) {
         Log.d("SpeakTextListener", "TtsRequest.Status: ${ttsRequest.status}")
         when (ttsRequest.status) {
-            TtsRequest.Status.COMPLETED, TtsRequest.Status.CANCELED, TtsRequest.Status.ERROR -> {
+            TtsRequest.Status.COMPLETED,
+            TtsRequest.Status.CANCELED,
+            TtsRequest.Status.ERROR,
+            TtsRequest.Status.PROCESSING -> {
                 isSpeaking.value = false
                 ttsQueue.value!!.poll()
                 ttsQueue.value = ttsQueue.value
