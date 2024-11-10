@@ -405,26 +405,44 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
         descriptionId: Int,
         description: String
     ) {
-        Log.d("Transfer", "Mein GoTO Status ${status} GuideStatus ${tourViewModel.guideState.value}")
+        Log.d(
+            "Transfer",
+            "Mein GoTO Status ${status} GuideStatus ${tourViewModel.guideState.value} Description ID ${description}"
+        )
         when (status) {
             OnGoToLocationStatusChangedListener.START -> {
                 if (tourViewModel.guideState.value == GuideState.TransferStart) {
                     tourViewModel.updateGuideState(GuideState.TransferGoing)
-                    Log.d("Transfer", "Ich beginne mich zu bewegen -> ${tourViewModel.guideState.value}")
+                    Log.d(
+                        "Transfer",
+                        "Ich beginne mich zu bewegen -> ${tourViewModel.guideState.value}"
+                    )
                 }
             }
+
             OnGoToLocationStatusChangedListener.COMPLETE -> {
                 if (tourViewModel.guideState.value == GuideState.TransferGoing) {
                     // Roboter erreicht Ziel
                     tourViewModel.updateGuideState(GuideState.Exhibit)
-                    Log.d("Transfer", "Ich habe mein Ziel erreicht -> ${tourViewModel.guideState.value}")
+                    Log.d(
+                        "Transfer",
+                        "Ich habe mein Ziel erreicht -> ${tourViewModel.guideState.value}"
+                    )
                 }
             }
+
             OnGoToLocationStatusChangedListener.ABORT -> {
+                Log.d("Transfer", "ABORT MISSION with Description ID: ${description}")
                 if (tourViewModel.guideState.value == GuideState.TransferGoing) {
                     // Roboter erreicht Ziel nicht
                     //TODO FEHLERBILDSCHIRM
+                    robotSpeakText(mRobot, "Hilfe, ich komme hier nicht weiter.", false)
                 }
+            }
+
+            OnGoToLocationStatusChangedListener.REPOSING -> {
+                //Ladespinner anzeigen?
+                robotSpeakText(mRobot, "Einen Moment, ich berechne meine Route.", false)
             }
         }
     }
