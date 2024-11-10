@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -29,16 +30,15 @@ import de.fhkiel.temi.robogguide.models.Text
  */
 @Composable
 fun DisplayMediaList(vararg texts: Text?) {
-    LazyRow(
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically,
+    LazyColumn(
+        verticalArrangement = Arrangement.Center,
         modifier = Modifier.fillMaxWidth()
     ) {
         texts.forEach { text ->
             text?.mediaList?.forEach { media ->
                 item {
                     Box (
-                        modifier = Modifier.padding(16.dp).size(400.dp)
+                        modifier = Modifier.padding(16.dp).size(800.dp)
                     ) {
                         when (media.type) {
                             MediaType.VIDEO -> {
