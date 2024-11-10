@@ -23,6 +23,7 @@ class TourViewModel : ViewModel() {
     val currentItem = MutableLiveData<Item>()
     val currentLocation = MutableLiveData<Location>()
     val wasAlreadySpoken = MutableLiveData(false)
+    val isAtHomeBase = MutableLiveData(true)
 
 
     /* Initial funssssssssss */

@@ -58,6 +58,8 @@ fun CustomTopAppBar(
     val currentDestination = navBackStackEntry.value?.destination?.route
     val currentLocationIndex by tourViewModel.currentLocationIndex.observeAsState(0)
 
+    val isAtHomeBase by tourViewModel.isAtHomeBase.observeAsState(true)
+
     if (showHelpPopup) {
         HelpPopup(onDismiss = { showHelpPopup = false }, activity)
     }
@@ -72,7 +74,11 @@ fun CustomTopAppBar(
                 showConfirmationPopUp = false
             },
             onConfirm = {
-                robotSpeakText(mRobot, "Ich fahre jetzt zur Aufladestation!", false)
+                robotSpeakText(
+                    mRobot, "Ich fahre jetzt zur Aufladestation!",
+                    isShowOnConversationLayer = false,
+                    clearQueue = true
+                )
                 mRobot?.goTo("home base")
                 showConfirmationPopUp = false
             },
@@ -99,11 +105,16 @@ fun CustomTopAppBar(
                 if (currentDestination != "homePage") {
                     IconButton(
                         onClick = {
-                            if (currentDestination == "guide") {
-                                showPopUp = true
-                            } else {
-                                navController.navigate("homePage")
+                            when (currentDestination) {
+                                "guide", "guideExhibition", "detailedExhibit" -> {
+                                    showPopUp = true
+                                }
+
+                                else -> {
+                                    navController.navigate("homePage")
+                                }
                             }
+
                         },
                         modifier = Modifier
                             .size(50.dp)
@@ -117,7 +128,7 @@ fun CustomTopAppBar(
                         )
                     }
                 }
-                if (currentDestination == "homePage") {
+                if (currentDestination == "homePage" && isAtHomeBase == false) {
                     CustomButton(
                         title = "Roboter zur Ladestation schicken",
                         onClick = {
