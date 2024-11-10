@@ -76,7 +76,9 @@ fun Guide(
                 TransferDrive(currentLocation!!, mRobot, tourViewModel, tourManager, navController)
             }
 
-            GuideState.End -> TODO()
+            GuideState.End -> {
+                //do nothing
+            }
             GuideState.TransferError -> {
                 assert(currentLocation != null)
                 TransferDrive(currentLocation!!, mRobot, tourViewModel, tourManager, navController)
