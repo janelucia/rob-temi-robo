@@ -1,6 +1,7 @@
 package de.fhkiel.temi.robogguide.ui.theme.components
 
 import android.app.Activity
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -9,7 +10,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -22,6 +25,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import com.robotemi.sdk.Robot
 import de.fhkiel.temi.robogguide.logic.robotSpeakText
+import de.fhkiel.temi.robogguide.ui.logic.SetupViewModel
 
 @Composable
 fun HelpPopup(onDismiss: () -> Unit, activity: Activity) {
@@ -65,7 +69,11 @@ fun HelpPopup(onDismiss: () -> Unit, activity: Activity) {
 }
 
 @Composable
-fun PreparationPopUp(onDismiss: () -> Unit) {
+fun PreparationPopUp(
+    onDismiss: () -> Unit,
+    isDebugFlagEnabled: Boolean,
+    setupViewModel: SetupViewModel
+) {
     Dialog(onDismissRequest = onDismiss) {
         Box(
             modifier = Modifier
@@ -90,6 +98,16 @@ fun PreparationPopUp(onDismiss: () -> Unit) {
                     "Stelle sicher, dass Temi den User tracken kann. Dies kannst du unter Einstellungen -> General Settings -> Andere -> Tracking User einschalten.",
                     fontSize = 24.sp,
                     lineHeight = 32.sp
+                )
+                Spacer(modifier = Modifier.height(32.dp))
+                Text("Debug Flag anmachen")
+                Spacer(modifier = Modifier.width(8.dp))
+                Switch(
+                    checked = isDebugFlagEnabled,
+                    onCheckedChange = { enabled: Boolean ->
+                        setupViewModel.setDebugFlagEnabled(enabled)
+                        Log.i("SetupUi", "Debug mode: $enabled")
+                    }
                 )
                 Spacer(modifier = Modifier.height(32.dp))
                 CustomButton(
