@@ -343,8 +343,10 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
 
         assert(mRobot != null)
         val oldVolume = mRobot?.volume!!
+        val isCharging = mRobot?.batteryData?.isCharging
 
-        if (!dialogShown) {
+        // check if dialog is already shown and robot is not charging
+        if (!dialogShown && !isCharging!!) {
             dialogShown = true
             // scream
             mRobot?.volume = 100
@@ -368,7 +370,7 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
             handler.postDelayed({
                 returnHomeRunnable.run()
                 dialog.dismiss()
-            }, 120000) // 3 Sek
+            }, 120000) // 2 Min
         }
         // TODO timer starten und ihn nach Hause schicken.. nicht vergessen Lautstärke zurückzusetzen
         // mRobot?.volume = oldVolume
