@@ -263,6 +263,10 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
                 }
             }
 
+            mRobot?.batteryData?.isCharging?.let { isCharging ->
+                tourViewModel.isAtHomeBase.value = isCharging
+            }
+
             setupViewModel.robotIsReady()
             // showMapData()
         }
