@@ -8,11 +8,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.robotemi.sdk.Robot
 import de.fhkiel.temi.robogguide.logic.TourManager
 import de.fhkiel.temi.robogguide.logic.robotSpeakText
@@ -26,10 +30,12 @@ fun TransferDrive(
     currentLocation: Location,
     mRobot: Robot?,
     tourViewModel: TourViewModel,
-    tourManager: TourManager
+    tourManager: TourManager,
+    navController: NavController
 ) {
 
     val guideState by tourViewModel.guideState.observeAsState(null)
+    var showErrorPopup by remember { mutableStateOf(true) }
 
     if (guideState == GuideState.TransferStart) {
         LaunchedEffect(currentLocation) {
@@ -46,7 +52,7 @@ fun TransferDrive(
 
     if (guideState == GuideState.TransferGoing) {
 
-        Log.d("Transfer", "ich versuche zu sprechen :((((, -> ${tourViewModel.guideState.value}")
+        Log.d("Transfer", "ich spreche und fahre, -> ${tourViewModel.guideState.value}")
         val transfers = tourManager.selectedPlace?.allTransfers?.get(currentLocation.name)
         if (tourViewModel.levelOfDetail?.isDetailed() == true) {
             val text = transfers?.detailedText?.value
@@ -55,6 +61,22 @@ fun TransferDrive(
             val text = transfers?.conciseText?.value
             robotSpeakText(mRobot, text)
         }
+    }
+
+    if (guideState == GuideState.TransferError && showErrorPopup) {
+        ErrorPopUp(
+            onDismiss = { showErrorPopup = false },
+            "Es ist ein Navigationsfehler aufgetreten! :(",
+            "Leider habe ich keine Route zum gewünschten Standort gefunden.\nBitte achten Sie darauf, dass ich genug Platz habe, um mich zu bewegen. Treten Sie eventuell einen Schritt zurück oder schieben Sie mich ein wenig von umstehenden Objekten weg und versuchen es gerne nochmal.\nAnsonsten können Sie mich auch zurück zur Ladestation schicken.",
+            "Hilfe, ich komme hier gerade leider nicht weiter.",
+            onClick = {
+                tourViewModel.updateGuideState(GuideState.TransferStart)
+                showErrorPopup = false
+                robotSpeakText(mRobot, "Okay, probieren wir es nochmal!", false)
+            },
+            navController = navController,
+            mRobot = mRobot
+        )
     }
 
     Header(
@@ -76,4 +98,6 @@ fun TransferDrive(
             contentScale = ContentScale.FillHeight
         )
     }
+
+
 }
