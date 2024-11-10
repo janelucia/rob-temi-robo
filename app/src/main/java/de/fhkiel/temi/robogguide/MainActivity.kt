@@ -24,6 +24,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.robotemi.sdk.Robot
 import com.robotemi.sdk.listeners.OnGoToLocationStatusChangedListener
+import com.robotemi.sdk.listeners.OnRobotLiftedListener
 import com.robotemi.sdk.listeners.OnRobotReadyListener
 import com.robotemi.sdk.listeners.OnUserInteractionChangedListener
 import com.robotemi.sdk.map.MapDataModel
@@ -51,7 +52,8 @@ import java.util.concurrent.Executors
 @OptIn(ExperimentalMaterial3Api::class)
 class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermissionResultListener,
     OnGoToLocationStatusChangedListener,
-    OnUserInteractionChangedListener {
+    OnUserInteractionChangedListener,
+    OnRobotLiftedListener{
     private val setupViewModel: SetupViewModel by viewModels()
     private val tourViewModel: TourViewModel by viewModels()
     private var mRobot: Robot? = null
@@ -194,6 +196,8 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
         Robot.getInstance().addOnRequestPermissionResultListener(this)
         Robot.getInstance().addOnGoToLocationStatusChangedListener(this)
         Robot.getInstance().addOnUserInteractionChangedListener(this)
+        Robot.getInstance().addOnRobotLiftedListener(this)
+        Log.i("MainActivity", "alle listener hinzugefügt")
     }
 
     override fun onStop() {
@@ -202,6 +206,7 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
         Robot.getInstance().removeOnRequestPermissionResultListener(this)
         Robot.getInstance().addOnGoToLocationStatusChangedListener(this)
         Robot.getInstance().removeOnUserInteractionChangedListener(this)
+        Robot.getInstance().removeOnRobotLiftedListener(this)
     }
 
     override fun onDestroy() {
@@ -416,6 +421,18 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
             tourViewModel.updateGuideState(GuideState.TransferGoing)
             Log.d("Transfer", "Ich beginne mich zu bewegen -> ${tourViewModel.guideState.value}")
         }
+    }
+
+    override fun onRobotLifted(isLifted: Boolean, reason: String) {
+        Log.i("MainActivity", "Robot is lifted: $isLifted")
+
+        val oldVolume = mRobot?.volume!!
+        mRobot?.volume = 7
+        robotSpeakText(mRobot, "Bitte stelle mich wieder auf den Boden! Ich habe Höhenangst!", true)
+
+        handler.postDelayed({
+            mRobot?.volume = oldVolume
+        }, 5000)
     }
 
 }
