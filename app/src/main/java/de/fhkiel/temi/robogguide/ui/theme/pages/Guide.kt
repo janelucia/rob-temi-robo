@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.robotemi.sdk.Robot
 import de.fhkiel.temi.robogguide.logic.TourManager
 import de.fhkiel.temi.robogguide.models.GuideState
@@ -30,7 +31,8 @@ fun Guide(
     innerPadding: PaddingValues,
     mRobot: Robot?,
     tourViewModel: TourViewModel,
-    tourManager: TourManager
+    tourManager: TourManager,
+    navController: NavController
 ) {
 
     val guideState by tourViewModel.guideState.observeAsState(null)
@@ -53,7 +55,7 @@ fun Guide(
             }
             GuideState.TransferStart -> {
                 assert(currentLocation != null)
-                TransferDrive(currentLocation!!, mRobot, tourViewModel, tourManager)
+                TransferDrive(currentLocation!!, mRobot, tourViewModel, tourManager, navController)
 //                //TODO DEBUG BUTTON
                 CustomButton(
                     title = "Am Exponat angekommen",
@@ -77,10 +79,14 @@ fun Guide(
 
             GuideState.TransferGoing -> {
                 assert(currentLocation != null)
-                TransferDrive(currentLocation!!, mRobot, tourViewModel, tourManager)
+                TransferDrive(currentLocation!!, mRobot, tourViewModel, tourManager, navController)
             }
 
             GuideState.End -> TODO()
+            GuideState.TransferError -> {
+                assert(currentLocation != null)
+                TransferDrive(currentLocation!!, mRobot, tourViewModel, tourManager, navController)
+            }
         }
     }
 

@@ -37,6 +37,7 @@ import de.fhkiel.temi.robogguide.ui.logic.SetupViewModel
 import de.fhkiel.temi.robogguide.ui.logic.TourViewModel
 import de.fhkiel.temi.robogguide.ui.theme.Rob_Temi_Robo_UITheme
 import de.fhkiel.temi.robogguide.ui.theme.components.CustomTopAppBar
+import de.fhkiel.temi.robogguide.ui.theme.components.ErrorPopUp
 import de.fhkiel.temi.robogguide.ui.theme.components.GuideNavigationButton
 import de.fhkiel.temi.robogguide.ui.theme.pages.EndPage
 import de.fhkiel.temi.robogguide.ui.theme.pages.Guide
@@ -151,7 +152,8 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
                                     innerPadding,
                                     mRobot,
                                     tourViewModel,
-                                    tourManager
+                                    tourManager,
+                                    navController
                                 )
                             }
                             composable("guideExhibition") {
@@ -167,7 +169,8 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
                                     innerPadding,
                                     mRobot,
                                     tourViewModel,
-                                    tourManager
+                                    tourManager,
+                                    navController
                                 )
                             }
                             composable("endPage") {
@@ -431,17 +434,23 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
             }
 
             OnGoToLocationStatusChangedListener.ABORT -> {
-                Log.d("Transfer", "ABORT MISSION with Description ID: ${description}")
                 if (tourViewModel.guideState.value == GuideState.TransferGoing) {
                     // Roboter erreicht Ziel nicht
-                    //TODO FEHLERBILDSCHIRM
-                    robotSpeakText(mRobot, "Hilfe, ich komme hier nicht weiter.", false)
+                    tourViewModel.updateGuideState(GuideState.TransferError)
+                    Log.d(
+                        "Transfer",
+                        "NACH ABORT: Mein GoTO Status ${status} GuideStatus ${tourViewModel.guideState.value} Description ID ${description}"
+                    )
+
                 }
             }
 
             OnGoToLocationStatusChangedListener.REPOSING -> {
-                //Ladespinner anzeigen?
-                robotSpeakText(mRobot, "Einen Moment, ich berechne meine Route.", false)
+                if (tourViewModel.guideState.value == GuideState.TransferGoing) {
+                    //Ladespinner anzeigen?
+                    robotSpeakText(mRobot, "Einen Moment, ich berechne meine Route.", false)
+                }
+
             }
         }
     }

@@ -203,8 +203,8 @@ fun ClosePopup(onDismiss: () -> Unit, navController: NavController, mRobot: Robo
 }
 
 @Composable
-fun ErrorPopUp(onDismiss: () -> Unit, title: String, message: String, onClick: () -> Unit, navController: NavController, mRobot: Robot?) {
-    robotSpeakText(mRobot, message)
+fun ErrorPopUp(onDismiss: () -> Unit, title: String, message: String, spokenText: String, onClick: () -> Unit, navController: NavController, mRobot: Robot?) {
+    robotSpeakText(mRobot, spokenText, false)
     Dialog(
         onDismissRequest = onDismiss,
     ) {
@@ -246,6 +246,7 @@ fun ErrorPopUp(onDismiss: () -> Unit, title: String, message: String, onClick: (
                         onClick = {
                             onDismiss
                             navController.navigate("homePage")
+                            robotSpeakText(mRobot, "Nagut, dann fahre ich erstmal wieder zurück zu meiner Ladestation. Bitte entschuldigen Sie.", false)
                             mRobot?.goTo("home base") },
                         title = "Zur Ladestation fahren",
                         width = 400.dp,
