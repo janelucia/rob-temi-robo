@@ -22,8 +22,10 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.robotemi.sdk.BatteryData
 import com.robotemi.sdk.Robot
 import com.robotemi.sdk.TtsRequest
+import com.robotemi.sdk.listeners.OnBatteryStatusChangedListener
 import com.robotemi.sdk.listeners.OnGoToLocationStatusChangedListener
 import com.robotemi.sdk.listeners.OnRobotReadyListener
 import com.robotemi.sdk.listeners.OnUserInteractionChangedListener
@@ -55,7 +57,9 @@ import java.util.concurrent.Executors
 @OptIn(ExperimentalMaterial3Api::class)
 class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermissionResultListener,
     OnGoToLocationStatusChangedListener,
-    OnUserInteractionChangedListener, Robot.TtsListener {
+    OnUserInteractionChangedListener,
+    Robot.TtsListener,
+    OnBatteryStatusChangedListener {
     private val setupViewModel: SetupViewModel by viewModels()
     private val tourViewModel: TourViewModel by viewModels()
     private var mRobot: Robot? = null
@@ -204,6 +208,7 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
         robot.addOnGoToLocationStatusChangedListener(this)
         robot.addOnUserInteractionChangedListener(this)
         robot.addTtsListener(this)
+        robot.addOnBatteryStatusChangedListener(this)
     }
 
     override fun onStop() {
@@ -452,6 +457,12 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
                     "Transfer",
                     "NACH ABORT: Mein GoTO Status $status GuideStatus ${tourViewModel.guideState.value} Description ID $description"
                 )
+
+                if (descriptionId == 0) {
+                    // general abort -> nothing to do
+                    return
+                }
+
                 if (descriptionId == 1006) {
                     // Robot is stuck outside of mapped area.
                     Log.e("Transfer", "Robot is stuck outside of mapped area.")
@@ -501,6 +512,13 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
             else -> {
                 Log.w("SpeakTextListener", "Unexpected TtsRequest.Status: ${ttsRequest.status}")
             }
+        }
+    }
+
+    override fun onBatteryStatusChanged(batteryData: BatteryData?) {
+        Log.d("BatteryStatus", "BatteryData: $batteryData")
+        if (batteryData != null) {
+            tourViewModel.isAtHomeBase.value = batteryData.isCharging
         }
     }
 

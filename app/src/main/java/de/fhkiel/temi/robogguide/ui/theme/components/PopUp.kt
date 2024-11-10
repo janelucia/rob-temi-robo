@@ -220,6 +220,7 @@ fun ClosePopup(onDismiss: () -> Unit, navController: NavController, mRobot: Robo
                             onDismiss()
                             mRobot.let { robot ->
                                 robotSpeakText(mRobot, "Ich fahre jetzt zur Aufladestation!")
+                                navController.navigate("homePage")
                                 robot?.goTo("home base")
                             }
                         },
@@ -296,7 +297,7 @@ fun ErrorPopUp(
                     Spacer(modifier = Modifier.height(32.dp))
                     CustomButton(
                         onClick = {
-                            onDismiss
+                            onDismiss()
                             navController.navigate("homePage")
                             robotSpeakText(
                                 mRobot,
