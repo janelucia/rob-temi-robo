@@ -64,7 +64,7 @@ fun CustomTopAppBar(navController: NavController, tourViewModel: TourViewModel, 
         ConfirmationPopUp(
             onDismiss = { showConfirmationPopUp = false },
             onConfirm = {
-                robotSpeakText(mRobot, "Ich fahre jetzt zur Aufladestation!")
+                robotSpeakText(mRobot, "Ich fahre jetzt zur Aufladestation!", false)
                 mRobot?.goTo("home base")
             },
             title = "Roboter zur Ladestation fahren lassen",

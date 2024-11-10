@@ -240,7 +240,7 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
      * Uses temi sdk function to go to home base
      */
     private fun gotoHomeBase() {
-        robotSpeakText(mRobot, "Ich fahre jetzt zur Aufladestation!")
+        robotSpeakText(mRobot, "Ich fahre jetzt zur Aufladestation!", false)
         mRobot?.goTo(location = "home base")
     }
 
