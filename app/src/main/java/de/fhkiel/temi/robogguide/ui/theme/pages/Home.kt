@@ -1,5 +1,6 @@
 package de.fhkiel.temi.robogguide.ui.theme.pages
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -42,7 +43,15 @@ fun Home(innerPadding: PaddingValues, navHostController: NavHostController, mRob
         Row(modifier = Modifier.align(Alignment.CenterHorizontally).padding(top = 32.dp)) {
             CustomButton(
                 title = "Los gehts!",
-                onClick = {navHostController.navigate("guideSelector")}
+                onClick = {
+                    navHostController.navigate("guideSelector")
+                    mRobot?.let {
+                        if (mRobot.volume == 0) {
+                            mRobot.volume = 5 // volume needs to be between 0 and 10
+                            Log.d("Home", "Volume set to ${mRobot.volume}")
+                        }
+                    }
+                }
             )
         }
     }
