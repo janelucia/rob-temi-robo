@@ -71,13 +71,13 @@ fun LoadingImage(
                     model = urlString,
                     contentDescription = "Fullscreen Image",
                     modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Fit
+                    contentScale = ContentScale.Fit,
+                    error = painterResource(id = R.drawable.computermuseum_maerz_23),
                 )
                 CustomIconButton(
                     iconId = R.drawable.baseline_cancel_24,
                     onClick = { showDialog = false },
                     modifier = Modifier.align(Alignment.TopEnd)
-
                 )
             }
         }
