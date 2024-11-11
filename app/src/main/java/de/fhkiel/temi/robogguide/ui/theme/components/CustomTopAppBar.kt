@@ -80,6 +80,7 @@ fun CustomTopAppBar(
                     clearQueue = true
                 )
                 mRobot?.goTo("home base")
+                navController.navigate("homePage")
                 showConfirmationPopUp = false
             },
             title = "Roboter zur Ladestation fahren lassen",
