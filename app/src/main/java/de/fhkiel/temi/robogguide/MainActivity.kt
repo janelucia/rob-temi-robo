@@ -262,6 +262,7 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
             ttsQueue.observe(this) { queue ->
                 Log.d("MainActivity", "Queue changed: ${queue.size}")
                 if (queue.isNotEmpty() && !isSpeaking.value!!) {
+                    Log.d("MainActivity", "Process queue")
                     processQueue(mRobot)
                 }
             }
@@ -507,7 +508,6 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
             TtsRequest.Status.ERROR,
             TtsRequest.Status.COMPLETED -> {
                 isSpeaking.value = false
-                ttsQueue.value = ttsQueue.value
                 ttsQueue.value!!.poll()
                 ttsQueue.value = ttsQueue.value
             }

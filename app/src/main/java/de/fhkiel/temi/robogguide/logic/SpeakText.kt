@@ -4,10 +4,9 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.robotemi.sdk.Robot
 import com.robotemi.sdk.TtsRequest
-import java.util.LinkedList
-import java.util.Queue
+import java.util.concurrent.ConcurrentLinkedQueue
 
-val ttsQueue = MutableLiveData<Queue<TtsRequest>>(LinkedList())
+val ttsQueue = MutableLiveData<ConcurrentLinkedQueue<TtsRequest>>(ConcurrentLinkedQueue())
 var isSpeaking = MutableLiveData(false)
 
 fun processQueue(mRobot: Robot?) {
@@ -49,7 +48,6 @@ fun robotSpeakText(
                 isShowOnConversationLayer = isShowOnConversationLayer
             )
             // fix needed to make sure that no text duplicates exist in the queue
-            ttsQueue.value = ttsQueue.value
             ttsQueue.value!!.add(ttsRequest)
             ttsQueue.value = ttsQueue.value
         }
