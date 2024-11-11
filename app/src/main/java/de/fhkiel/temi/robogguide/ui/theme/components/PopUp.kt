@@ -254,10 +254,12 @@ fun ErrorPopUp(
     onClick: () -> Unit,
     navController: NavController?,
     mRobot: Robot?,
-    ladestation: Boolean = true
+    chargingStation: Boolean = true
 ) {
     Dialog(
-        onDismissRequest = onDismiss,
+        onDismissRequest = {
+            onDismiss()
+        }
     ) {
         Box(
             modifier = Modifier
@@ -282,7 +284,7 @@ fun ErrorPopUp(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,
                 ) {
-                    if(ladestation){
+                    if(chargingStation){
                         CustomButton(
                             onClick = {
                                 onDismiss()

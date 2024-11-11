@@ -22,6 +22,7 @@ import com.robotemi.sdk.Robot
 import de.fhkiel.temi.robogguide.R
 import de.fhkiel.temi.robogguide.logic.clearQueue
 import de.fhkiel.temi.robogguide.logic.robotSpeakText
+import de.fhkiel.temi.robogguide.models.GuideState
 import de.fhkiel.temi.robogguide.ui.logic.TourViewModel
 
 @Composable
@@ -40,6 +41,7 @@ fun GuideNavigationButton(
 
     val wasAlreadySpoken by tourViewModel.wasAlreadySpoken.observeAsState(false)
 
+    val currentGuideState by tourViewModel.guideState.observeAsState(GuideState.TransferStart)
 
     when (currentDestination) {
         "guide" -> {
@@ -71,41 +73,62 @@ fun GuideNavigationButton(
                             CustomIconButton(
                                 iconId = R.drawable.play_arrow_left,
                                 onClick = {
-                                    tourViewModel.decrementCurrentItemIndex()
+                                    if (currentGuideState == GuideState.Exhibit) {
+                                        tourViewModel.decrementCurrentItemIndex()
+                                    } else {
+                                        tourViewModel.decrementCurrentLocationIndex()
+                                    }
+                                    clearQueue(mRobot)
                                 },
                                 contentDescription = "Vorheriges Exponat"
                             )
                         }
-                        CustomIconButton(
-                            iconId = R.drawable.replay,
-                            contentDescription = "Exponat wiederholen",
-                            onClick = {
-                                if (wasAlreadySpoken) {
-                                    assert(tourViewModel.levelOfDetail != null)
-                                    if (tourViewModel.levelOfDetail?.isDetailed() == true) {
-                                        val text =
-                                            currentItem?.conciseText?.value + "\n" + currentItem?.detailedText?.value
-                                        robotSpeakText(mRobot, text, clearQueue = true)
+                        if (currentGuideState == GuideState.TransferError) {
+                            CustomButton(
+                                title = "Erneut versuchen",
+                                fontSize = 32.sp,
+                                onClick = {
+                                    tourViewModel.updateGuideState(GuideState.TransferStart)
+                                },
+                                modifier = Modifier.padding(16.dp),
+                                height = 100.dp,
+                                width = 300.dp
+                            )
+                        }
+
+                        if (currentGuideState == GuideState.Exhibit) {
+                            CustomIconButton(
+                                iconId = R.drawable.replay,
+                                contentDescription = "Exponat wiederholen",
+                                onClick = {
+                                    if (wasAlreadySpoken) {
+                                        assert(tourViewModel.levelOfDetail != null)
+                                        if (tourViewModel.levelOfDetail?.isDetailed() == true) {
+                                            val text =
+                                                currentItem?.conciseText?.value + "\n" + currentItem?.detailedText?.value
+                                            robotSpeakText(mRobot, text, clearQueue = true)
+                                        } else {
+                                            robotSpeakText(
+                                                mRobot,
+                                                currentItem?.conciseText?.value,
+                                                clearQueue = true
+                                            )
+                                        }
                                     } else {
-                                        robotSpeakText(
-                                            mRobot,
-                                            currentItem?.conciseText?.value,
-                                            clearQueue = true
-                                        )
+                                        // don't speak
+                                        Log.w("GuideNavigationButton", "Stop spamming me!")
                                     }
-                                } else {
-                                    // don't speak
-                                    Log.w("GuideNavigationButton", "Stop spamming me!")
-                                }
-                            },
-                        )
-                        CustomIconButton(
-                            iconId = R.drawable.stop,
-                            contentDescription = "Sprachausgabe stoppen",
-                            onClick = {
-                                clearQueue(mRobot)
-                            },
-                        )
+                                },
+                            )
+                            CustomIconButton(
+                                iconId = R.drawable.stop,
+                                contentDescription = "Sprachausgabe stoppen",
+                                onClick = {
+                                    clearQueue(mRobot)
+                                },
+                            )
+
+                        }
                         if (currentItemIndex == numberOfItems - 1 && currentLocationIndex == tourViewModel.numberOfLocations - 1) {
                             CustomButton(
                                 title = "Führung beenden",
@@ -123,7 +146,11 @@ fun GuideNavigationButton(
                                 iconId = R.drawable.play_arrow_right,
                                 contentDescription = "Nächstes Exponat",
                                 onClick = {
-                                    tourViewModel.incrementCurrentItemIndex()
+                                    if (currentGuideState == GuideState.Exhibit) {
+                                        tourViewModel.incrementCurrentItemIndex()
+                                    } else {
+                                        tourViewModel.incrementCurrentLocationIndex()
+                                    }
                                     clearQueue(mRobot)
                                 },
                             )
@@ -157,76 +184,92 @@ fun GuideNavigationButton(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        if (currentItemIndex == 0) {
-                            CustomIconButton(
-                                iconId = R.drawable.play_disabled_right,
+
+                        if (currentGuideState == GuideState.TransferError) {
+                            CustomButton(
+                                title = "Erneut versuchen",
+                                fontSize = 32.sp,
                                 onClick = {
-                                    // do nothing
+                                    tourViewModel.updateGuideState(GuideState.TransferStart)
                                 },
-                                contentDescription = "Kein vorheriges Exponat",
-                                initialContainerColor = Color.Gray,
-                                iconModifier = Modifier.graphicsLayer(rotationZ = 180f)
-                            )
-                        } else {
-                            CustomIconButton(
-                                iconId = R.drawable.play_arrow_left,
-                                onClick = {
-                                    tourViewModel.decrementCurrentItemIndex()
-                                    clearQueue(mRobot)
-                                },
-                                contentDescription = "Vorheriges Exponat"
-                            )
-                        }
-                        CustomIconButton(
-                            iconId = R.drawable.replay,
-                            contentDescription = "Exponat wiederholen",
-                            onClick = {
-                                if (wasAlreadySpoken) {
-                                    assert(tourViewModel.levelOfDetail != null)
-                                    if (tourViewModel.levelOfDetail?.isDetailed() == true) {
-                                        val text =
-                                            currentItem?.conciseText?.value + "\n" + currentItem?.detailedText?.value
-                                        robotSpeakText(mRobot, text, clearQueue = true)
-                                    } else {
-                                        robotSpeakText(
-                                            mRobot,
-                                            currentItem?.conciseText?.value,
-                                            clearQueue = true
-                                        )
-                                    }
-                                } else {
-                                    // don't speak
-                                    Log.w("GuideNavigationButton", "Stop spamming me!")
-                                }
-                            }
-                        )
-                        CustomIconButton(
-                            iconId = R.drawable.stop,
-                            contentDescription = "Sprachausgabe stoppen",
-                            onClick = {
-                                clearQueue(mRobot)
-                            },
-                        )
-                        if (currentItemIndex == numberOfItems - 1) {
-                            CustomIconButton(
-                                iconId = R.drawable.play_disabled_right,
-                                onClick = {
-                                    // do nothing
-                                },
-                                contentDescription = "Kein vorheriges Exponat",
-                                initialContainerColor = Color.Gray,
-                            )
-                        } else {
-                            CustomIconButton(
-                                iconId = R.drawable.play_arrow_right,
-                                contentDescription = "Nächstes Exponat",
-                                onClick = {
-                                    tourViewModel.incrementCurrentItemIndex()
-                                    clearQueue(mRobot)
-                                },
+                                modifier = Modifier.padding(16.dp),
+                                height = 100.dp,
+                                width = 300.dp
                             )
                         }
 
+                        if (currentGuideState == GuideState.Exhibit) {
+                            if (currentItemIndex == 0) {
+                                CustomIconButton(
+                                    iconId = R.drawable.play_disabled_right,
+                                    onClick = {
+                                        // do nothing
+                                    },
+                                    contentDescription = "Kein vorheriges Exponat",
+                                    initialContainerColor = Color.Gray,
+                                    iconModifier = Modifier.graphicsLayer(rotationZ = 180f)
+                                )
+                            } else {
+                                CustomIconButton(
+                                    iconId = R.drawable.play_arrow_left,
+                                    onClick = {
+                                        tourViewModel.decrementCurrentItemIndex()
+                                        clearQueue(mRobot)
+                                    },
+                                    contentDescription = "Vorheriges Exponat"
+                                )
+                            }
+                            CustomIconButton(
+                                iconId = R.drawable.replay,
+                                contentDescription = "Exponat wiederholen",
+                                onClick = {
+                                    if (wasAlreadySpoken) {
+                                        assert(tourViewModel.levelOfDetail != null)
+                                        if (tourViewModel.levelOfDetail?.isDetailed() == true) {
+                                            val text =
+                                                currentItem?.conciseText?.value + "\n" + currentItem?.detailedText?.value
+                                            robotSpeakText(mRobot, text, clearQueue = true)
+                                        } else {
+                                            robotSpeakText(
+                                                mRobot,
+                                                currentItem?.conciseText?.value,
+                                                clearQueue = true
+                                            )
+                                        }
+                                    } else {
+                                        // don't speak
+                                        Log.w("GuideNavigationButton", "Stop spamming me!")
+                                    }
+                                }
+                            )
+                            CustomIconButton(
+                                iconId = R.drawable.stop,
+                                contentDescription = "Sprachausgabe stoppen",
+                                onClick = {
+                                    clearQueue(mRobot)
+                                },
+                            )
+
+                            if (currentItemIndex == numberOfItems - 1) {
+                                CustomIconButton(
+                                    iconId = R.drawable.play_disabled_right,
+                                    onClick = {
+                                        // do nothing
+                                    },
+                                    contentDescription = "Kein vorheriges Exponat",
+                                    initialContainerColor = Color.Gray,
+                                )
+                            } else {
+                                CustomIconButton(
+                                    iconId = R.drawable.play_arrow_right,
+                                    contentDescription = "Nächstes Exponat",
+                                    onClick = {
+                                        tourViewModel.incrementCurrentItemIndex()
+                                        clearQueue(mRobot)
+                                    },
+                                )
+                            }
+                        }
                         CustomButton(
                             title = "Zurück zur Liste",
                             fontSize = 32.sp,

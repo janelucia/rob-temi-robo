@@ -73,7 +73,7 @@ fun SetupUi(tourManager: TourManager, setupViewModel: SetupViewModel) {
                 // is not used
             },
             mRobot = mRobot,
-            ladestation = false,
+            chargingStation = false,
             navController = null,
         )
     }

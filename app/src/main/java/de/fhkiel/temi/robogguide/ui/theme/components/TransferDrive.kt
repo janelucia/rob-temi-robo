@@ -56,8 +56,7 @@ fun TransferDrive(
 
 
     if (guideState == GuideState.TransferGoing) {
-
-        robotSpeakText(mRobot, "Bitte folgen Sie mir zum Ausstellungsstück!", false)
+        robotSpeakText(mRobot, "Bitte folgen Sie mir zur nächsten Station", false)
         Log.d("Transfer", "ich spreche und fahre, -> ${tourViewModel.guideState.value}")
         val transfers = tourManager.selectedPlace?.allTransfers?.get(currentLocation.name)
         if (tourViewModel.levelOfDetail?.isDetailed() == true) {

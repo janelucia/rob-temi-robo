@@ -87,11 +87,11 @@ class TourViewModel : ViewModel() {
         }
     }
 
-    private fun incrementCurrentLocationIndex() {
+    fun incrementCurrentLocationIndex() {
         updateCurrentLocation(currentLocationIndex.value!! + 1)
     }
 
-    private fun decrementCurrentLocationIndex() {
+    fun decrementCurrentLocationIndex() {
         updateCurrentLocation(currentLocationIndex.value!! - 1)
     }
 
