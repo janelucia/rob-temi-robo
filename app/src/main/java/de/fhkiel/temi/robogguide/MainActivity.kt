@@ -250,10 +250,13 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
             // ---- DISABLE TEMI UI ELEMENTS ---
             mRobot?.hideTopBar()        // hide top action bar
 
-            // hide pull-down bar
-            val activityInfo: ActivityInfo =
-                packageManager.getActivityInfo(componentName, PackageManager.GET_META_DATA)
-            Robot.getInstance().onStart(activityInfo)
+            // hide pull-down bar only in live mode
+            if (!setupViewModel.isDebugFlagEnabled.value!!) {
+                val activityInfo: ActivityInfo =
+                    packageManager.getActivityInfo(componentName, PackageManager.GET_META_DATA)
+                Robot.getInstance().onStart(activityInfo)
+            }
+
 
             // Observe the ttsQueue
             ttsQueue.observe(this) { queue ->
