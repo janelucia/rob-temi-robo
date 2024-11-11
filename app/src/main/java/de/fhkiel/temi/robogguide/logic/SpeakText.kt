@@ -49,6 +49,7 @@ fun robotSpeakText(
                 isShowOnConversationLayer = isShowOnConversationLayer
             )
             // fix needed to make sure that no text duplicates exist in the queue
+            ttsQueue.value = ttsQueue.value
             ttsQueue.value!!.add(ttsRequest)
             ttsQueue.value = ttsQueue.value
         }
