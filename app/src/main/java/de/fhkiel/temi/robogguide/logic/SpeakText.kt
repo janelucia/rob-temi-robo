@@ -37,11 +37,11 @@ fun robotSpeakText(
         if (chunk) {
             val chunked = splitTextBySentenceEnd(txt)
             chunked.forEach {
-                robotSpeakText(mRobot, it, isShowOnConversationLayer, chunk = false)
+                robotSpeakText(mRobot, it, isShowOnConversationLayer, clearQueue, chunk = false)
             }
             return
         }
-
+        // TODO FIX double speaking
         Log.d("SpeakText", "adding text to queue: $txt")
         mRobot?.let {
             val ttsRequest: TtsRequest = TtsRequest.create(
