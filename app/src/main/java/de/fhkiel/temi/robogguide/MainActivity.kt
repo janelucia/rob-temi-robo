@@ -503,15 +503,14 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
     override fun onTtsStatusChanged(ttsRequest: TtsRequest) {
         Log.d("SpeakTextListener", "TtsRequest.Status: ${ttsRequest.status}")
         when (ttsRequest.status) {
-            TtsRequest.Status.COMPLETED,
             TtsRequest.Status.CANCELED,
             TtsRequest.Status.ERROR,
-            TtsRequest.Status.PROCESSING -> {
+            TtsRequest.Status.COMPLETED -> {
                 isSpeaking.value = false
                 ttsQueue.value!!.poll()
                 ttsQueue.value = ttsQueue.value
             }
-
+            TtsRequest.Status.PROCESSING,
             TtsRequest.Status.STARTED -> {
                 isSpeaking.value = true
             }
