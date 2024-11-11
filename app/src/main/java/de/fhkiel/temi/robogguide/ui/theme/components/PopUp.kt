@@ -251,13 +251,11 @@ fun ErrorPopUp(
     onDismiss: () -> Unit,
     title: String,
     message: String,
-    spokenText: String,
     onClick: () -> Unit,
     navController: NavController?,
     mRobot: Robot?,
     ladestation: Boolean = true
 ) {
-    robotSpeakText(mRobot, spokenText, false)
     Dialog(
         onDismissRequest = onDismiss,
     ) {
@@ -298,7 +296,7 @@ fun ErrorPopUp(
                         Spacer(modifier = Modifier.height(32.dp))
                         CustomButton(
                             onClick = {
-                                onDismiss
+                                onDismiss()
                                 navController?.navigate("homePage")
                                 robotSpeakText(
                                     mRobot,

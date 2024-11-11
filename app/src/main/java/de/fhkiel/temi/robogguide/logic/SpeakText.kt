@@ -12,7 +12,7 @@ var isSpeaking = MutableLiveData(false)
 
 fun processQueue(mRobot: Robot?) {
     val currentRequest = ttsQueue.value!!.first()
-    if (currentRequest != null) {
+    if (currentRequest != null && currentRequest.status == TtsRequest.Status.PENDING) {
         mRobot?.speak(currentRequest)
     }
 }
@@ -21,8 +21,13 @@ fun robotSpeakText(mRobot: Robot?, text: String?, isShowOnConversationLayer: Boo
     if (clearQueue) {
         clearQueue(mRobot)
     }
+    //TODO what if the text is bigger than 2000 chars?
     text?.let { txt ->
-        Log.d("SpeakText", "added text to queue")
+        if (txt.isEmpty()){
+            Log.d("SpeakText", "Text is empty")
+            return
+        }
+        Log.d("SpeakText", "adding text to queue: $txt")
         mRobot?.let {
             val ttsRequest: TtsRequest = TtsRequest.create(
                 speech = txt,
@@ -40,5 +45,6 @@ fun robotSpeakText(mRobot: Robot?, text: String?, isShowOnConversationLayer: Boo
 fun clearQueue(mRobot: Robot?) {
     mRobot?.cancelAllTtsRequests()
     ttsQueue.value!!.clear()
+    isSpeaking.value = false
     ttsQueue.value = ttsQueue.value
 }
