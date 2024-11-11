@@ -205,7 +205,14 @@ fun SetupUi(tourManager: TourManager, setupViewModel: SetupViewModel) {
                                 }
 
                             },
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .border(
+                                    width = 2.dp,
+                                    color = Color.Black,
+                                    shape = RoundedCornerShape(8.dp)
+                                )
+
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                     }
@@ -227,14 +234,7 @@ fun SetupUi(tourManager: TourManager, setupViewModel: SetupViewModel) {
                 )
                 Spacer(modifier = Modifier.width(16.dp))
                 if (isRobotReady) {
-                    Box(
-                        modifier = Modifier
-                            .border(
-                                width = 2.dp,
-                                color = Color.Black,
-                                shape = RoundedCornerShape(8.dp)
-                            )
-                    ) {
+                    Box {
                         if (clickCounter.intValue == 0 && !loading.value) {
                             CustomButton(
                                 onClick = {
