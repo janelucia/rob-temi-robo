@@ -73,7 +73,6 @@ fun SetupUi(tourManager: TourManager, setupViewModel: SetupViewModel) {
                 // is not used
             },
             mRobot = mRobot,
-            spokenText = "Ich konnte leider keinen Ort finden. Bitte wähle einen Ort aus der Liste.",
             ladestation = false,
             navController = null,
         )
@@ -206,14 +205,7 @@ fun SetupUi(tourManager: TourManager, setupViewModel: SetupViewModel) {
                                 }
 
                             },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .border(
-                                    width = 2.dp,
-                                    color = Color.Black,
-                                    shape = RoundedCornerShape(8.dp)
-                                )
-
+                            modifier = Modifier.fillMaxWidth()
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                     }
@@ -265,7 +257,9 @@ fun SetupUi(tourManager: TourManager, setupViewModel: SetupViewModel) {
                             LoadingSpinner(
                                 messages = listOf("Suche nach Ort..."),
                                 currentMessageIndex = 0,
-                                modifier = Modifier.width(600.dp).height(200.dp)
+                                modifier = Modifier
+                                    .width(600.dp)
+                                    .height(200.dp)
                             )
                         }
                     }
