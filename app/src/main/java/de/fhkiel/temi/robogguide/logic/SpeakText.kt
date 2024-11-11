@@ -17,16 +17,31 @@ fun processQueue(mRobot: Robot?) {
     }
 }
 
-fun robotSpeakText(mRobot: Robot?, text: String?, isShowOnConversationLayer: Boolean = false, clearQueue: Boolean = false) {
+fun robotSpeakText(
+    mRobot: Robot?,
+    text: String?,
+    isShowOnConversationLayer: Boolean = false,
+    clearQueue: Boolean = false,
+    chunk: Boolean = true
+) {
     if (clearQueue) {
         clearQueue(mRobot)
     }
-    //TODO what if the text is bigger than 2000 chars?
+
     text?.let { txt ->
-        if (txt.isEmpty()){
+        if (txt.isEmpty()) {
             Log.d("SpeakText", "Text is empty")
             return
         }
+
+        if (chunk) {
+            val chunked = splitTextBySentenceEnd(txt)
+            chunked.forEach {
+                robotSpeakText(mRobot, it, isShowOnConversationLayer, chunk = false)
+            }
+            return
+        }
+
         Log.d("SpeakText", "adding text to queue: $txt")
         mRobot?.let {
             val ttsRequest: TtsRequest = TtsRequest.create(
@@ -34,7 +49,6 @@ fun robotSpeakText(mRobot: Robot?, text: String?, isShowOnConversationLayer: Boo
                 isShowOnConversationLayer = isShowOnConversationLayer
             )
             // fix needed to make sure that no text duplicates exist in the queue
-            ttsQueue.value = ttsQueue.value
             ttsQueue.value!!.add(ttsRequest)
             ttsQueue.value = ttsQueue.value
         }
@@ -43,8 +57,14 @@ fun robotSpeakText(mRobot: Robot?, text: String?, isShowOnConversationLayer: Boo
 }
 
 fun clearQueue(mRobot: Robot?) {
+    Log.i("SpeakText", "Clearing TTS queue")
     mRobot?.cancelAllTtsRequests()
     ttsQueue.value!!.clear()
     isSpeaking.value = false
     ttsQueue.value = ttsQueue.value
+}
+
+fun splitTextBySentenceEnd(text: String): List<String> {
+    val sentenceEndRegex = Regex("(?<=[.!?])")
+    return text.split(sentenceEndRegex).map { it.trim() }.filter { it.isNotEmpty() }
 }
