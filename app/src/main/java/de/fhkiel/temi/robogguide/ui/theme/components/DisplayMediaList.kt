@@ -23,8 +23,8 @@ import de.fhkiel.temi.robogguide.models.MediaType
 import de.fhkiel.temi.robogguide.models.Text as TextModel
 
 /**
- * Composable function to display a list of media items.
- * @param texts The list of texts to display. Sepereated by commas.
+ * Composable function to display a list of media items. Includes a custom temi face to indicate speaking.
+ * @param texts The list of texts to display. Separated by commas.
  */
 @Composable
 fun DisplayMediaList(vararg texts: TextModel?) {
