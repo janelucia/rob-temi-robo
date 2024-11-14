@@ -1,5 +1,9 @@
 package de.fhkiel.temi.robogguide.ui.theme.components
 
+/**
+ * This file contains the ui component: button in all forms and variations.
+ */
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.height
@@ -26,6 +30,22 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 
+/**
+ * CustomButton
+ * - being used for all buttons with text to have a cohesive look.
+ * @param title: String - the text displayed on the button.
+ * @param onClick: () -> Unit - the action to be executed when the button is clicked.
+ * @param modifier: Modifier - the modifier for the button (styling and such).
+ * @param width: Dp - the width of the button.
+ * @param height: Dp - the height of the button.
+ * @param initialBackgroundColor: Color - the initial background color of the button.
+ * @param clickedBackgroundColor: Color - the background color of the button when clicked.
+ * @param contentColor: Color - the color of the text on the button.
+ * @param borderColor: Color - the color of the border of the button.
+ * @param borderWidth: Dp - the width of the border of the button.
+ * @param fontSize: TextUnit - the size of the text on the button.
+ * @param delayMillis: Long - the delay in milliseconds before the button returns to its initial state.
+ */
 @Composable
 fun CustomButton(
     title: String,
@@ -39,11 +59,13 @@ fun CustomButton(
     borderColor: Color = Color.Black,
     borderWidth: Dp = 2.dp,
     fontSize: TextUnit = 64.sp,
-    delayMillis: Long = 100 // Time in milliseconds to switch back to initial color
+    delayMillis: Long = 100
 ) {
     var backgroundColor by remember { mutableStateOf(initialBackgroundColor) }
     var isClicked by remember { mutableStateOf(false) }
 
+    // delay the return to the initial color of the button
+    // used to indicate that the button has been clicked
     LaunchedEffect(isClicked) {
         if (isClicked) {
             delay(delayMillis)
@@ -76,6 +98,22 @@ fun CustomButton(
     }
 }
 
+/**
+ * CustomIconButton
+ * - being used for all buttons with icons to have a cohesive look.
+ * @param iconId: Int - the id of the icon to be displayed on the button.
+ * @param onClick: () -> Unit - the action to be executed when the button is clicked.
+ * @param modifier: Modifier - the modifier for the button (styling and such).
+ * @param size: Dp - the size of the button.
+ * @param initialContainerColor: Color - the initial background color of the button.
+ * @param clickedContainerColor: Color - the background color of the button when clicked.
+ * @param contentColor: Color - the color of the icon on the button.
+ * @param iconSize: Dp - the size of the icon on the button.
+ * @param colorFilter: ColorFilter - the color filter of the icon on the button.
+ * @param contentDescription: String - the content description of the icon on the button.
+ * @param iconModifier: Modifier - the modifier for the icon (styling and such).
+ * @param delayMillis: Long - the delay in milliseconds before the button returns to its initial state.
+ */
 @Composable
 fun CustomIconButton(
     iconId: Int,
@@ -94,6 +132,8 @@ fun CustomIconButton(
     var containerColor by remember { mutableStateOf(initialContainerColor) }
     var isClicked by remember { mutableStateOf(false) }
 
+    // delay the return to the initial color of the button
+    // used to indicate that the button has been clicked
     LaunchedEffect(isClicked) {
         if (isClicked) {
             delay(delayMillis)
