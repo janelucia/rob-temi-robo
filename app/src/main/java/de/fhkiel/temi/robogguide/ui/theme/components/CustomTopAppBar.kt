@@ -1,5 +1,10 @@
 package de.fhkiel.temi.robogguide.ui.theme.components
 
+/**
+ * This file contains the ui component: top app bar.
+ * The Top Bar for the Setup (SetupTopBar) and another for the rest of the app (CustomTopAppBar).
+ */
+
 import android.app.Activity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -42,6 +47,16 @@ import de.fhkiel.temi.robogguide.R
 import de.fhkiel.temi.robogguide.logic.robotSpeakText
 import de.fhkiel.temi.robogguide.ui.logic.SetupViewModel
 import de.fhkiel.temi.robogguide.ui.logic.TourViewModel
+
+
+/**
+ * CustomTopAppBar
+ * - being used for the top app bar in the app (except the Setup).
+ * @param navController: NavController - the navigation controller.
+ * @param tourViewModel: TourViewModel - the view model for the tour.
+ * @param activity: Activity - the activity, used to exit the app for example (see HelpPopup).
+ * @param mRobot: Robot? - the robot.
+ */
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -171,6 +186,12 @@ fun CustomTopAppBar(
     }
 }
 
+/**
+ * SetupTopBar
+ * - being used for the top app bar in the Setup.
+ * @param activity: Activity - the activity, used to exit the app for example (see ConfirmationPopUp).
+ * @param setupViewModel: SetupViewModel - the view model for the setup.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SetupTopBar(activity: Activity, setupViewModel: SetupViewModel) {
@@ -229,6 +250,11 @@ fun SetupTopBar(activity: Activity, setupViewModel: SetupViewModel) {
     }
 }
 
+/**
+ * exitApp
+ * - exits the app.
+ * @param activity: Activity - the activity to finish.
+ */
 fun exitApp(activity: Activity = MainActivity()) {
     activity.finishAndRemoveTask()
 }
