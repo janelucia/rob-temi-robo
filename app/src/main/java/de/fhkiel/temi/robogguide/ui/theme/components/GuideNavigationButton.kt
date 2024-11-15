@@ -72,7 +72,7 @@ fun GuideNavigationButton(
                                 onClick = {
                                     robotSpeakText(
                                         mRobot,
-                                        "Mhm, das gibt es leider nicht. Wir sind gerade am Anfang.",
+                                        "Das geht leider nicht. Wir sind gerade am Anfang.",
                                         clearQueue = true
                                     )
                                 },
@@ -81,18 +81,26 @@ fun GuideNavigationButton(
                                 iconModifier = Modifier.graphicsLayer(rotationZ = 180f)
                             )
                         } else {
-                            CustomIconButton(
-                                iconId = R.drawable.play_arrow_left,
-                                onClick = {
-                                    if (currentGuideState == GuideState.Exhibit) {
+                            if (currentGuideState == GuideState.Exhibit && currentItemIndex != 0) {
+                                CustomIconButton(
+                                    iconId = R.drawable.play_arrow_left,
+                                    onClick = {
                                         tourViewModel.decrementCurrentItemIndex()
-                                    } else {
+                                        clearQueue(mRobot)
+                                    },
+                                    contentDescription = "Vorheriges Exponat"
+                                )
+                            } else {
+                                CustomIconButton(
+                                    iconId = R.drawable.skip_previous,
+                                    onClick = {
                                         tourViewModel.decrementCurrentLocationIndex()
-                                    }
-                                    clearQueue(mRobot)
-                                },
-                                contentDescription = "Vorheriges Exponat"
-                            )
+                                        clearQueue(mRobot)
+                                    },
+                                    contentDescription = "Vorherige Station"
+                                )
+                            }
+
                         }
                         // if navigation threw an error the button allows the user to do a retry
                         if (currentGuideState == GuideState.TransferError) {
@@ -117,15 +125,17 @@ fun GuideNavigationButton(
                                     // wait to speak
                                     if (wasAlreadySpoken) {
                                         assert(tourViewModel.levelOfDetail != null)
+                                        // first speak the concise text
+                                        robotSpeakText(
+                                            mRobot,
+                                            currentItem?.conciseText?.value,
+                                            clearQueue = true
+                                        )
+                                        // if the level of detail is detailed also speak the detailed text
                                         if (tourViewModel.levelOfDetail?.isDetailed() == true) {
-                                            val text =
-                                                currentItem?.conciseText?.value + "\n" + currentItem?.detailedText?.value
-                                            robotSpeakText(mRobot, text, clearQueue = true)
-                                        } else {
                                             robotSpeakText(
                                                 mRobot,
-                                                currentItem?.conciseText?.value,
-                                                clearQueue = true
+                                                currentItem?.detailedText?.value
                                             )
                                         }
                                     } else {
@@ -143,8 +153,10 @@ fun GuideNavigationButton(
                             )
 
                         }
-                        // allow to end guide if at the last item and location
-                        if (currentItemIndex == numberOfItems - 1 && currentLocationIndex == tourViewModel.numberOfLocations - 1) {
+                        // allow to end guide if at the last item and location or if the guide is at the last location not at an Exhibit
+                        if (currentLocationIndex == tourViewModel.numberOfLocations - 1 &&
+                            (currentItemIndex == numberOfItems - 1 || currentGuideState != GuideState.Exhibit)
+                        ) {
                             CustomButton(
                                 title = "Führung beenden",
                                 fontSize = 32.sp,
@@ -157,18 +169,25 @@ fun GuideNavigationButton(
                                 width = 300.dp
                             )
                         } else {
-                            CustomIconButton(
-                                iconId = R.drawable.play_arrow_right,
-                                contentDescription = "Nächstes Exponat",
-                                onClick = {
-                                    if (currentGuideState == GuideState.Exhibit) {
+                            if (currentGuideState == GuideState.Exhibit && currentItemIndex != numberOfItems - 1) {
+                                CustomIconButton(
+                                    iconId = R.drawable.play_arrow_right,
+                                    contentDescription = "Nächstes Exponat",
+                                    onClick = {
                                         tourViewModel.incrementCurrentItemIndex()
-                                    } else {
+                                        clearQueue(mRobot)
+                                    },
+                                )
+                            } else {
+                                CustomIconButton(
+                                    iconId = R.drawable.skip_next,
+                                    contentDescription = "Nächste Station",
+                                    onClick = {
                                         tourViewModel.incrementCurrentLocationIndex()
-                                    }
-                                    clearQueue(mRobot)
-                                },
-                            )
+                                        clearQueue(mRobot)
+                                    },
+                                )
+                            }
                         }
                     }
                 }
@@ -218,7 +237,7 @@ fun GuideNavigationButton(
                                     onClick = {
                                         robotSpeakText(
                                             mRobot,
-                                            "Mhm, das gibt es leider nicht. Wir sind gerade am Anfang.",
+                                            "Das geht leider nicht. Wir sind gerade am Anfang.",
                                             clearQueue = true
                                         )
                                     },
@@ -243,15 +262,15 @@ fun GuideNavigationButton(
                                     // wait to speak
                                     if (wasAlreadySpoken) {
                                         assert(tourViewModel.levelOfDetail != null)
+                                        robotSpeakText(
+                                            mRobot,
+                                            currentItem?.conciseText?.value,
+                                            clearQueue = true
+                                        )
                                         if (tourViewModel.levelOfDetail?.isDetailed() == true) {
-                                            val text =
-                                                currentItem?.conciseText?.value + "\n" + currentItem?.detailedText?.value
-                                            robotSpeakText(mRobot, text, clearQueue = true)
-                                        } else {
                                             robotSpeakText(
                                                 mRobot,
-                                                currentItem?.conciseText?.value,
-                                                clearQueue = true
+                                                currentItem?.detailedText?.value
                                             )
                                         }
                                     } else {
@@ -274,9 +293,9 @@ fun GuideNavigationButton(
                                     onClick = {
                                         robotSpeakText(
                                             mRobot,
-                                            "Mhm, das gibt es leider nicht. Das war das letzte Exponat",
+                                            "Das geht leider nicht. Das war das letzte Exponat",
                                             clearQueue = true
-                                            )
+                                        )
                                     },
                                     contentDescription = "Kein vorheriges Exponat",
                                     initialContainerColor = Color.Gray,
