@@ -27,6 +27,22 @@ import com.robotemi.sdk.Robot
 import de.fhkiel.temi.robogguide.logic.robotSpeakText
 import de.fhkiel.temi.robogguide.ui.logic.SetupViewModel
 
+/**
+ * PopUp
+ * contains different PopUps for different purposes
+ * - HelpPopup: Popup to ask for help
+ * - PreparationPopUp: Popup to show the user the necessary preparations to start the temi
+ * - ConfirmationPopUp: Popup to confirm an action
+ * - ClosePopup: Popup to ask the user if he wants to end the tour
+ * - ErrorPopUp: Popup to show an error message
+ */
+
+/**
+ * HelpPopup: Popup, can currently only close the app.
+ * - future: add more options like: call help desk of computer museum
+ * @param onDismiss: function to dismiss the popup
+ * @param activity: current activity
+ */
 @Composable
 fun HelpPopup(onDismiss: () -> Unit, activity: Activity) {
     Dialog(onDismissRequest = onDismiss) {
@@ -68,6 +84,12 @@ fun HelpPopup(onDismiss: () -> Unit, activity: Activity) {
     }
 }
 
+/**
+ * PreparationPopUp: Popup to show the user the necessary preparations to start the temi
+ * @param onDismiss: function to dismiss the popup
+ * @param isDebugFlagEnabled: boolean to enable debug mode
+ * @param setupViewModel: viewmodel to handle the debug flag
+ */
 @Composable
 fun PreparationPopUp(
     onDismiss: () -> Unit,
@@ -122,6 +144,15 @@ fun PreparationPopUp(
     }
 }
 
+/**
+ * ConfirmationPopUp: Popup to confirm an action like sending the robot to the charging station
+ * @param onDismiss: function to dismiss the popup
+ * @param onConfirm: function to confirm the action
+ * @param title: title of the popup
+ * @param message: message of the popup
+ * @param confirmationButtonText: text of the confirmation button
+ * @param dismissButtonText: text of the dismiss button
+ */
 @Composable
 fun ConfirmationPopUp(
     onDismiss: () -> Unit,
@@ -173,8 +204,17 @@ fun ConfirmationPopUp(
     }
 }
 
+/**
+ * ClosePopup: Popup to ask the user if he wants to end the tour
+ * @param onDismiss: function to dismiss the popup
+ * @param navController: navigation controller to navigate to the home page
+ * @param mRobot: robot object to stop the movement
+ */
 @Composable
-fun ClosePopup(onDismiss: () -> Unit, navController: NavController, mRobot: Robot?) {
+fun ClosePopup(
+    onDismiss: () -> Unit,
+    navController: NavController,
+    mRobot: Robot?) {
     Dialog(
         onDismissRequest = { onDismiss() },
         content = {
@@ -220,6 +260,7 @@ fun ClosePopup(onDismiss: () -> Unit, navController: NavController, mRobot: Robo
                             onDismiss()
                             mRobot.let { robot ->
                                 robotSpeakText(mRobot, "Ich fahre jetzt zur Aufladestation!")
+                                navController.navigate("homePage")
                                 robot?.goTo("home base")
                             }
                         },
@@ -246,6 +287,16 @@ fun ClosePopup(onDismiss: () -> Unit, navController: NavController, mRobot: Robo
     )
 }
 
+/**
+ * ErrorPopUp: Popup to show an error message
+ * @param onDismiss: function to dismiss the popup
+ * @param title: title of the popup
+ * @param message: message of the popup
+ * @param onClick: function to try again
+ * @param navController: navigation controller to navigate to the home page
+ * @param mRobot: robot object to send the robot to the charging station
+ * @param chargingStation: boolean to show the option to send the robot to the charging station - default true
+ */
 @Composable
 fun ErrorPopUp(
     onDismiss: () -> Unit,
@@ -284,6 +335,8 @@ fun ErrorPopUp(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,
                 ) {
+                    // only show the option to send the robot to the charging station if the chargingStation flag is true
+                    // makes this error popup reusable for different purposes
                     if(chargingStation){
                         CustomButton(
                             onClick = {

@@ -15,6 +15,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+/**
+ * LoadingSpinner
+ * - A loading spinner with a message
+ * @param messages: List of messages to display
+ * @param currentMessageIndex: Index of the message to display
+ * @param modifier: Modifier
+ */
 @Composable
 fun LoadingSpinner(
     messages: List<String>,

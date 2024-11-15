@@ -29,6 +29,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.robotemi.sdk.Robot
 import de.fhkiel.temi.robogguide.R
 import de.fhkiel.temi.robogguide.ui.logic.TourViewModel
 import de.fhkiel.temi.robogguide.ui.theme.components.CustomButton
@@ -42,7 +43,8 @@ import java.time.format.DateTimeFormatter
 fun EndPage(
     innerPadding: PaddingValues,
     navHostController: NavHostController,
-    tourViewModel: TourViewModel
+    tourViewModel: TourViewModel,
+    mRobot: Robot?
 ) {
     var feedbackGiven by remember { mutableStateOf(false) }
     val context = LocalContext.current
@@ -129,6 +131,7 @@ fun EndPage(
                     title = "Den Roboter zur Ladestation schicken",
                     onClick = {
                         navHostController.navigate("homePage")
+                        mRobot?.goTo("home base")
                     },
                     initialBackgroundColor = Color.White,
                     contentColor = Color.Black,

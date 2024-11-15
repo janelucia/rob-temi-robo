@@ -9,6 +9,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import de.fhkiel.temi.robogguide.R
 
+/**
+ * StockImage: displays a placeholder image of the Computer Museum
+ */
 @Composable
 fun StockImage() {
     Image(

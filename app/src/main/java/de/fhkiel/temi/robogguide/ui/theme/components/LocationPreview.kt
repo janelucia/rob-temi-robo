@@ -26,6 +26,14 @@ import de.fhkiel.temi.robogguide.models.LevelOfDetail
 import de.fhkiel.temi.robogguide.models.Location
 import de.fhkiel.temi.robogguide.ui.logic.TourViewModel
 
+/**
+ * LocationPreview
+ * - shows an image, the name and the possibility to look at the items of a location or to navigate to it
+ * @param location: the location to be displayed
+ * @param navHostController: the navigation controller
+ * @param showExhibitions: the state to show the exhibitions
+ * @param tourViewModel: the view model to handle the tour
+ */
 @Composable
 fun LocationPreview(
     location: Location,
@@ -33,7 +41,6 @@ fun LocationPreview(
     showExhibitions: MutableState<String>,
     tourViewModel: TourViewModel
 ) {
-
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -45,6 +52,7 @@ fun LocationPreview(
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
+            // show an image if it exists, otherwise show a placeholder image
             if (location.conciseText?.mediaList?.first()?.url != null) {
                 LoadingImage(
                     urlString = location.conciseText.mediaList.first().url.toString(),
@@ -72,6 +80,7 @@ fun LocationPreview(
         }
         Spacer(modifier = Modifier.width(32.dp))
         Column {
+            // show a button to navigate to the exhibits if a location has exhibits
             if (location.items.isNotEmpty()) {
                 CustomButton(
                     onClick = {
@@ -116,6 +125,13 @@ fun LocationPreview(
     }
 }
 
+/**
+ * ItemPreview
+ * - shows an image, the name and the possibility to navigate to the exhibit via the robot
+ * @param item: the item to be displayed
+ * @param tourViewModel: the view model to handle the tour
+ * @param navHostController: the navigation controller
+ */
 @Composable
 fun ItemPreview(
     item: Item,
@@ -133,6 +149,7 @@ fun ItemPreview(
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
+            // show an image if it exists, otherwise show a placeholder image
             if (item.conciseText?.mediaList?.first()?.url != null) {
                 LoadingImage(
                     urlString = item.conciseText.mediaList.first().url.toString(),
@@ -161,20 +178,17 @@ fun ItemPreview(
         Spacer(modifier = Modifier.width(32.dp))
         CustomButton(
             onClick = {
-
                 // prepare the detailed exhibit page
                 tourViewModel.fillTourLocations(listOf(item.location!!).toMutableList())
                 tourViewModel.levelOfDetail = LevelOfDetail.EVERYTHING_DETAILED
-
+                // set the current item to the selected item
                 item.location!!.items.forEachIndexed { index, it ->
                     if (it.name == item.name) {
                         tourViewModel.currentItemIndex.value = index + 1
                         return@forEachIndexed
                     }
                 }
-
                 tourViewModel.currentItem.value = item
-
                 // navigate to the detailed exhibit page
                 navHostController.navigate("detailedExhibit")
             },

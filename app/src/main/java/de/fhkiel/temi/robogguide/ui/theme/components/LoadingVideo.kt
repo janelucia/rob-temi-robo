@@ -30,6 +30,14 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTube
 import de.fhkiel.temi.robogguide.R
 import java.net.URL
 
+/**
+ * LoadingVideo
+ * - A video player that shows a thumbnail of the video and plays the video when clicked
+ * @param url: URL of the video
+ * @param modifier: Modifier
+ * @param contentScale: ContentScale, default is FillBounds
+ */
+
 @Composable
 fun LoadingVideo(
     url: URL,
@@ -38,19 +46,18 @@ fun LoadingVideo(
 ) {
     val uri: Uri = Uri.parse(url.toString())
     val videoId = uri.getQueryParameter("v")
-
     val videoThumbnailUrl = "https://img.youtube.com/vi/$videoId/0.jpg"
 
     var isLoading by remember { mutableStateOf(false) }
     var noError by remember { mutableStateOf(false) }
     var showDialog by remember { mutableStateOf(false) }
 
+    // Check if videoId is null
     if (videoId == null) {
         Log.e("LoadingVideo", "Error parsing video URL")
         return
     }
     Box(contentAlignment = Alignment.Center, modifier = modifier) {
-
         AsyncImage(
             model = videoThumbnailUrl,
             contentDescription = "Exponat Image",
@@ -74,7 +81,7 @@ fun LoadingVideo(
             },
             error = painterResource(id = R.drawable.computermuseum_maerz_23),
         )
-
+        // if no error occurred, show play button
         if (noError) {
             CustomIconButton(
                 iconId = R.drawable.play_arrow_right,
@@ -89,9 +96,8 @@ fun LoadingVideo(
         }
     }
 
-
+    // shows video in fullscreen
     if (showDialog) {
-
         Dialog(
             onDismissRequest = { showDialog = false },
             properties = DialogProperties(usePlatformDefaultWidth = false)

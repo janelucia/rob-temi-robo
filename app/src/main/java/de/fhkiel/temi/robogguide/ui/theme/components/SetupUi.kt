@@ -51,8 +51,17 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+/**
+ * SetupUi: allows the user to set up the temi
+ * - provides a dropdown menu to select the place
+ * - provides a button to let the temi automatically find the place
+ * @param tourManager: the tour manager
+ * @param setupViewModel: the setup view model
+ */
 @Composable
-fun SetupUi(tourManager: TourManager, setupViewModel: SetupViewModel) {
+fun SetupUi(
+    tourManager: TourManager,
+    setupViewModel: SetupViewModel) {
     val mRobot = Robot.getInstance()
     var expanded by remember { mutableStateOf(false) }
     var selectedIndex by remember { mutableIntStateOf(tourManager.allPlacesMap.size) } // set to the last element of the list
@@ -64,6 +73,7 @@ fun SetupUi(tourManager: TourManager, setupViewModel: SetupViewModel) {
     val clickCounter = remember { mutableIntStateOf(0) }
     val loading = remember { mutableStateOf(false) }
 
+    // Show error pop up if the robot could not find the place
     if (showErrorPopUp.value) {
         ErrorPopUp(
             title = "Fehler",
@@ -233,6 +243,7 @@ fun SetupUi(tourManager: TourManager, setupViewModel: SetupViewModel) {
                     modifier = Modifier.padding(16.dp)
                 )
                 Spacer(modifier = Modifier.width(16.dp))
+                // if a robot is found the robot chooses the place according to its internal map
                 if (isRobotReady) {
                     Box {
                         if (clickCounter.intValue == 0 && !loading.value) {
@@ -306,6 +317,15 @@ fun SetupUi(tourManager: TourManager, setupViewModel: SetupViewModel) {
     }
 }
 
+/**
+ * searchForPlace: searches for the place the robot is currently at
+ * @param mRobot: the robot
+ * @param tourManager: the tour manager
+ * @param setupViewModel: the setup view model
+ * @param showErrorPopUp: the error pop up
+ * @param clickCounter: the click counter
+ * @param loading: the loading state
+ */
 fun searchForPlace(
     mRobot: Robot,
     tourManager: TourManager,
@@ -331,6 +351,9 @@ fun searchForPlace(
                 if (!placeFound) {
                     Log.e("SetupUi", "Place not found")
                     showErrorPopUp.value = true
+                    // the button can only be clicked once.
+                    // If the robot does not find the place, the user has to select the place manually
+                    // if the robot tries again this could lead to an unexpected behavior
                     clickCounter.value++
                 } else {
                     if (placeSet) {
