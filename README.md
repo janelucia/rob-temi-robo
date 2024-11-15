@@ -39,12 +39,15 @@ Die App wurde im Rahmen des Moduls "Einführung in die Robotik" an der Fachhochs
 Beachten Sie, dass Sie die Einstellung nur beim Start der App vornehmen können!
 
 ### App schließen
-WICHTIG: erst den Kioskmodus ausschalten, bevor Sie die App schließen! 
-Dies ist eine Vorsichtsmaßnahme, damit Besucher:innen die App nicht schließen können. 
-In der Zukunft würde der schließen Button nur über einen PIN ausführbar sein.
-- Sollten Sie Probleme haben und möchten die App schließen, dann können Sie dies an verschiedenen Stellen in der Applikation vornehmen
-  - Drücken Sie auf den Button "App schließen" in der Setup UI
-  - Wenn Sie sich in der Hauptansicht befinden, können Sie die App auch über den Button "?" und dann über "App schließen" schließen
+Sollte die App im Kioskmodus laufen, ist es nicht ohne weiteres möglich die App zu schließen.
+Sollten Sie die App im Kiosk Modus schließen wollen, dann müssen Sie folgende Schritte befolgen:
+- Drücken Sie auf das Fragezeichen oben rechts
+- Drücken Sie auf "App schließen" (Dies soll in Zukunft nur über PIN Eingabe möglich sein, damit Kunden nicht die App schließen können)
+- Sie sollten nun die Konfigurationsseite der App sehen
+- Stellen Sie den Slider "Kioksmodus" auf Aus.
+- Wechseln Sie in die Einstellungen des Temis und wählen Sie dort unter "Home Screen" eine andere App oder "Default" aus.
+- Jetzt können Sie zurück in die App wechseln und diese schließen.
+
 
 ### Führung auswählen
 - Wählen Sie die Art der Führung aus, die Sie durch den Temi erhalten möchten
