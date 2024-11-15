@@ -192,7 +192,8 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
                                 EndPage(
                                     innerPadding,
                                     navController,
-                                    tourViewModel
+                                    tourViewModel,
+                                    mRobot
                                 )
                             }
                         }
