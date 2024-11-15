@@ -21,8 +21,19 @@ import de.fhkiel.temi.robogguide.logic.TourManager
 import de.fhkiel.temi.robogguide.ui.theme.components.CustomButton
 import de.fhkiel.temi.robogguide.ui.theme.components.Header
 
+/**
+ * Home: first page after setup and the initial page where you come back to after the tour is finished.
+ * @param innerPadding: PaddingValues - the padding values.
+ * @param navHostController: NavHostController - the navigation controller.
+ * @param mRobot: Robot? - the robot.
+ * @param tourManager: TourManager - the tour manager.
+ */
 @Composable
-fun Home(innerPadding: PaddingValues, navHostController: NavHostController, mRobot: Robot?, tourManager: TourManager) {
+fun Home(
+    innerPadding: PaddingValues,
+    navHostController: NavHostController,
+    mRobot: Robot?,
+    tourManager: TourManager) {
     Column(
         modifier = Modifier
             .fillMaxSize()
