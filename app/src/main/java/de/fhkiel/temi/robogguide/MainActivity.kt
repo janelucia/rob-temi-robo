@@ -55,7 +55,6 @@ import java.util.concurrent.Executors
 const val REQUEST_CODE_MAP = 10
 const val REQUEST_CODE_SETTINGS = 1
 
-// TODO Bei zweimaliger Wiederhlung spricht er nur den Detailierten Text neu.
 class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermissionResultListener,
     OnGoToLocationStatusChangedListener,
     OnUserInteractionChangedListener,

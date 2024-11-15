@@ -125,14 +125,17 @@ fun GuideNavigationButton(
                                     // wait to speak
                                     if (wasAlreadySpoken) {
                                         assert(tourViewModel.levelOfDetail != null)
+                                        // first speak the concise text
+                                        robotSpeakText(
+                                            mRobot,
+                                            currentItem?.conciseText?.value,
+                                            clearQueue = true
+                                        )
+                                        // if the level of detail is detailed also speak the detailed text
                                         if (tourViewModel.levelOfDetail?.isDetailed() == true) {
-                                            val text =
-                                                currentItem?.conciseText?.value + "\n" + currentItem?.detailedText?.value
-                                            robotSpeakText(mRobot, text, clearQueue = true)
-                                        } else {
                                             robotSpeakText(
                                                 mRobot,
-                                                currentItem?.conciseText?.value,
+                                                currentItem?.detailedText?.value,
                                                 clearQueue = true
                                             )
                                         }

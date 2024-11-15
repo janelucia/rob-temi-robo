@@ -44,8 +44,9 @@ fun robotSpeakText(
 
         if (chunk) {
             val chunked = splitTextBySentenceEnd(txt)
-            chunked.forEach {
-                robotSpeakText(mRobot, it, isShowOnConversationLayer, clearQueue, chunk = false)
+            chunked.forEachIndexed { index, s ->
+                val clearQueueNow = if (index == 0) clearQueue else false
+                robotSpeakText(mRobot, s, isShowOnConversationLayer, clearQueueNow, chunk = false)
             }
             return
         }
