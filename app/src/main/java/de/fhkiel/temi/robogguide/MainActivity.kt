@@ -102,19 +102,6 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
             database.initializeDatabase() // Initialize the database and copy it from assets
             tourManager = TourManager(database.getDatabase())
 
-            /*
-            // EXAMPLE CODE TO ONLY COPY DATABASE TO DIRECTLY USE THE DATABASE FILE FOR ORM
-            database.initializeDatabase(withOpen = false)
-            val dbFile = database.getDBFile()
-            val sqLiteDatabase = database.getDatabase()
-            */
-
-            // use json code to get database objects
-//            val places = database.getTableDataAsJson("places") // Fetch data as JSON
-//            val locations = database.getTableDataAsJson("locations") // Fetch data as JSON
-//            Log.i("MainActivity", "Places: $places")
-//            Log.i("MainActivity", "Locations: $locations")
-
         } catch (e: IOException) {
             e.printStackTrace()
             tourManager = TourManager(null) // Initialize with null to simulate error
