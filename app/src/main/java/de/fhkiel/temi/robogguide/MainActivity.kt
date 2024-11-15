@@ -61,8 +61,8 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
     Robot.TtsListener,
     OnBatteryStatusChangedListener {
 
-    private val setupViewModel: SetupViewModel = SetupViewModel(application)
-    private val tourViewModel: TourViewModel = TourViewModel()
+    private lateinit var setupViewModel: SetupViewModel
+    private lateinit var tourViewModel: TourViewModel
     private var mRobot: Robot? = null
     private lateinit var database: DatabaseHelper
     private lateinit var tourManager: TourManager
@@ -86,8 +86,13 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        sharedPreferences = application.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
 
+        // ---- VIEW MODEL SETUP ----
+        tourViewModel = TourViewModel()
+        setupViewModel = SetupViewModel(application)
+
+        // ---- SHARED PREFERENCES ----
+        sharedPreferences = application.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
 
         // ---- DATABASE ACCESS ----
         val databaseName = "roboguide.db"
