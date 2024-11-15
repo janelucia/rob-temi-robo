@@ -1,10 +1,9 @@
 package de.fhkiel.temi.robogguide.models
 
 /**
- * Enum class for the level of detail of a tour
- * The parameters need to be filled at a later point, when the db is analyzed.
+ * LevelOfDetail: for the level of detail of a tour
+ * The parameters need to be filled at a later point, when the database is analyzed.
  * These Level of Details need to be set for each new Place.
- *
  */
 enum class LevelOfDetail {
     EVERYTHING_DETAILED,
