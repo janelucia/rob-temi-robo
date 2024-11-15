@@ -10,6 +10,7 @@ import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 
+@Suppress("RedundantSuppression") // function should still be suppressed even if it is used
 class DatabaseHelper(context: Context, private val databaseName: String) :
     SQLiteOpenHelper(context, databaseName, null, 1) {
 
