@@ -23,13 +23,20 @@ import coil.compose.AsyncImage
 import coil.request.ErrorResult
 import de.fhkiel.temi.robogguide.R
 
+/**
+ * LoadingImage
+ * - Displays an image with a loading indicator
+ * @param urlString: URL of the image
+ * @param modifier: Modifier for the image
+ * @param contentScale: Content scale of the image, like fit or crop
+ */
+
 @Composable
 fun LoadingImage(
     urlString: String,
     modifier: Modifier = Modifier.fillMaxWidth(),
     contentScale: ContentScale = ContentScale.FillBounds
 ) {
-
     var isLoading by remember { mutableStateOf(false) }
     var showDialog by remember { mutableStateOf(false) }
 
@@ -58,7 +65,7 @@ fun LoadingImage(
             CircularProgressIndicator()
         }
     }
-
+    // open the image in fullscreen
     if (showDialog) {
         Dialog(
             onDismissRequest = { showDialog = false },
