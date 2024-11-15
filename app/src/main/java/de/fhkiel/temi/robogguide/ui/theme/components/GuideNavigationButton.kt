@@ -70,7 +70,11 @@ fun GuideNavigationButton(
                             CustomIconButton(
                                 iconId = R.drawable.play_disabled_right,
                                 onClick = {
-                                    // do nothing
+                                    robotSpeakText(
+                                        mRobot,
+                                        "Mhm, das gibt es leider nicht. Wir sind gerade am Anfang.",
+                                        clearQueue = true
+                                    )
                                 },
                                 contentDescription = "Kein vorheriges Exponat",
                                 initialContainerColor = Color.Gray,
@@ -212,7 +216,11 @@ fun GuideNavigationButton(
                                 CustomIconButton(
                                     iconId = R.drawable.play_disabled_right,
                                     onClick = {
-                                        // do nothing
+                                        robotSpeakText(
+                                            mRobot,
+                                            "Mhm, das gibt es leider nicht. Wir sind gerade am Anfang.",
+                                            clearQueue = true
+                                        )
                                     },
                                     contentDescription = "Kein vorheriges Exponat",
                                     initialContainerColor = Color.Gray,
@@ -264,7 +272,11 @@ fun GuideNavigationButton(
                                 CustomIconButton(
                                     iconId = R.drawable.play_disabled_right,
                                     onClick = {
-                                        // do nothing
+                                        robotSpeakText(
+                                            mRobot,
+                                            "Mhm, das gibt es leider nicht. Das war das letzte Exponat",
+                                            clearQueue = true
+                                            )
                                     },
                                     contentDescription = "Kein vorheriges Exponat",
                                     initialContainerColor = Color.Gray,
