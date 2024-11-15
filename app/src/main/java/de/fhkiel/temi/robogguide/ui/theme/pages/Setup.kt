@@ -28,6 +28,11 @@ import de.fhkiel.temi.robogguide.ui.theme.components.LoadingSpinner
 import de.fhkiel.temi.robogguide.ui.theme.components.SetupUi
 import kotlinx.coroutines.delay
 
+/**
+ * Setup: the setup page.
+ * @param setupViewModel: SetupViewModel - the view model for the setup.
+ * @param tourManager: TourManager - the tour manager.
+ */
 @Composable
 fun Setup(
     setupViewModel: SetupViewModel,
@@ -39,6 +44,7 @@ fun Setup(
     var isDatabaseValid by remember { mutableStateOf(false) }
     var currentMessageIndex by remember { mutableIntStateOf(0) }
 
+    // these messages will be displayed if the app is loading
     val messages = listOf(
         "Checking database...",
         "Loading data...",
@@ -48,6 +54,7 @@ fun Setup(
         "Ready!"
     )
 
+    // check if the database is valid
     LaunchedEffect(Unit) {
         isDatabaseValid = tourManager.doneChecking
         loading = false
