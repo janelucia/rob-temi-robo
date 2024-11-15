@@ -35,7 +35,7 @@ Die App wurde im Rahmen des Moduls "Einführung in die Robotik" an der Fachhochs
 - Wählen Sie den Ort aus, an dem sich der Temi befindet.
   - Alternativ können sie auch den Temi automatisch den Ort bestimmen lassen (Button: "Den Roboter auswählen lassen")
   - Sollte dies fehlschlagen, ist es nur möglich, den Ort manuell zu bestimmen. Ein erneutes Drücken des Buttons "Den Roboter auswählen lassen" ist nicht möglich.
-- Schalten Sie den Kioskmodus ein
+- Schalten Sie den Kioskmodus ein (Der Kiosk modus wird unteranderem dafür benötigt um den Inaktivitätscheck zu benutzen.)
 Beachten Sie, dass Sie die Einstellung nur beim Start der App vornehmen können!
 
 ### App schließen

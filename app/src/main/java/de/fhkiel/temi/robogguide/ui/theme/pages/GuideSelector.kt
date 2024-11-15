@@ -40,7 +40,6 @@ fun GuideSelector(
 ) {
     var isGuideSelected by remember { mutableStateOf(false) }
     var selectedLength by remember { mutableStateOf("") }
-    //TODO make use of Tour object ???
 
     Column(
         modifier = Modifier

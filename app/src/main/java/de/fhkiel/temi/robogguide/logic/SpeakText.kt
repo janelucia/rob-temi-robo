@@ -40,7 +40,6 @@ fun robotSpeakText(
             }
             return
         }
-        // TODO FIX double speaking
         Log.d("SpeakText", "adding text to queue: $txt")
         mRobot?.let {
             val ttsRequest: TtsRequest = TtsRequest.create(

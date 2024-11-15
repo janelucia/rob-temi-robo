@@ -358,8 +358,6 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
                     showMapData()
                 }
             }
-
-            // Permission.FACE_RECOGNITION -> TODO
             Permission.SETTINGS -> {
                 if (grantResult == Permission.GRANTED) {
                     Log.i("MainActivity", "Settings permission granted")
@@ -367,8 +365,6 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
                     Log.e("MainActivity", "Settings permission denied")
                 }
             }
-            // Permission.UNKNOWN -> TODO
-
             else -> {
                 // do nothing
             }
