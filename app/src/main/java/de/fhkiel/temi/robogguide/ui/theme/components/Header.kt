@@ -10,6 +10,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
 
+/**
+ * Header
+ * - Displays a header with a title
+ * @param title: Title of the header
+ * @param modifier: Modifier for the header
+ * @param fontSize: Font size of the title
+ * @param fontWeight: Font weight of the title
+ */
 @Composable
 fun Header(
     title: String?,
