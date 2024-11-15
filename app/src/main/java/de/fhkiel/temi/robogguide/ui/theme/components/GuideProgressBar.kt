@@ -44,7 +44,7 @@ fun GuideProgressBar(numberOfExhibits: Int, currentExhibit: Int) {
             ) {
                 //Fortschrittselemente, eines hervorgehoben (=das aktuelle)
                 repeat(numberOfExhibits) {
-                    Log.d("Test", "current bead ${it}")
+                    Log.d("Test", "current bead $it")
                     Box(
                         modifier = Modifier
                             .size(24.dp)

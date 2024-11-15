@@ -54,7 +54,6 @@ import java.io.IOException
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-@OptIn(ExperimentalMaterial3Api::class)
 class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermissionResultListener,
     OnGoToLocationStatusChangedListener,
     OnUserInteractionChangedListener,

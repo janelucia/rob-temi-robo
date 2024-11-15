@@ -5,7 +5,6 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.robotemi.sdk.Robot
 import de.fhkiel.temi.robogguide.models.Item
-import de.fhkiel.temi.robogguide.models.LevelOfDetail
 import de.fhkiel.temi.robogguide.models.Location
 import de.fhkiel.temi.robogguide.models.Media
 import de.fhkiel.temi.robogguide.models.MediaType
