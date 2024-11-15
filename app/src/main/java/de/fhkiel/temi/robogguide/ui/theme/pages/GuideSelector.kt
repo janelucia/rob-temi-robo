@@ -31,6 +31,14 @@ import de.fhkiel.temi.robogguide.ui.logic.TourViewModel
 import de.fhkiel.temi.robogguide.ui.theme.components.CustomButton
 import de.fhkiel.temi.robogguide.ui.theme.components.Header
 
+/**
+ * GuideSelector: the guide selector page. The user can choose between a guide and a single exhibition.
+ * Furthermore, the visitor can choose the length and detail of the guide.
+ * @param innerPadding: PaddingValues - the padding values.
+ * @param navHostController: NavHostController - the navigation controller.
+ * @param tourManager: TourManager - the tour manager.
+ * @param tourViewModel: TourViewModel - the view model for the tour.
+ */
 @Composable
 fun GuideSelector(
     innerPadding: PaddingValues,
@@ -182,6 +190,10 @@ fun GuideSelector(
     }
 }
 
+/**
+ * convertTourName: converts the tour name to a readable string.
+ * @param tourName: String - the tour name.
+ */
 fun convertTourName(tourName: String): String {
     return when (tourName) {
         "Only Important" -> "Highlights"
