@@ -18,6 +18,27 @@ Die App wurde im Rahmen des Moduls "Einführung in die Robotik" an der Fachhochs
 - Karlina (@caprily)
 - Jane (@janelucia)
 
+## Inhaltsverzeichnis
+
+- [Weiterentwicklung der App](#weiterentwicklung-der-app)
+  - [Vorbedingungen](#vorbedingungen)
+  - [Schritte](#schritte)
+  - [Beachte](#beachte)
+  - [Ausblick](#ausblick)
+- [Benutzung der App](#benutzung-der-app)
+  - [Vorbedingungen](#vorbedingungen-1)
+  - [Benötigte Rechte](#benötigte-rechte)
+  - [Einstellen des Temis](#einstellen-des-temis)
+  - [App schließen](#app-schließen)
+  - [Führung auswählen](#führung-auswählen)
+  - [Führung](#führung)
+    - [Generelle Informationen](#generelle-informationen)
+    - [Stationen wiederholen](#stationen-wiederholen)
+    - [Führung abbrechen](#führung-abbrechen)
+    - [Führung beenden](#führung-beenden)
+  - [Mit Fehlern umgehen](#mit-fehlern-umgehen)
+  - [Kleiner Temi Knigge](#kleiner-temi-knigge)
+
 ## Weiterentwicklung der App
 
 Wenn du dich dafür interessierst uns bei unserer Mission zu helfen, die beste Temi App für das Computermuseum der FH Kiel zu entwickeln, dann klone gerne unser Repository und folge den Anweisungen.
