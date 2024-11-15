@@ -77,18 +77,26 @@ fun GuideNavigationButton(
                                 iconModifier = Modifier.graphicsLayer(rotationZ = 180f)
                             )
                         } else {
-                            CustomIconButton(
-                                iconId = R.drawable.play_arrow_left,
-                                onClick = {
-                                    if (currentGuideState == GuideState.Exhibit) {
+                            if (currentGuideState == GuideState.Exhibit && currentItemIndex != 0) {
+                                CustomIconButton(
+                                    iconId = R.drawable.play_arrow_left,
+                                    onClick = {
                                         tourViewModel.decrementCurrentItemIndex()
-                                    } else {
+                                        clearQueue(mRobot)
+                                    },
+                                    contentDescription = "Vorheriges Exponat"
+                                )
+                            } else {
+                                CustomIconButton(
+                                    iconId = R.drawable.skip_previous,
+                                    onClick = {
                                         tourViewModel.decrementCurrentLocationIndex()
-                                    }
-                                    clearQueue(mRobot)
-                                },
-                                contentDescription = "Vorheriges Exponat"
-                            )
+                                        clearQueue(mRobot)
+                                    },
+                                    contentDescription = "Vorherige Station"
+                                )
+                            }
+
                         }
                         // if navigation threw an error the button allows the user to do a retry
                         if (currentGuideState == GuideState.TransferError) {
@@ -139,8 +147,9 @@ fun GuideNavigationButton(
                             )
 
                         }
-                        // allow to end guide if at the last item and location
-                        if (currentItemIndex == numberOfItems - 1 && currentLocationIndex == tourViewModel.numberOfLocations - 1) {
+                        // allow to end guide if at the last item and location or if the guide is at the last location not at an Exhibit
+                        if (currentLocationIndex == tourViewModel.numberOfLocations - 1 &&
+                            (currentItemIndex == numberOfItems - 1 || currentGuideState != GuideState.Exhibit)) {
                             CustomButton(
                                 title = "Führung beenden",
                                 fontSize = 32.sp,
@@ -153,18 +162,25 @@ fun GuideNavigationButton(
                                 width = 300.dp
                             )
                         } else {
-                            CustomIconButton(
-                                iconId = R.drawable.play_arrow_right,
-                                contentDescription = "Nächstes Exponat",
-                                onClick = {
-                                    if (currentGuideState == GuideState.Exhibit) {
+                            if (currentGuideState == GuideState.Exhibit && currentItemIndex != numberOfItems - 1) {
+                                CustomIconButton(
+                                    iconId = R.drawable.play_arrow_right,
+                                    contentDescription = "Nächstes Exponat",
+                                    onClick = {
                                         tourViewModel.incrementCurrentItemIndex()
-                                    } else {
+                                        clearQueue(mRobot)
+                                    },
+                                )
+                            } else {
+                                CustomIconButton(
+                                    iconId = R.drawable.skip_next,
+                                    contentDescription = "Nächste Station",
+                                    onClick = {
                                         tourViewModel.incrementCurrentLocationIndex()
-                                    }
-                                    clearQueue(mRobot)
-                                },
-                            )
+                                        clearQueue(mRobot)
+                                    },
+                                )
+                            }
                         }
                     }
                 }
