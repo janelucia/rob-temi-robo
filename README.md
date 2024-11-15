@@ -1,69 +1,113 @@
 # Temi the Robot
 
-Dieses Repository enthält die Android App für den Temi Roboter. Die App wurde im Rahmen des Moduls "
-Einführung in die Robotik" an der Fachhochschule Kiel entwickelt.
+Dieses Repository enthält die Android App für den Temi Roboter. Der Temi Roboter führt
+Besucher:innen durch die Ausstellung des Computer Museums der Fachhochschule Kiels. 
+Die Besuchenden haben die Möglichkeit die Art der Führung zu wählen. Dabei können sie zwischen:
+
+- einer langen und ausführlichen Führung (alle Stationen und alle Texte zu den Exponaten)
+- einer langen und prägnanten Führung (alle Stationen und die wichtigsten Informationen zu den Exponaten)
+- einer kurzen und ausführlichen Führung (nur die wichtigsten Stationen und alle Texte zu den Exponaten)
+- einer kurzen und prägnanten Führung (nur die wichtigsten Stationen und Informationen zu den Exponaten)
+
+Im Anschluss wird der Besuchenden von dem Temi zu den ausgewählten Stationen geführt.
+Die App wurde im Rahmen des Moduls "Einführung in die Robotik" an der Fachhochschule Kiel entwickelt.
 
 ## Gruppenmitglieder
 
-* Benjamin (@sihingbenni)
-* Karlina ()
-* Jane (@janelucia)
+- Benjamin (@sihingbenni)
+- Karlina ()
+- Jane (@janelucia)
 
-## Ziel
+## Benutzung der App
 
-Funktionen
+### Vorbedingungen
+- Die Projekt-APK ist auf dem Temi installiert
+- Der Temi Roboter ist eingeschaltet
+- Es besteht eine Datenbank mit den notwendigen Informationen (siehe Datenbank)
+- Die App ist gestartet
 
-* Auswahl der Art der Führung durch die Besucher*innen.
-* Navigation des Roboters zu den Bereichen / Exponaten.
-* Abspielen von Erklärungen, Fotos und Videos zu den Bereichen / Exponaten.
-* funktionale und benutzerfreundliche Oberfläche.
-* Fähigkeiten vertiefen in den Bereichen: Benutzeroberflächendesign, Robotiksteuerung und
-  Medienintegration
-
-## Meilensteine
-
-| Meilenstein                       | Datum      | Beschreibung                                                                                                          |
-|-----------------------------------|------------|-----------------------------------------------------------------------------------------------------------------------|
-| Projektinitialisierung            | 06.10.2024 | Richten Sie die Entwicklungsumgebung ein; Machen Sie sich mit der temi Roboter API und dem Beispielprojekt vertraut.  |
-| UI-Design und Implementierung     | 13.10.2024 | Entwerfen und setzen Sie die Benutzeroberfläche um; Implementieren Sie die Auswahlmöglichkeiten für die Führung.      |
-| Navigation und Steuerung          | 20.10.2024 | Integrieren Sie die Navigationsfunktionen; Implementieren Sie die Statusanzeige.                                      |
-| Erklärungen und Medienintegration | 27.10.2024 | Rufen Sie die Erklärungstexte ab und stellen Sie diese dar; Integrieren und synchronisieren Sie die Fotos und Videos. |
-| Test und Fehlerbehebung           | 10.11.2024 | Führen Sie Tests zur Sicherstellung der Funktionalität durch; Beheben Sie Navigations- und Anzeigefehler.             |
-
-## Anforderungen
-
-1. **Benutzeroberfläche (UI)**:
-   - Erstellen Sie einen Startbildschirm mit Auswahlmöglichkeiten für die Art der Führung:
-     - Kurz (kurze Erklärungen) oder Lang (ausführliche Erklärungen).
-     - Einfach (nur wichtige Bereiche) oder Ausführlich (alle Bereiche).
-     - Individuelle Führung.
-   - Implementieren Sie eine Fortschrittsleiste oder eine Übersicht der Bereiche während der Führung.
-
-2. **Interaktive Elemente**:
-   - Ermöglichen Sie den Besucher*innen, die Art der Führung auszuwählen.
-   - Implementieren Sie Feedback-Möglichkeiten für die Besucher*innen, um die Qualität der Führung zu bewerten. Die Bewertung sollte in Form einer Smiley-Bewertung (gut / neutral / schlecht) erfolgen.
-
-3. **Navigation**:
-   - Integrieren Sie die Funktion zur Steuerung des Roboters zu den jeweiligen Exponaten.
-     - Schaffen Sie die Möglichkeit, die Führung zu pausieren oder zu beenden.
-
-4. **Erklärungen und Medienwiedergabe**:
-   - Rufen Sie kurze und lange Erklärungstexte zu den Themenbereichen und Exponaten ab und lassen Sie den Roboter diese sprechen.
-     - Implementieren Sie die Wiedergabe von Fotos und Videos zu den Exponaten.
-     - Stellen Sie sicher, dass die Medieninhalte zusammen mit der Sprache wiedergegeben werden.
-
-5. **Datenverwaltung**:
-   - Nutzen Sie für die Datenverwaltung die Funktionen im Beispielprojekt.
-
-6. **Fehlerbehandlung**:
-   - Entwickeln Sie eine Anzeige von Fehlermeldungen bei Navigationsfehlern oder anderen Problemen.
-   - Schaffen Sie die Möglichkeit zur Wiederholung oder zum Überspringen eines Exponats bei Navigationsfehlern.
+### Benötigte Rechte
+* Bitte nehmen Sie alle notwendigen Rechte an, die der Temi Ihnen beim Start der App zeigt. Sonst wird die App nicht  korrekt funktioniert.
 
 
-## Technologische Anforderungen
+### Einstellen des Temis
+- Folgen Sie den Vorbereitungsschritten, welche unter dem Button: "Vorbereitungen" in der Setup UI zu finden sind
+- Wählen Sie den Ort aus, an dem sich der Temi befindet.
+  - Alternativ können sie auch den Temi automatisch den Ort bestimmen lassen (Button: "Den Roboter auswählen lassen")
+  - Sollte dies fehlschlagen, ist es nur möglich, den Ort manuell zu bestimmen. Ein erneutes Drücken des Buttons "Den Roboter auswählen lassen" ist nicht möglich.
+- Schalten Sie den Kioskmodus ein
+Beachten Sie, dass Sie die Einstellung nur beim Start der App vornehmen können!
 
-Technische Anforderungen
-- Programmiersprache: Kotlin
-- Entwicklungsumgebung: Android Studio
-- Zugriff auf temi Roboter: Nutzen Sie die bereitgestellten Funktionen zur Navigation und
-Statusüberprüfung.
+### App schließen
+WICHTIG: erst den Kioskmodus ausschalten, bevor Sie die App schließen! 
+Dies ist eine Vorsichtsmaßnahme, damit Besucher:innen die App nicht schließen können. 
+In der Zukunft würde der schließen Button nur über einen PIN ausführbar sein.
+- Sollten Sie Probleme haben und möchten die App schließen, dann können Sie dies an verschiedenen Stellen in der Applikation vornehmen
+  - Drücken Sie auf den Button "App schließen" in der Setup UI
+  - Wenn Sie sich in der Hauptansicht befinden, können Sie die App auch über den Button "?" und dann über "App schließen" schließen
+
+### Führung auswählen
+- Wählen Sie die Art der Führung aus, die Sie durch den Temi erhalten möchten
+- Drücken Sie auf den Button "Los gehts"
+- Wählen Sie aus, ob Sie eine Führung oder nur zu einem bestimmten Exponat geführt werden möchten
+- Zu erst können Sie auswählen, ob Sie eine kurze (nur die wichtigsten Stationen) oder eine lange Führung machen möchten
+- Dann wählen Sie, ob Sie nur die wichtigsten Informationen oder alle Informationen zu den Exponaten erhalten möchten
+
+### Führung
+
+#### Generelle Informationen
+- Der Temi wird Sie zu ihrer gewählten Station führen. Sie können die Stationen über den Pfeil nach rechts überpringen oder mit dem Pfeil nach links zurückgehen
+- Sobald Sie an der Station angekommen sind, wird der Temi Ihnen die Informationen zu der Station vorlesen. Sie können diese Informationen, aber auch auf dem Bildschirm einsehen.
+- Der Temi pausiert nach jedem Exponat, so haben Sie Zeit sich die Informationen durchzulesen oder sich die Exponate anzusehen
+- Sobald Sie bereit sind, müssen Sie den Pfeil nach rechts drücken, damit der Temi Ihnen Informationen zum nächsten Exponat vorliest
+- Wenn Sie das letzte Exponat der Station gehört haben, wird der Temi Sie zur nächsten Station führen
+- Sobald Sie alle Stationen gehört haben, können Sie die Führung beenden
+
+#### Stationen wiederholen
+- Über den Wiederholungsbutton, der gedrehte Pfeil, können Sie sich die Informationen zu dem aktuellen Exponat noch einmal anhören
+
+#### Führung abbrechen
+- Die Führung kann über das "Haus"-Symbol in der Führungsansicht abgebrochen werden, welche Sie in der obere rechten Ecke finden
+
+#### Führung beenden
+- Am letzten Exponat, der letzten Station haben Sie die Möglichkeit die Führung zu beenden. Drücken Sie dazu auf den Button "Führung beenden"
+- Danach würden wir uns freuen, wenn Sie uns ein Feedback hinterlassen würden
+- Im Anschluss haben Sie die Möglichkeit die Führung zu beenden. Dabei können Sie auswählen, ob Sie zur Startseite zurückkehren möchten oder den Temi zu seiner Ladestation schicken möchten
+
+### Mit Fehlern umgehen
+- Der Temi benötigt seinen personal space, bitte lassen Sie ihn diesen auch. Sollten Sie zu nah an den Temi herantreten, wird er nicht mehr weiter navigieren und ggf. die Navigation abbrechen
+- Sie können die Navigation erneut anstoßen, in dem Sie auf den Button "Erneut versuchen" drücken. Dieser erscheint, wenn die Navigation abgebrochen wurde. Sie können diesen auch in dem Dialog, der erscheint, wenn ein Fehler auftritt, finden.
+
+### Kleiner Temi Knigge
+- Sollten Sie den Temi nicht mehr benötigen, dann lassen Sie Ihn bitte zu seiner Ladestation fahren. Er wird sich sonst auch bemerkbar machen.
+
+## Weiterentwicklung der App
+
+Wenn du dich dafür interessierst uns bei unserer Mission zu helfen, die beste Temi App für das Computermuseum der FH Kiel zu entwickeln, dann klone gerne unser Repository und folge den Anweisungen.
+
+```bash
+  git clone https://github.com/janelucia/rob-temi-robo.git
+```
+
+### Vorbedingungen
+- Android Studio in der Version Ladybug ist installiert
+- AGP Version: 8.7.2
+
+### Schritte
+- Wähle als Emulator ein Tablet aus. Die App wurde nur für Tablets entwickelt.
+- Installiere die Dependencies per `gradle sync`
+- Starte die App
+
+### Beachte
+- Um den vollkommenen Funktionsumfang zu testen, benötigst du einen Temi Roboter
+
+### Ausblick
+- per Videocall um Hilfe bitten
+- PIN für das Schließen der App
+- ein verbessertes Feedbacksystem
+- Eigene Youtube Steuerung, um das Navigieren aus der App zu verhindern.
+- Übersetzung auf Englisch
+
+
+
+
