@@ -278,7 +278,6 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
             }
 
             setupViewModel.robotIsReady()
-            // showMapData()
         }
     }
 
@@ -334,8 +333,9 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
             Log.d("PERMISSION", "Permission $permission already granted")
             return false
         } else {
-            mRobot?.requestPermissions(listOf(permission), requestCode)
             Log.d("PERMISSION", "Requesting permission $permission")
+            mRobot?.requestPermissions(listOf(permission), requestCode)
+            // return is permission granted?
             return true
         }
     }
@@ -509,7 +509,7 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
                 ttsQueue.value = ttsQueue.value
             }
 
-            TtsRequest.Status.PROCESSING,
+            TtsRequest.Status.PROCESSING -> {}
             TtsRequest.Status.STARTED -> {
                 isSpeaking.value = true
             }

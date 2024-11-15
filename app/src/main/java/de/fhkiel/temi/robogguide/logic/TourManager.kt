@@ -85,7 +85,6 @@ class TourManager(private val db: SQLiteDatabase?) {
                 do {
                     val id = it.getInt(it.getColumnIndexOrThrow("id"))
                     val name = it.getString(it.getColumnIndexOrThrow("name"))
-                    Log.i("TourManager", "Place: $name")
                     allPlacesMap[id] = name
                 } while (it.moveToNext())
             }
@@ -102,7 +101,6 @@ class TourManager(private val db: SQLiteDatabase?) {
                     val placesId = it.getInt(it.getColumnIndexOrThrow("places_id"))
 
                     locationIds.add(id)
-                    Log.i("TourManager", "Location ID: $id")
 
                     if (!allPlacesMap.keys.contains(placesId)) {
                         Log.e("TourManager", "Location with unknown Place found")
@@ -167,7 +165,6 @@ class TourManager(private val db: SQLiteDatabase?) {
 
                     startLocations.add(from)
                     endLocations.add(to)
-                    Log.i("TourManager", "Transfer: $from -> $to")
                 } while (it.moveToNext())
             }
         }
@@ -190,7 +187,6 @@ class TourManager(private val db: SQLiteDatabase?) {
                         throw IllegalStateException(errorMessage + "Der Text mit der ID $id hat keine gültige ID Zuweisung.")
                     }
 
-                    Log.i("TourManager", "Text")
                 } while (it.moveToNext())
             }
         }
@@ -248,8 +244,8 @@ class TourManager(private val db: SQLiteDatabase?) {
             throw IllegalStateException(errorMessage + "Ungültige Anzahl von Start- oder Endorten.")
         }
 
-        Log.i("TourManager", "Start location: ${startLocation.first()}")
-        Log.i("TourManager", "End location: ${endLocation.first()}")
+        Log.d("TourManager", "Start location: ${startLocation.first()}")
+        Log.d("TourManager", "End location: ${endLocation.first()}")
 
         // Check for the start location again to stop as it indicates another tour
         db.rawQuery("SELECT * from transfers", null).use { newTransfers ->
@@ -348,8 +344,6 @@ class TourManager(private val db: SQLiteDatabase?) {
                     val conciseText = texts?.get(false)
 
                     allTransfers[nameTo] = Transfer(detailedTransferText, conciceTransferText)
-
-                    Log.i("TourManager", "Transfer: $from -> $to")
                     transfersForLocation[from] = to
 
                     val newLocation = Location(
@@ -473,10 +467,6 @@ class TourManager(private val db: SQLiteDatabase?) {
 
         assert(selectedPlace != null)
         selectedPlace!!.allLocations.forEach { location ->
-            mRobot.locations.forEach { robotLocation ->
-                Log.d("TourManager", "Location: $robotLocation")
-            }
-
             if (!mRobot.locations.contains(location.name)) {
                 Log.e("TourManager", "Location ${location.name} not found on robot")
                 throw IllegalStateException("Der Ort ${location.name} konnte nicht auf dem Roboter gefunden werden.")
