@@ -30,6 +30,9 @@ import de.fhkiel.temi.robogguide.models.Location
 import de.fhkiel.temi.robogguide.ui.logic.TourViewModel
 import kotlinx.coroutines.delay
 
+/**
+ * TransferDrive: displays the current location and the next location to drive to
+ */
 @Composable
 fun TransferDrive(
     currentLocation: Location,
@@ -38,14 +41,14 @@ fun TransferDrive(
     tourManager: TourManager,
     navController: NavController
 ) {
-
     val guideState by tourViewModel.guideState.observeAsState(null)
     var showErrorPopup by remember { mutableStateOf(true) }
 
+    // when the temi starts to drive to the next location, it says where it is going
     if (guideState == GuideState.TransferStart) {
         LaunchedEffect(currentLocation) {
             delay(3000)
-            //Beginnt Fahrt zur nächsten Location
+            // Starts drive to next location
             Log.d(
                 "Transfer",
                 "Ich fahre los zu ${currentLocation.name}, -> ${tourViewModel.guideState.value}"
@@ -54,7 +57,7 @@ fun TransferDrive(
         }
     }
 
-
+    // when the temi is driving to the next location, it tells the visitor to follow
     if (guideState == GuideState.TransferGoing) {
         robotSpeakText(mRobot, "Bitte folgen Sie mir zur nächsten Station", false)
         Log.d("Transfer", "ich spreche und fahre, -> ${tourViewModel.guideState.value}")
@@ -68,6 +71,7 @@ fun TransferDrive(
         }
     }
 
+    // when an error occurs during the transfer, a popup is displayed
     if (guideState == GuideState.TransferError && showErrorPopup) {
         ErrorPopUp(
             onDismiss = { showErrorPopup = false },
@@ -93,8 +97,8 @@ fun TransferDrive(
         title = "Die nächste Station ist: ${currentLocation.name}",
         fontSize = 32.sp
     )
+    // Transfers only has one image in order to tell the user where to go
     currentLocation.conciseText?.mediaList?.first().let { media ->
-        // Bei Transfers gibt es nur ein Bild, da wir nur wissen müssen, wo es hingeht
         Row(
             modifier = Modifier.fillMaxWidth(),
         ) {
