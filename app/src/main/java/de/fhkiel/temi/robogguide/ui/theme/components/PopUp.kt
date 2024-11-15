@@ -260,6 +260,7 @@ fun ClosePopup(
                             onDismiss()
                             mRobot.let { robot ->
                                 robotSpeakText(mRobot, "Ich fahre jetzt zur Aufladestation!")
+                                navController.navigate("homePage")
                                 robot?.goTo("home base")
                             }
                         },
