@@ -39,6 +39,13 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
+/**
+ * EndPage: the page that is shown after the tour is finished.
+ * @param innerPadding: PaddingValues - the padding values.
+ * @param navHostController: NavHostController - the navigation controller.
+ * @param tourViewModel: TourViewModel - the view model for the tour.
+ * @param mRobot: Robot? - the robot.
+ */
 @Composable
 fun EndPage(
     innerPadding: PaddingValues,
@@ -56,6 +63,7 @@ fun EndPage(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+        // If the feedback was not given yet, show the feedback options.
         if (!feedbackGiven) {
             Header(
                 title = "Wie hat Ihnen die Führung gefallen?",
@@ -153,13 +161,20 @@ fun EndPage(
     }
 }
 
+/**
+ * saveTourFeedback: saves the feedback of the tour on the device.
+ * @param context: Context - the context. Context of the tablet and saves the file to the internal storage.
+ * @param tourType: String - the type of the tour.
+ * @param feedback: String - the feedback.
+ */
 fun saveTourFeedback(context: Context, tourType: String, feedback: String) {
 
     val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     val date = LocalDate.now().format(formatter)
     val time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm"))
-
     val directory = File(context.filesDir, "feedback")
+
+    // add directory if it does not exist
     if (!directory.exists()) {
         directory.mkdirs()
     }
