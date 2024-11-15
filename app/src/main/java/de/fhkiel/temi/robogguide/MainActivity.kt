@@ -17,6 +17,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -63,6 +64,10 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
 
     private lateinit var setupViewModel: SetupViewModel
     private lateinit var tourViewModel: TourViewModel
+
+    /** Navigation controller for the app */
+    private lateinit var navController: NavHostController
+
     private var mRobot: Robot? = null
     private lateinit var database: DatabaseHelper
     private lateinit var tourManager: TourManager
@@ -74,6 +79,8 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
     private val singleThreadExecutor: ExecutorService = Executors.newSingleThreadExecutor()
     private val activity: Activity = this
 
+    private var interactionDialog: AlertDialog? = null
+
     private val noInteractionRunnable = Runnable {
         if (!isUserInteracting) {
             showInteractionDialog()
@@ -82,6 +89,8 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
 
     private val returnHomeRunnable = Runnable {
         gotoHomeBase()
+        interactionDialog?.dismiss()
+        navController.navigate("homePage")
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -109,11 +118,12 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
         }
 
         setContent {
+            navController = rememberNavController()
+
             val isSetupComplete by setupViewModel.isSetupComplete.observeAsState(false)
 
             if (isSetupComplete) {
                 Rob_Temi_Robo_UITheme {
-                    val navController = rememberNavController()
                     Scaffold(
                         modifier = Modifier.fillMaxSize(),
                         topBar = {
@@ -391,7 +401,13 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
             mRobot?.volume = 7
             robotSpeakText(mRobot, "Hallo, werde ich noch gebraucht?", false)
 
-            val dialog = AlertDialog.Builder(this)
+            interactionDialog = AlertDialog.Builder(this)
+                .setOnDismissListener {
+                    isUserInteracting = true
+                    dialogShown = false
+                    mRobot?.volume = oldVolume
+                    handler.removeCallbacks(returnHomeRunnable)
+                }
                 .setTitle("Tour fortführen?")
                 .setMessage("Ich habe längere Zeit keine Interaktion festgestellt. Möchtest du die Tour fortsetzen oder darf der Roboter zurück zur Homebase?\nDu hast 2 Minuten Zeit, bevor ich nach Hause fahre.")
                 .setPositiveButton("Tour fortführen") { _, _ ->
@@ -401,15 +417,14 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
                 }
                 .setNegativeButton("Tour beenden und Roboter zur Homebase schicken") { _, _ ->
                     gotoHomeBase()
+                    isUserInteracting = true
                     handler.removeCallbacks(returnHomeRunnable)
+                    navController.navigate("homePage")
                     mRobot?.volume = oldVolume
                 }
                 .show()
 
-            handler.postDelayed({
-                returnHomeRunnable.run()
-                dialog.dismiss()
-            }, 120000) // 2 Min
+            handler.postDelayed(returnHomeRunnable, 1000 * 12 * 60) // 2 Min
         }
     }
 
