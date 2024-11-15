@@ -30,6 +30,13 @@ import de.fhkiel.temi.robogguide.ui.theme.components.CustomButton
 import de.fhkiel.temi.robogguide.ui.theme.components.ItemPreview
 import de.fhkiel.temi.robogguide.ui.theme.components.LocationPreview
 
+/**
+ * GuideExhibition: user can choose which location or item he is particularly interested in and being guided to it.
+ * @param innerPadding: PaddingValues - the padding values.
+ * @param tourManager: TourManager - the tour manager.
+ * @param tourViewModel: TourViewModel - the view model for the tour.
+ * @param navHostController: NavHostController - the navigation controller.
+ */
 @Composable
 fun GuideExhibition(
     innerPadding: PaddingValues,
@@ -37,8 +44,6 @@ fun GuideExhibition(
     tourViewModel: TourViewModel,
     navHostController: NavHostController
 ) {
-
-
     // Create LazyListState to own it and be able to control scroll behaviour of scrollable Row below
     val listState = rememberLazyListState()
     val showExhibitions = remember { mutableStateOf("") }
