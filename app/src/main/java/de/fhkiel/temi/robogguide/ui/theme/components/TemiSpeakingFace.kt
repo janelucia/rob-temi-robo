@@ -25,10 +25,15 @@ import androidx.compose.ui.unit.sp
 import de.fhkiel.temi.robogguide.logic.isSpeaking
 import kotlinx.coroutines.delay
 
+/**
+ * TemiSpeakingFace: displays a face with eyes and mouth that move to simulate speaking
+ */
 @Composable
 fun TemiSpeakingFace() {
     val infiniteTransition = rememberInfiniteTransition(label = "")
+    var isEyeOpen by remember { mutableStateOf(true) }
 
+    // animate mouth
     val isMouthOpen by infiniteTransition.animateFloat(
         initialValue = 1f,
         targetValue = 0f,
@@ -37,8 +42,8 @@ fun TemiSpeakingFace() {
             repeatMode = RepeatMode.Reverse
         ), label = ""
     )
-    var isEyeOpen by remember { mutableStateOf(true) }
 
+    // eyes blinking
     LaunchedEffect(Unit) {
         while (true) {
             delay(3000)
