@@ -94,6 +94,9 @@ fun GuideNavigationButton(
                                 CustomIconButton(
                                     iconId = R.drawable.skip_previous,
                                     onClick = {
+                                        if (currentGuideState == GuideState.TransferGoing) {
+                                            mRobot?.stopMovement()
+                                        }
                                         tourViewModel.decrementCurrentLocationIndex()
                                         clearQueue(mRobot)
                                     },
@@ -103,7 +106,7 @@ fun GuideNavigationButton(
 
                         }
                         // if navigation threw an error the button allows the user to do a retry
-                        if (currentGuideState == GuideState.TransferError) {
+                        if (currentGuideState == GuideState.TransferError || currentGuideState == GuideState.TransferAbort) {
                             CustomButton(
                                 title = "Erneut versuchen",
                                 fontSize = 32.sp,
@@ -183,6 +186,9 @@ fun GuideNavigationButton(
                                     iconId = R.drawable.skip_next,
                                     contentDescription = "Nächste Station",
                                     onClick = {
+                                        if (currentGuideState == GuideState.TransferGoing) {
+                                            mRobot?.stopMovement()
+                                        }
                                         tourViewModel.incrementCurrentLocationIndex()
                                         clearQueue(mRobot)
                                     },

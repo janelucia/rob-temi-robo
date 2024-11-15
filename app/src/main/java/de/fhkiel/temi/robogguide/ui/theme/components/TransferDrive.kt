@@ -72,19 +72,24 @@ fun TransferDrive(
     }
 
     // when an error occurs during the transfer, a popup is displayed
-    if (guideState == GuideState.TransferError && showErrorPopup) {
-        ErrorPopUp(
-            onDismiss = { showErrorPopup = false },
-            "Es ist ein Navigationsfehler aufgetreten! :(",
-            "Leider habe ich keine Route zum gewünschten Standort gefunden.\nBitte achten Sie darauf, dass ich genug Platz habe, um mich zu bewegen. Treten Sie eventuell einen Schritt zurück oder schieben Sie mich ein wenig von umstehenden Objekten weg und versuchen es gerne nochmal.\nAnsonsten können Sie mich auch zurück zur Ladestation schicken.",
-            onClick = {
-                tourViewModel.updateGuideState(GuideState.TransferStart)
-                showErrorPopup = false
-                robotSpeakText(mRobot, "Okay, probieren wir es nochmal!", false)
-            },
-            navController = navController,
-            mRobot = mRobot
-        )
+    if ((guideState == GuideState.TransferError || guideState == GuideState.TransferAbort) && showErrorPopup) {
+        if (guideState == GuideState.TransferError) {
+            ErrorPopUp(
+                onDismiss = { showErrorPopup = false },
+                "Es ist ein Navigationsfehler aufgetreten! :(",
+                "Leider habe ich keine Route zum gewünschten Standort gefunden.\nBitte achten Sie darauf, dass ich genug Platz habe, um mich zu bewegen. Treten Sie eventuell einen Schritt zurück oder schieben Sie mich ein wenig von umstehenden Objekten weg und versuchen es gerne nochmal.\nAnsonsten können Sie mich auch zurück zur Ladestation schicken.",
+                onClick = {
+                    tourViewModel.updateGuideState(GuideState.TransferStart)
+                    showErrorPopup = false
+                    robotSpeakText(mRobot, "Okay, probieren wir es nochmal!", false)
+                },
+                navController = navController,
+                mRobot = mRobot
+            )
+        } else {
+            //nothing?
+        }
+
     }
 
     Header(

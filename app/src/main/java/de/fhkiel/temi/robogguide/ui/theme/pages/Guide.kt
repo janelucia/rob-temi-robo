@@ -96,6 +96,10 @@ fun Guide(
                 assert(currentLocation != null)
                 TransferDrive(currentLocation!!, mRobot, tourViewModel, tourManager, navController)
             }
+            GuideState.TransferAbort -> {
+                assert(currentLocation != null)
+                TransferDrive(currentLocation!!, mRobot, tourViewModel, tourManager, navController)
+            }
         }
     }
 

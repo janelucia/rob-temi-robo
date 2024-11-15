@@ -421,7 +421,7 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
     ) {
         Log.d(
             "Transfer",
-            "Mein GoTO Status $status GuideStatus ${tourViewModel.guideState.value} Description ID $description"
+            "Mein GoTO Status $status GuideStatus ${tourViewModel.guideState.value} Description $description + ID $descriptionId"
         )
         when (status) {
             OnGoToLocationStatusChangedListener.START -> {
@@ -453,6 +453,13 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
 
                 if (descriptionId == 0) {
                     // general abort -> nothing to do
+                    return
+                }
+
+                if (descriptionId == 1005) {
+                    // gets triggered when Temi's movement is either stopped by pressing specified buttons during a guide transfermovement or in general if you pat temi's head while he's moving
+                    robotSpeakText(mRobot, "Ich halte an.", clearQueue = true)
+                    tourViewModel.updateGuideState(GuideState.TransferAbort)
                     return
                 }
 
