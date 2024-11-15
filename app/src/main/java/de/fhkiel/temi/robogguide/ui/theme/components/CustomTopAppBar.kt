@@ -199,10 +199,12 @@ fun SetupTopBar(activity: Activity, setupViewModel: SetupViewModel) {
     var showConfirmationPopUp by remember { mutableStateOf(false) }
     val isDebugFlagEnabled by setupViewModel.isDebugFlagEnabled.observeAsState(false)
 
+    // if button "Vorbereitung" is being pressed the PreparationPopUp will be shown
     if (showPopUp) {
         PreparationPopUp(onDismiss = { showPopUp = false }, isDebugFlagEnabled, setupViewModel)
     }
 
+    // if button "App schließen" is being pressed the ConfirmationPopUp will be shown
     if (showConfirmationPopUp) {
         ConfirmationPopUp(
             onDismiss = { showConfirmationPopUp = false },

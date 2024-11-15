@@ -36,6 +36,7 @@ fun DisplayMediaList(vararg texts: TextModel?) {
             modifier = Modifier.size(700.dp)
         ) {
             texts.forEach { text ->
+                // iterating over the media list of each item
                 text?.mediaList?.forEach { media ->
                     item {
                         Box(

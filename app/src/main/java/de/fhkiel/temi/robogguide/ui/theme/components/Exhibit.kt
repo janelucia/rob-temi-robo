@@ -44,6 +44,7 @@ fun Exhibit(currentItem: Item, mRobot: Robot?, tourViewModel: TourViewModel) {
         fontWeight = FontWeight.Bold
     )
     Spacer(modifier = Modifier.height(8.dp))
+    // add media depending on the level of detail
     if (tourViewModel.levelOfDetail?.isDetailed() == true) {
         DisplayMediaList(currentItem.conciseText, currentItem.detailedText)
     } else {

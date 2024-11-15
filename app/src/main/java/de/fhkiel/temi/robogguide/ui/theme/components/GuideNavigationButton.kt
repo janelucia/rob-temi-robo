@@ -49,6 +49,7 @@ fun GuideNavigationButton(
     val currentGuideState by tourViewModel.guideState.observeAsState(GuideState.TransferStart)
 
     when (currentDestination) {
+        // navigation buttons for guide
         "guide" -> {
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -58,12 +59,13 @@ fun GuideNavigationButton(
                 GuideProgressBar(numberOfItems, currentItemIndex)
 
                 Box {
-                    // Navigations-Buttons für Exponate
+                    // navigation buttons for items
                     Row(
                         horizontalArrangement = Arrangement.SpaceAround,
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.fillMaxWidth()
                     ) {
+                        // dont show previous button if at the beginning
                         if (currentItemIndex == 0 && currentLocationIndex == 0) {
                             CustomIconButton(
                                 iconId = R.drawable.play_disabled_right,
@@ -88,6 +90,7 @@ fun GuideNavigationButton(
                                 contentDescription = "Vorheriges Exponat"
                             )
                         }
+                        // if navigation threw an error the button allows the user to do a retry
                         if (currentGuideState == GuideState.TransferError) {
                             CustomButton(
                                 title = "Erneut versuchen",
@@ -100,12 +103,14 @@ fun GuideNavigationButton(
                                 width = 300.dp
                             )
                         }
-
+                        // if the guide is in the exhibit state the buttons are different
+                        // prevents the user from repeat the item if he isn't at the exhibit state
                         if (currentGuideState == GuideState.Exhibit) {
                             CustomIconButton(
                                 iconId = R.drawable.replay,
                                 contentDescription = "Exponat wiederholen",
                                 onClick = {
+                                    // wait to speak
                                     if (wasAlreadySpoken) {
                                         assert(tourViewModel.levelOfDetail != null)
                                         if (tourViewModel.levelOfDetail?.isDetailed() == true) {
@@ -134,6 +139,7 @@ fun GuideNavigationButton(
                             )
 
                         }
+                        // allow to end guide if at the last item and location
                         if (currentItemIndex == numberOfItems - 1 && currentLocationIndex == tourViewModel.numberOfLocations - 1) {
                             CustomButton(
                                 title = "Führung beenden",
@@ -173,7 +179,6 @@ fun GuideNavigationButton(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-
                 Box(
                     modifier = Modifier
                         .align(Alignment.CenterVertically)
@@ -181,15 +186,13 @@ fun GuideNavigationButton(
                 ) {
                     GuideProgressBar(numberOfItems, currentItemIndex)
                 }
-
-
                 Box {
                     Row(
                         horizontalArrangement = Arrangement.SpaceAround,
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.fillMaxWidth()
                     ) {
-
+                        // show button to retry if an error occurred
                         if (currentGuideState == GuideState.TransferError) {
                             CustomButton(
                                 title = "Erneut versuchen",
@@ -202,8 +205,9 @@ fun GuideNavigationButton(
                                 width = 300.dp
                             )
                         }
-
+                        // show navigation buttons only for items
                         if (currentGuideState == GuideState.Exhibit) {
+                            // show disabled previous button if at the first item
                             if (currentItemIndex == 0) {
                                 CustomIconButton(
                                     iconId = R.drawable.play_disabled_right,
@@ -255,7 +259,7 @@ fun GuideNavigationButton(
                                     clearQueue(mRobot)
                                 },
                             )
-
+                            // show disabled next button if at the last item
                             if (currentItemIndex == numberOfItems - 1) {
                                 CustomIconButton(
                                     iconId = R.drawable.play_disabled_right,
