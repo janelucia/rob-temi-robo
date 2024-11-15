@@ -18,6 +18,33 @@ Die App wurde im Rahmen des Moduls "Einführung in die Robotik" an der Fachhochs
 - Karlina (@caprily)
 - Jane (@janelucia)
 
+## Weiterentwicklung der App
+
+Wenn du dich dafür interessierst uns bei unserer Mission zu helfen, die beste Temi App für das Computermuseum der FH Kiel zu entwickeln, dann klone gerne unser Repository und folge den Anweisungen.
+
+```bash
+  git clone https://github.com/janelucia/rob-temi-robo.git
+```
+
+### Vorbedingungen
+- Android Studio in der Version Ladybug ist installiert
+- AGP Version: 8.7.2
+
+### Schritte
+- Wähle als Emulator ein Tablet aus. Die App wurde speziell für die Größe und Auflösung der Temi-Tablets entwickelt. Dadurch kann es sein, dass die UI-Elemente auf den Emulator-Tablets etwas gedrungen aussieht.
+- Installiere die Dependencies per `sync project with gradle files`
+- Starte die App
+
+### Beachte
+- Um den vollkommenen Funktionsumfang zu testen, benötigst du einen Temi Roboter
+
+### Ausblick
+- per Videocall um Hilfe bitten
+- PIN für das Schließen der App
+- ein verbessertes Feedbacksystem
+- Eigene Youtube Steuerung, um das Navigieren aus der App zu verhindern.
+- Übersetzung auf Englisch
+
 ## Benutzung der App
 
 ### Vorbedingungen
@@ -83,33 +110,6 @@ Sollten Sie die App im Kiosk Modus schließen wollen, dann müssen Sie folgende 
 
 ### Kleiner Temi Knigge
 - Sollten Sie den Temi nicht mehr benötigen, dann lassen Sie Ihn bitte zu seiner Ladestation fahren. Er wird sich sonst auch bemerkbar machen.
-
-## Weiterentwicklung der App
-
-Wenn du dich dafür interessierst uns bei unserer Mission zu helfen, die beste Temi App für das Computermuseum der FH Kiel zu entwickeln, dann klone gerne unser Repository und folge den Anweisungen.
-
-```bash
-  git clone https://github.com/janelucia/rob-temi-robo.git
-```
-
-### Vorbedingungen
-- Android Studio in der Version Ladybug ist installiert
-- AGP Version: 8.7.2
-
-### Schritte
-- Wähle als Emulator ein Tablet aus. Die App wurde speziell für die Größe und Auflösung der Temi-Tablets entwickelt. Dadurch kann es sein, dass die UI-Elemente auf den Emulator-Tablets etwas gedrungen aussieht.
-- Installiere die Dependencies per `gradle sync`
-- Starte die App
-
-### Beachte
-- Um den vollkommenen Funktionsumfang zu testen, benötigst du einen Temi Roboter
-
-### Ausblick
-- per Videocall um Hilfe bitten
-- PIN für das Schließen der App
-- ein verbessertes Feedbacksystem
-- Eigene Youtube Steuerung, um das Navigieren aus der App zu verhindern.
-- Übersetzung auf Englisch
 
 
 
