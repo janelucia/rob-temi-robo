@@ -121,6 +121,24 @@ fun PreparationPopUp(
                     fontSize = 24.sp,
                     lineHeight = 32.sp
                 )
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    "In den Temi Einstellungen -> Navigation -> Clear Way TTS ausschalten.",
+                    fontSize = 24.sp,
+                    lineHeight = 32.sp
+                )
+                Spacer(modifier = Modifier.height(32.dp))
+                Text(
+                    "In den Temi Einstellungen -> Navigation -> Bypass Obstacle einschalten.",
+                    fontSize = 24.sp,
+                    lineHeight = 32.sp
+                )
+                Spacer(modifier = Modifier.height(32.dp))
+                Text(
+                    "In den Temi Einstellungen -> General Settings -> unter Benachrichtigungen alles ausschalten.",
+                    fontSize = 24.sp,
+                    lineHeight = 32.sp
+                )
                 Spacer(modifier = Modifier.height(32.dp))
                 Text("Debug Flag anmachen")
                 Spacer(modifier = Modifier.width(8.dp))
