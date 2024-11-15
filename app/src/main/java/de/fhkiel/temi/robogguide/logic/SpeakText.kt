@@ -19,7 +19,7 @@ fun processQueue(mRobot: Robot?) {
     val currentRequest = ttsQueue.value!!.first()
 
     // make sure that the same request is not repeated
-    if (currentRequest != lastTtsRequest ) {
+    if (currentRequest != lastTtsRequest) {
         lastTtsRequest = currentRequest
         mRobot?.speak(currentRequest)
     }
@@ -46,6 +46,7 @@ fun robotSpeakText(
             val chunked = splitTextBySentenceEnd(txt)
             chunked.forEachIndexed { index, s ->
                 val clearQueueNow = if (index == 0) clearQueue else false
+                Log.d("SpeakText", "Clearing Queue $clearQueueNow")
                 robotSpeakText(mRobot, s, isShowOnConversationLayer, clearQueueNow, chunk = false)
             }
             return

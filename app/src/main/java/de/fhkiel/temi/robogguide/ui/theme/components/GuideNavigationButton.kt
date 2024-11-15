@@ -72,7 +72,7 @@ fun GuideNavigationButton(
                                 onClick = {
                                     robotSpeakText(
                                         mRobot,
-                                        "Mhm, das gibt es leider nicht. Wir sind gerade am Anfang.",
+                                        "Das geht leider nicht. Wir sind gerade am Anfang.",
                                         clearQueue = true
                                     )
                                 },
@@ -135,8 +135,7 @@ fun GuideNavigationButton(
                                         if (tourViewModel.levelOfDetail?.isDetailed() == true) {
                                             robotSpeakText(
                                                 mRobot,
-                                                currentItem?.detailedText?.value,
-                                                clearQueue = true
+                                                currentItem?.detailedText?.value
                                             )
                                         }
                                     } else {
@@ -156,7 +155,8 @@ fun GuideNavigationButton(
                         }
                         // allow to end guide if at the last item and location or if the guide is at the last location not at an Exhibit
                         if (currentLocationIndex == tourViewModel.numberOfLocations - 1 &&
-                            (currentItemIndex == numberOfItems - 1 || currentGuideState != GuideState.Exhibit)) {
+                            (currentItemIndex == numberOfItems - 1 || currentGuideState != GuideState.Exhibit)
+                        ) {
                             CustomButton(
                                 title = "Führung beenden",
                                 fontSize = 32.sp,
@@ -237,7 +237,7 @@ fun GuideNavigationButton(
                                     onClick = {
                                         robotSpeakText(
                                             mRobot,
-                                            "Mhm, das gibt es leider nicht. Wir sind gerade am Anfang.",
+                                            "Das geht leider nicht. Wir sind gerade am Anfang.",
                                             clearQueue = true
                                         )
                                     },
@@ -262,15 +262,15 @@ fun GuideNavigationButton(
                                     // wait to speak
                                     if (wasAlreadySpoken) {
                                         assert(tourViewModel.levelOfDetail != null)
+                                        robotSpeakText(
+                                            mRobot,
+                                            currentItem?.conciseText?.value,
+                                            clearQueue = true
+                                        )
                                         if (tourViewModel.levelOfDetail?.isDetailed() == true) {
-                                            val text =
-                                                currentItem?.conciseText?.value + "\n" + currentItem?.detailedText?.value
-                                            robotSpeakText(mRobot, text, clearQueue = true)
-                                        } else {
                                             robotSpeakText(
                                                 mRobot,
-                                                currentItem?.conciseText?.value,
-                                                clearQueue = true
+                                                currentItem?.detailedText?.value
                                             )
                                         }
                                     } else {
@@ -293,9 +293,9 @@ fun GuideNavigationButton(
                                     onClick = {
                                         robotSpeakText(
                                             mRobot,
-                                            "Mhm, das gibt es leider nicht. Das war das letzte Exponat",
+                                            "Das geht leider nicht. Das war das letzte Exponat",
                                             clearQueue = true
-                                            )
+                                        )
                                     },
                                     contentDescription = "Kein vorheriges Exponat",
                                     initialContainerColor = Color.Gray,
