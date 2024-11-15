@@ -13,6 +13,10 @@ import de.fhkiel.temi.robogguide.models.Text
 import de.fhkiel.temi.robogguide.models.Transfer
 import java.net.URL
 
+/**
+ * TourManager: manages the tour and the database.
+ * @param db The database to use
+ */
 class TourManager(private val db: SQLiteDatabase?) {
 
     private var currentPlaceId: Int? = null
