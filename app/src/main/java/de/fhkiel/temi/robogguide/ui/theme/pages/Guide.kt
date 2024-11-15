@@ -20,6 +20,15 @@ import de.fhkiel.temi.robogguide.ui.theme.components.CustomButton
 import de.fhkiel.temi.robogguide.ui.theme.components.Exhibit
 import de.fhkiel.temi.robogguide.ui.theme.components.TransferDrive
 
+/**
+ * Guide: the guide page.
+ * @param innerPadding: PaddingValues - the padding values.
+ * @param mRobot: Robot? - the robot.
+ * @param tourViewModel: TourViewModel - the view model for the tour.
+ * @param tourManager: TourManager - the tour manager.
+ * @param navController: NavController - the navigation controller.
+ * @param setupUiViewModel: SetupViewModel - the view model for the setup. Needed to display the debug flag.
+ */
 @Composable
 fun Guide(
     innerPadding: PaddingValues,
@@ -31,7 +40,6 @@ fun Guide(
 ) {
 
     val guideState by tourViewModel.guideState.observeAsState(null)
-
     val currentItem by tourViewModel.currentItem.observeAsState(null)
     val currentLocation by tourViewModel.currentLocation.observeAsState(null)
     val isDebugFlagEnabled by setupUiViewModel.isDebugFlagEnabled.observeAsState(false)
@@ -83,6 +91,7 @@ fun Guide(
             GuideState.End -> {
                 //do nothing
             }
+
             GuideState.TransferError -> {
                 assert(currentLocation != null)
                 TransferDrive(currentLocation!!, mRobot, tourViewModel, tourManager, navController)
