@@ -25,6 +25,13 @@ import de.fhkiel.temi.robogguide.logic.robotSpeakText
 import de.fhkiel.temi.robogguide.models.GuideState
 import de.fhkiel.temi.robogguide.ui.logic.TourViewModel
 
+/**
+ * GuideNavigationButton
+ * - shows the navigation buttons for the guide and the detailed exhibit views
+ * @param navController: NavController
+ * @param tourViewModel: TourViewModel
+ * @param mRobot: Robot?
+ */
 @Composable
 fun GuideNavigationButton(
     navController: NavController,
@@ -38,9 +45,7 @@ fun GuideNavigationButton(
     val currentItemIndex by tourViewModel.currentItemIndex.observeAsState(0)
     val currentItem by tourViewModel.currentItem.observeAsState(null)
     val currentLocationIndex by tourViewModel.currentLocationIndex.observeAsState(0)
-
     val wasAlreadySpoken by tourViewModel.wasAlreadySpoken.observeAsState(false)
-
     val currentGuideState by tourViewModel.guideState.observeAsState(GuideState.TransferStart)
 
     when (currentDestination) {
@@ -161,6 +166,7 @@ fun GuideNavigationButton(
 
         }
 
+        // navigation buttons for items
         "detailedExhibit" -> {
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -178,7 +184,6 @@ fun GuideNavigationButton(
 
 
                 Box {
-                    // Navigations-Buttons für Exponate
                     Row(
                         horizontalArrangement = Arrangement.SpaceAround,
                         verticalAlignment = Alignment.CenterVertically,
@@ -223,6 +228,7 @@ fun GuideNavigationButton(
                                 iconId = R.drawable.replay,
                                 contentDescription = "Exponat wiederholen",
                                 onClick = {
+                                    // wait to speak
                                     if (wasAlreadySpoken) {
                                         assert(tourViewModel.levelOfDetail != null)
                                         if (tourViewModel.levelOfDetail?.isDetailed() == true) {

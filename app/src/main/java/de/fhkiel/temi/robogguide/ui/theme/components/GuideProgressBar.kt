@@ -3,7 +3,6 @@ package de.fhkiel.temi.robogguide.ui.theme.components
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,11 +21,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+/**
+ * GuideProgressBar
+ * - Displays a progress bar with 'beads' for each exhibit of the current location
+ * @param numberOfExhibits: Number of exhibits in the guide
+ * @param currentExhibit: Index of the current exhibit
+ */
 
 @Composable
 fun GuideProgressBar(numberOfExhibits: Int, currentExhibit: Int) {
-
-
     Box(
         modifier = Modifier
             .width(200.dp).padding(8.dp),
@@ -35,14 +38,12 @@ fun GuideProgressBar(numberOfExhibits: Int, currentExhibit: Int) {
         Column {
             Header(title = "Ausstellungsstück(e):", fontSize = 16.sp)
             Spacer(modifier = Modifier.height(8.dp))
-            // Fortschrittsanzeige
-            // Fortschrittsbalken mit Elementen??
+            // Progress bar with 'beads' for each exhibit
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
-                    .clickable { /*Dinge*/ }
             ) {
-                //Fortschrittselemente, eines hervorgehoben (=das aktuelle)
+                // Progress element (bead) for current exhibit is black filled
                 repeat(numberOfExhibits) {
                     Log.d("Test", "current bead $it")
                     Box(

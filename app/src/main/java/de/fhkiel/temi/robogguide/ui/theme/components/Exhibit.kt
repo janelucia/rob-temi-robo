@@ -14,9 +14,17 @@ import de.fhkiel.temi.robogguide.models.Item
 import de.fhkiel.temi.robogguide.ui.logic.TourViewModel
 import kotlinx.coroutines.delay
 
+/**
+ * Exhibit
+ * - shows each item of the tour.
+ * @param currentItem: Item - the current item.
+ * @param mRobot: Robot? - the robot.
+ * @param tourViewModel: TourViewModel - the view model for the tour.
+ */
 @Composable
 fun Exhibit(currentItem: Item, mRobot: Robot?, tourViewModel: TourViewModel) {
 
+    // wait for 2 seconds before speaking the text
     LaunchedEffect(currentItem) {
         tourViewModel.updateAlreadySpoken(false)
         delay(2000)
