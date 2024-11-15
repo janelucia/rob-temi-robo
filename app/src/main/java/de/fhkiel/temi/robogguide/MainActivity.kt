@@ -12,9 +12,7 @@ import android.os.Looper
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -54,14 +52,17 @@ import java.io.IOException
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-@OptIn(ExperimentalMaterial3Api::class)
+const val REQUEST_CODE_MAP = 10
+const val REQUEST_CODE_SETTINGS = 1
+
 class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermissionResultListener,
     OnGoToLocationStatusChangedListener,
     OnUserInteractionChangedListener,
     Robot.TtsListener,
     OnBatteryStatusChangedListener {
-    private val setupViewModel: SetupViewModel by viewModels()
-    private val tourViewModel: TourViewModel by viewModels()
+
+    private lateinit var setupViewModel: SetupViewModel
+    private lateinit var tourViewModel: TourViewModel
     private var mRobot: Robot? = null
     private lateinit var database: DatabaseHelper
     private lateinit var tourManager: TourManager
@@ -85,8 +86,13 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        sharedPreferences = application.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
 
+        // ---- VIEW MODEL SETUP ----
+        tourViewModel = TourViewModel()
+        setupViewModel = SetupViewModel(application)
+
+        // ---- SHARED PREFERENCES ----
+        sharedPreferences = application.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
 
         // ---- DATABASE ACCESS ----
         val databaseName = "roboguide.db"
@@ -272,7 +278,6 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
             }
 
             setupViewModel.robotIsReady()
-            // showMapData()
         }
     }
 
@@ -328,8 +333,9 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
             Log.d("PERMISSION", "Permission $permission already granted")
             return false
         } else {
-            mRobot?.requestPermissions(listOf(permission), requestCode)
             Log.d("PERMISSION", "Requesting permission $permission")
+            mRobot?.requestPermissions(listOf(permission), requestCode)
+            // return is permission granted?
             return true
         }
     }
@@ -357,8 +363,6 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
                     showMapData()
                 }
             }
-
-            // Permission.FACE_RECOGNITION -> TODO
             Permission.SETTINGS -> {
                 if (grantResult == Permission.GRANTED) {
                     Log.i("MainActivity", "Settings permission granted")
@@ -366,8 +370,6 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
                     Log.e("MainActivity", "Settings permission denied")
                 }
             }
-            // Permission.UNKNOWN -> TODO
-
             else -> {
                 // do nothing
             }
@@ -421,11 +423,6 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
                 dialog.dismiss()
             }, 120000) // 2 Min
         }
-    }
-
-    companion object {
-        const val REQUEST_CODE_MAP = 10
-        const val REQUEST_CODE_SETTINGS = 1
     }
 
     override fun onGoToLocationStatusChanged(
@@ -511,7 +508,8 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
                 ttsQueue.value!!.poll()
                 ttsQueue.value = ttsQueue.value
             }
-            TtsRequest.Status.PROCESSING,
+
+            TtsRequest.Status.PROCESSING -> {}
             TtsRequest.Status.STARTED -> {
                 isSpeaking.value = true
             }

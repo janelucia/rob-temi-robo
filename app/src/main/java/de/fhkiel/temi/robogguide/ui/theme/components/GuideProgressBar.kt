@@ -45,7 +45,7 @@ fun GuideProgressBar(numberOfExhibits: Int, currentExhibit: Int) {
             ) {
                 // Progress element (bead) for current exhibit is black filled
                 repeat(numberOfExhibits) {
-                    Log.d("Test", "current bead ${it}")
+                    Log.d("Test", "current bead $it")
                     Box(
                         modifier = Modifier
                             .size(24.dp)

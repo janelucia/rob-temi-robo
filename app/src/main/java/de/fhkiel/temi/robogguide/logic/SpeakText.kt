@@ -8,10 +8,19 @@ import java.util.concurrent.ConcurrentLinkedQueue
 
 val ttsQueue = MutableLiveData<ConcurrentLinkedQueue<TtsRequest>>(ConcurrentLinkedQueue())
 var isSpeaking = MutableLiveData(false)
+var lastTtsRequest: TtsRequest? = null
 
 fun processQueue(mRobot: Robot?) {
+    if (ttsQueue.value!!.isEmpty()) {
+        Log.e("Speak Text", "Queue is empty")
+        return
+    }
+    // get the first element from the queue
     val currentRequest = ttsQueue.value!!.first()
-    if (currentRequest != null && currentRequest.status == TtsRequest.Status.PENDING) {
+
+    // make sure that the same request is not repeated
+    if (currentRequest != lastTtsRequest ) {
+        lastTtsRequest = currentRequest
         mRobot?.speak(currentRequest)
     }
 }
@@ -40,7 +49,6 @@ fun robotSpeakText(
             }
             return
         }
-        // TODO FIX double speaking
         Log.d("SpeakText", "adding text to queue: $txt")
         mRobot?.let {
             val ttsRequest: TtsRequest = TtsRequest.create(

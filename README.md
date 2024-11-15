@@ -1,7 +1,7 @@
 # Temi the Robot
 
 Dieses Repository enthält die Android App für den Temi Roboter. Der Temi Roboter führt
-Besucher:innen durch die Ausstellung des Computer Museums der Fachhochschule Kiels. 
+Besucher:innen durch die Ausstellung des Computer Museums der Fachhochschule Kiel. 
 Die Besuchenden haben die Möglichkeit die Art der Führung zu wählen. Dabei können sie zwischen:
 
 - einer langen und ausführlichen Führung (alle Stationen und alle Texte zu den Exponaten)
@@ -9,13 +9,13 @@ Die Besuchenden haben die Möglichkeit die Art der Führung zu wählen. Dabei k�
 - einer kurzen und ausführlichen Führung (nur die wichtigsten Stationen und alle Texte zu den Exponaten)
 - einer kurzen und prägnanten Führung (nur die wichtigsten Stationen und Informationen zu den Exponaten)
 
-Im Anschluss wird der Besuchenden von dem Temi zu den ausgewählten Stationen geführt.
+Im Anschluss wird der Besuchende von dem Temi zu den ausgewählten Stationen geführt.
 Die App wurde im Rahmen des Moduls "Einführung in die Robotik" an der Fachhochschule Kiel entwickelt.
 
 ## Gruppenmitglieder
 
 - Benjamin (@sihingbenni)
-- Karlina ()
+- Karlina (@caprily)
 - Jane (@janelucia)
 
 ## Benutzung der App
@@ -27,7 +27,7 @@ Die App wurde im Rahmen des Moduls "Einführung in die Robotik" an der Fachhochs
 - Die App ist gestartet
 
 ### Benötigte Rechte
-* Bitte nehmen Sie alle notwendigen Rechte an, die der Temi Ihnen beim Start der App zeigt. Sonst wird die App nicht  korrekt funktioniert.
+* Bitte nehmen Sie alle notwendigen Rechte an, die der Temi Ihnen beim Start der App zeigt. Sonst wird die App nicht korrekt funktionieren.
 
 
 ### Einstellen des Temis
@@ -35,20 +35,23 @@ Die App wurde im Rahmen des Moduls "Einführung in die Robotik" an der Fachhochs
 - Wählen Sie den Ort aus, an dem sich der Temi befindet.
   - Alternativ können sie auch den Temi automatisch den Ort bestimmen lassen (Button: "Den Roboter auswählen lassen")
   - Sollte dies fehlschlagen, ist es nur möglich, den Ort manuell zu bestimmen. Ein erneutes Drücken des Buttons "Den Roboter auswählen lassen" ist nicht möglich.
-- Schalten Sie den Kioskmodus ein
+- Schalten Sie den Kioskmodus ein (Der Kiosk modus wird unteranderem dafür benötigt um den Inaktivitätscheck zu benutzen.)
 Beachten Sie, dass Sie die Einstellung nur beim Start der App vornehmen können!
 
 ### App schließen
-WICHTIG: erst den Kioskmodus ausschalten, bevor Sie die App schließen! 
-Dies ist eine Vorsichtsmaßnahme, damit Besucher:innen die App nicht schließen können. 
-In der Zukunft würde der schließen Button nur über einen PIN ausführbar sein.
-- Sollten Sie Probleme haben und möchten die App schließen, dann können Sie dies an verschiedenen Stellen in der Applikation vornehmen
-  - Drücken Sie auf den Button "App schließen" in der Setup UI
-  - Wenn Sie sich in der Hauptansicht befinden, können Sie die App auch über den Button "?" und dann über "App schließen" schließen
+Sollte die App im Kioskmodus laufen, ist es nicht ohne weiteres möglich die App zu schließen.
+Sollten Sie die App im Kiosk Modus schließen wollen, dann müssen Sie folgende Schritte befolgen:
+- Drücken Sie auf das Fragezeichen oben rechts
+- Drücken Sie auf "App schließen" (Dies soll in Zukunft nur über PIN Eingabe möglich sein, damit Kunden nicht die App schließen können)
+- Sie sollten nun die Konfigurationsseite der App sehen
+- Stellen Sie den Slider "Kioksmodus" auf Aus.
+- Wechseln Sie in die Einstellungen des Temis und wählen Sie dort unter "Home Screen" eine andere App oder "Default" aus.
+- Jetzt können Sie zurück in die App wechseln und diese schließen.
+
 
 ### Führung auswählen
 - Wählen Sie die Art der Führung aus, die Sie durch den Temi erhalten möchten
-- Drücken Sie auf den Button "Los gehts"
+- Drücken Sie auf den Button "Los geht's"
 - Wählen Sie aus, ob Sie eine Führung oder nur zu einem bestimmten Exponat geführt werden möchten
 - Zu erst können Sie auswählen, ob Sie eine kurze (nur die wichtigsten Stationen) oder eine lange Führung machen möchten
 - Dann wählen Sie, ob Sie nur die wichtigsten Informationen oder alle Informationen zu den Exponaten erhalten möchten
@@ -56,7 +59,7 @@ In der Zukunft würde der schließen Button nur über einen PIN ausführbar sein
 ### Führung
 
 #### Generelle Informationen
-- Der Temi wird Sie zu ihrer gewählten Station führen. Sie können die Stationen über den Pfeil nach rechts überpringen oder mit dem Pfeil nach links zurückgehen
+- Der Temi wird Sie zu Ihrer gewählten Station führen. Sie können die Stationen über den Pfeil nach rechts überspringen oder mit dem Pfeil nach links zurückgehen
 - Sobald Sie an der Station angekommen sind, wird der Temi Ihnen die Informationen zu der Station vorlesen. Sie können diese Informationen, aber auch auf dem Bildschirm einsehen.
 - Der Temi pausiert nach jedem Exponat, so haben Sie Zeit sich die Informationen durchzulesen oder sich die Exponate anzusehen
 - Sobald Sie bereit sind, müssen Sie den Pfeil nach rechts drücken, damit der Temi Ihnen Informationen zum nächsten Exponat vorliest
@@ -75,7 +78,7 @@ In der Zukunft würde der schließen Button nur über einen PIN ausführbar sein
 - Im Anschluss haben Sie die Möglichkeit die Führung zu beenden. Dabei können Sie auswählen, ob Sie zur Startseite zurückkehren möchten oder den Temi zu seiner Ladestation schicken möchten
 
 ### Mit Fehlern umgehen
-- Der Temi benötigt seinen personal space, bitte lassen Sie ihn diesen auch. Sollten Sie zu nah an den Temi herantreten, wird er nicht mehr weiter navigieren und ggf. die Navigation abbrechen
+- Der Temi benötigt seinen personal space, bitte lassen Sie ihm diesen auch. Sollten Sie zu nah an den Temi herantreten, wird er nicht mehr weiter navigieren und ggf. die Navigation abbrechen
 - Sie können die Navigation erneut anstoßen, in dem Sie auf den Button "Erneut versuchen" drücken. Dieser erscheint, wenn die Navigation abgebrochen wurde. Sie können diesen auch in dem Dialog, der erscheint, wenn ein Fehler auftritt, finden.
 
 ### Kleiner Temi Knigge
@@ -94,7 +97,7 @@ Wenn du dich dafür interessierst uns bei unserer Mission zu helfen, die beste T
 - AGP Version: 8.7.2
 
 ### Schritte
-- Wähle als Emulator ein Tablet aus. Die App wurde nur für Tablets entwickelt.
+- Wähle als Emulator ein Tablet aus. Die App wurde speziell für die Größe und Auflösung der Temi-Tablets entwickelt. Dadurch kann es sein, dass die UI-Elemente auf den Emulator-Tablets etwas gedrungen aussieht.
 - Installiere die Dependencies per `gradle sync`
 - Starte die App
 
