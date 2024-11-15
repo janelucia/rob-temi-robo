@@ -9,8 +9,8 @@ import de.fhkiel.temi.robogguide.models.Location
 
 class TourViewModel : ViewModel() {
     var currentLocationIndex = MutableLiveData(0)
-    var tourLocations: MutableList<Location> = mutableListOf()
-    var tourLocationsAsItems: MutableList<Item> = mutableListOf()
+    private var tourLocations: MutableList<Location> = mutableListOf()
+    private var tourLocationsAsItems: MutableList<Item> = mutableListOf()
     var numberOfLocations: Int = tourLocations.size
     var levelOfDetail: LevelOfDetail? = null
 
@@ -103,7 +103,7 @@ class TourViewModel : ViewModel() {
         updateCurrentItem(currentItemIndex.value!! - 1)
     }
 
-    fun updateCurrentItem(index: Int) {
+    private fun updateCurrentItem(index: Int) {
         if (index in 0 until numberOfItemsAtCurrentLocation.value!!) {
             currentItemIndex.value = index
             currentItem.value = _currentLocationItems[index]
