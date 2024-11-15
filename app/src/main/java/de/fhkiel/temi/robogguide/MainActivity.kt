@@ -14,7 +14,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -53,6 +52,9 @@ import de.fhkiel.temi.robogguide.ui.theme.pages.Setup
 import java.io.IOException
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+
+const val REQUEST_CODE_MAP = 10
+const val REQUEST_CODE_SETTINGS = 1
 
 class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermissionResultListener,
     OnGoToLocationStatusChangedListener,
@@ -420,11 +422,6 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
                 dialog.dismiss()
             }, 120000) // 2 Min
         }
-    }
-
-    companion object {
-        const val REQUEST_CODE_MAP = 10
-        const val REQUEST_CODE_SETTINGS = 1
     }
 
     override fun onGoToLocationStatusChanged(
