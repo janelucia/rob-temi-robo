@@ -1,7 +1,7 @@
 package de.fhkiel.temi.robogguide.models
 
 /**
- * A Location has multiple items
+ * Location: consists of multiple items and resides in a place
  */
 class Location(
     val name: String,

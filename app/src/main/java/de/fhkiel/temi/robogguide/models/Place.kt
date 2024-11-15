@@ -1,5 +1,8 @@
 package de.fhkiel.temi.robogguide.models
 
+/**
+ * Place: represents a place which consists of locations
+ */
 class Place(
     val name: String,
     val importantLocations: List<Location>,
