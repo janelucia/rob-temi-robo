@@ -12,7 +12,6 @@ import android.os.Looper
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.getValue
@@ -61,8 +60,9 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
     OnUserInteractionChangedListener,
     Robot.TtsListener,
     OnBatteryStatusChangedListener {
-    private val setupViewModel: SetupViewModel by viewModels()
-    private val tourViewModel: TourViewModel by viewModels()
+
+    private val setupViewModel: SetupViewModel = SetupViewModel(application)
+    private val tourViewModel: TourViewModel = TourViewModel()
     private var mRobot: Robot? = null
     private lateinit var database: DatabaseHelper
     private lateinit var tourManager: TourManager
@@ -507,6 +507,7 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
                 ttsQueue.value!!.poll()
                 ttsQueue.value = ttsQueue.value
             }
+
             TtsRequest.Status.PROCESSING,
             TtsRequest.Status.STARTED -> {
                 isSpeaking.value = true
