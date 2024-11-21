@@ -312,7 +312,7 @@ class TourManager(private val db: SQLiteDatabase?) {
 
         val queryGetAllTransfersForLocation = """
             SELECT t.id as transfer_id, 
-            t.location_from, t.location_to, l1.id, l1.name as name_from, l1.important, l2.name as name_to
+            t.location_from, t.location_to, l1.id, l1.name as name_from, l1.important as from_important, l2.important as to_important, l2.name as name_to
             FROM transfers AS t
             LEFT JOIN locations AS l1 
             ON t.location_from = l1.id 
@@ -337,7 +337,7 @@ class TourManager(private val db: SQLiteDatabase?) {
 
                     val nameTo = cursor.getString(cursor.getColumnIndexOrThrow("name_to"))
                     val nameFrom = cursor.getString(cursor.getColumnIndexOrThrow("name_from"))
-                    val important = cursor.getInt(cursor.getColumnIndexOrThrow("important"))
+                    val important = cursor.getInt(cursor.getColumnIndexOrThrow("from_important"))
 
                     val transferTexts = getTexts("transfers_id", transferId)
                     val detailedTransferText = transferTexts?.get(true)
@@ -365,9 +365,37 @@ class TourManager(private val db: SQLiteDatabase?) {
                         importantLocations[from] = newLocation
                     }
                 } while (cursor.moveToNext())
+
+                // after the loop, add the last location to the list
+                cursor.moveToLast()
+                val to = cursor.getInt(cursor.getColumnIndexOrThrow("location_to"))
+                val nameTo = cursor.getString(cursor.getColumnIndexOrThrow("name_to"))
+                val important = cursor.getInt(cursor.getColumnIndexOrThrow("to_important"))
+                val isImportant = (important == 1)
+
+                val texts = getTexts("locations_id", to)
+                val detailedText = texts?.get(true)
+                val conciseText = texts?.get(false)
+
+                val newLocation = Location(
+                    nameTo,
+                    getItems(to),
+                    detailedText,
+                    conciseText,
+                )
+
+                newLocation.fillYourItemsWithYourself()
+
+                allLocations[to] = newLocation
+
+                if (isImportant) {
+                    importantLocations[to] = newLocation
+                }
+                allLocations.forEach() { (key, value) ->
+                    Log.i("TourManager", "Location: $key -> ${value.name} ${value.items}")
+                }
             }
         }
-
 
         var currentStartpoint = startPoint
         do {
@@ -383,6 +411,13 @@ class TourManager(private val db: SQLiteDatabase?) {
             currentStartpoint = currentEndpoint
         } while (currentEndpoint != endPoint)
 
+        // add the end location to the list
+        sortedAllLocations.add(allLocations[endPoint]!!)
+        if (importantLocations.containsKey(endPoint)) {
+            sortedImportantLocations.add(importantLocations[endPoint]!!)
+        }
+
+        Log.d("TourManager", "All sorted locations: ${sortedAllLocations.size}")
 
         Log.i("TourManager", "Transfers for location: $transfersForLocation")
 
