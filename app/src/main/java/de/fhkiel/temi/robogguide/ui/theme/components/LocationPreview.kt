@@ -53,7 +53,7 @@ fun LocationPreview(
             verticalAlignment = Alignment.CenterVertically
         ) {
             // show an image if it exists, otherwise show a placeholder image
-            if (location.conciseText?.mediaList?.first()?.url != null) {
+            if (location.conciseText?.mediaList?.firstOrNull()?.url != null) {
                 LoadingImage(
                     urlString = location.conciseText.mediaList.first().url.toString(),
                     modifier = Modifier.size(400.dp)
@@ -150,7 +150,7 @@ fun ItemPreview(
             verticalAlignment = Alignment.CenterVertically
         ) {
             // show an image if it exists, otherwise show a placeholder image
-            if (item.conciseText?.mediaList?.first()?.url != null) {
+            if (item.conciseText?.mediaList?.firstOrNull()?.url != null) {
                 LoadingImage(
                     urlString = item.conciseText.mediaList.first().url.toString(),
                     modifier = Modifier.size(400.dp)

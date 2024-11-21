@@ -103,7 +103,7 @@ fun TransferDrive(
         fontSize = 32.sp
     )
     // Transfers only has one image in order to tell the user where to go
-    currentLocation.conciseText?.mediaList?.first().let { media ->
+    currentLocation.conciseText?.mediaList?.firstOrNull().let { media ->
         Row(
             modifier = Modifier.fillMaxWidth(),
         ) {
