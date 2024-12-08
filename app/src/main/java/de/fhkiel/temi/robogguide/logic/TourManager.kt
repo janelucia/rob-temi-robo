@@ -302,8 +302,16 @@ class TourManager(private val db: SQLiteDatabase?) {
     private fun getLocations(): Triple<List<Location>, List<Location>, Map<String, Transfer>> {
 
         val transfersForLocation: MutableMap<Int, Int> = mutableMapOf()
-        val startPoint = tourStartLocation[currentPlaceId]!!
-        val endPoint = tourEndLocation[currentPlaceId]!!
+
+        if (tourStartLocation.containsKey(currentPlaceId) && tourEndLocation.containsKey(currentPlaceId)) {
+            Log.i("TourManager", "Start and end location found")
+        } else {
+            Log.e("TourManager", "Start and end location not found")
+            throw IllegalStateException("Es konnte kein Start oder Endpunkt für diesen Ort gefunden werden.")
+        }
+
+        val startPoint = tourStartLocation[currentPlaceId]
+        val endPoint = tourEndLocation[currentPlaceId]
         val sortedAllLocations: MutableList<Location> = mutableListOf()
         val sortedImportantLocations: MutableList<Location> = mutableListOf()
         val allLocations: MutableMap<Int, Location> = mutableMapOf()
