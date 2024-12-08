@@ -130,6 +130,7 @@ fun GuideSelector(
                         contentColor = Color.Black,
                         width = 800.dp,
                         modifier = Modifier.wrapContentSize(),
+                        enabled = tourManager.selectedPlace?.importantLocations?.isNotEmpty() == true,
                         onClick = {
                             selectedLength = "Only Important"
                             tourManager.selectedPlace?.importantLocations?.let {
@@ -146,6 +147,7 @@ fun GuideSelector(
                         initialBackgroundColor = Color.White,
                         contentColor = Color.Black,
                         width = 800.dp,
+                        enabled = tourManager.selectedPlace?.allLocations?.isNotEmpty() == true,
                         onClick = {
                             selectedLength = "Everything"
                             tourManager.selectedPlace?.allLocations?.let {

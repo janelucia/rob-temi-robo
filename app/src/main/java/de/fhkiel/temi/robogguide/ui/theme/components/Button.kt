@@ -59,7 +59,8 @@ fun CustomButton(
     borderColor: Color = Color.Black,
     borderWidth: Dp = 2.dp,
     fontSize: TextUnit = 64.sp,
-    delayMillis: Long = 100
+    delayMillis: Long = 100,
+    enabled: Boolean = true
 ) {
     var backgroundColor by remember { mutableStateOf(initialBackgroundColor) }
     var isClicked by remember { mutableStateOf(false) }
@@ -88,6 +89,7 @@ fun CustomButton(
             containerColor = backgroundColor,
             contentColor = contentColor
         ),
+        enabled = enabled
     ) {
         Text(
             text = title,
