@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import com.robotemi.sdk.Robot
+import de.fhkiel.temi.robogguide.logic.clearQueue
 import de.fhkiel.temi.robogguide.logic.robotSpeakText
 import de.fhkiel.temi.robogguide.ui.logic.SetupViewModel
 
@@ -262,6 +263,7 @@ fun ClosePopup(
                     CustomButton(
                         onClick = {
                             navController.navigate("homePage")
+                            clearQueue(mRobot)
                             mRobot?.stopMovement()
                             onDismiss()
                         },
