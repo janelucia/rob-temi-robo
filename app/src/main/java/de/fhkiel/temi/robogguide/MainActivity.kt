@@ -104,7 +104,7 @@ class MainActivity : ComponentActivity(), OnRobotReadyListener, OnRequestPermiss
         sharedPreferences = application.getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
 
         // ---- DATABASE ACCESS ----
-        val databaseName = "roboguide.db"
+        val databaseName = "roboguide-präsi.db"
         database = DatabaseHelper(this, databaseName)
 
         try {

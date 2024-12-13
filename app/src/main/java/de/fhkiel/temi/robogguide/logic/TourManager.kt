@@ -188,7 +188,8 @@ class TourManager(private val db: SQLiteDatabase?) {
 
                     if (locationId == 0 && itemId == 0 && transferId == 0) {
                         Log.e("TourManager", "No ID set in text entry $id")
-                        throw IllegalStateException(errorMessage + "Der Text mit der ID $id hat keine gültige ID Zuweisung.")
+                        // TODO einkommentieren, falls man eine strenge Überprüfung wünscht.
+                        //throw IllegalStateException(errorMessage + "Der Text mit der ID $id hat keine gültige ID Zuweisung.")
                     }
 
                 } while (it.moveToNext())
